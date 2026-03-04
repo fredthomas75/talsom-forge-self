@@ -85,8 +85,11 @@ function useReveal() {
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
     obs.observe(el);
-    // observe stagger children
-    el.querySelectorAll(":scope > .reveal").forEach((c) => obs.observe(c));
+    // observe stagger children in sibling containers
+    const parent = el.parentElement;
+    if (parent) {
+      parent.querySelectorAll(".reveal").forEach((c) => { if (c !== el) obs.observe(c); });
+    }
     return () => obs.disconnect();
   }, []);
   return ref;
