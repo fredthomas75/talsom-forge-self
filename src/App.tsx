@@ -464,7 +464,7 @@ function Hero() {
           </Badge>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-6" style={HDR_FONT}>
-            {t(lang, "Le consulting virtuel,", "Virtual consulting,")}{" "}
+            {t(lang, "Le consulting,", "Consulting,")}{" "}
             <span className="text-gradient">{t(lang, "réinventé.", "reinvented.")}</span>
           </h1>
 
@@ -524,7 +524,7 @@ function TrustBar() {
 
 // ─── SERVICE DETAIL SHEET ────────────────────────────
 
-function ServiceDetailContent({ serviceId }: { serviceId: string }) {
+function ServiceDetailContent({ serviceId, onClose }: { serviceId: string; onClose?: () => void }) {
   const { lang } = useLang();
   const services = getServices(lang);
   const allDetails = getServiceDetails(lang);
@@ -667,12 +667,12 @@ function ServiceDetailContent({ serviceId }: { serviceId: string }) {
               {detail.timeline}
             </Badge>
           </div>
-          <a href="#contact">
+          <a href="#contact" onClick={onClose}>
             <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2 transition-opacity" style={{ background: C.yellow, color: C.green }}>
               {t(lang, "Demander une consultation", "Request a consultation")} <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </a>
-          <a href="#contact">
+          <a href="#contact" onClick={onClose}>
             <Button variant="outline" className="w-full rounded-full text-sm">
               {t(lang, "Planifier un appel", "Schedule a call")}
             </Button>
@@ -685,7 +685,7 @@ function ServiceDetailContent({ serviceId }: { serviceId: string }) {
 
 // ─── MARKETPLACE DETAIL SHEET ────────────────────────
 
-function MarketplaceDetailContent({ productId }: { productId: string }) {
+function MarketplaceDetailContent({ productId, onClose }: { productId: string; onClose?: () => void }) {
   const { lang } = useLang();
   const products = getMarketplace(lang);
   const allDetails = getMarketplaceDetails(lang);
@@ -757,7 +757,7 @@ function MarketplaceDetailContent({ productId }: { productId: string }) {
 
         {/* Footer CTA */}
         <div className="pt-5 pb-2">
-          <a href="#contact">
+          <a href="#contact" onClick={onClose}>
             <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2 transition-opacity" style={{ background: C.green, color: C.yellow }}>
               {t(lang, "Demander un accès", "Request access")} <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -833,7 +833,7 @@ function ServicesSection() {
 
       <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
         <SheetContent side="right" className="w-full sm:max-w-xl p-0">
-          {selectedId && <ServiceDetailContent serviceId={selectedId} />}
+          {selectedId && <ServiceDetailContent serviceId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
     </section>
@@ -939,7 +939,7 @@ function MarketplaceSection() {
 
       <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
         <SheetContent side="right" className="w-full sm:max-w-xl p-0">
-          {selectedId && <MarketplaceDetailContent productId={selectedId} />}
+          {selectedId && <MarketplaceDetailContent productId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
     </section>
