@@ -26,28 +26,26 @@ import {
   Globe,
   TrendingUp,
   MessageSquare,
+  ChevronsRight,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════
-   Talsom brand color tokens (used inline throughout)
-   coral:       #E8604C / hsl(8,76%,60%)
-   coral-dark:  #D04A38
-   coral-light: #FFF0ED
-   charcoal:    #1C1C2E
-   teal:        #2A9D8F
-   teal-light:  #E8F6F4
-   warm-gray:   #F7F5F3
+   Talsom brand tokens — Charte Graphique 2024
+   green:        #003533  (vert foncé — couleur principale)
+   green-mid:    #00524F  (vert intermédiaire)
+   yellow:       #FDF100  (jaune — accent / CTA)
+   silver:       #D2D9D9  (gris argenté — secondaire)
    ═══════════════════════════════════════════════════════ */
 
 const C = {
-  coral: "#E8604C",
-  coralDark: "#D04A38",
-  coralLight: "#FFF0ED",
-  charcoal: "#1C1C2E",
-  charcoalMid: "#2A2A42",
-  teal: "#2A9D8F",
-  tealLight: "#E8F6F4",
-  warmGray: "#F7F5F3",
+  green: "#003533",
+  greenMid: "#00524F",
+  greenLight: "#E6EDEC",
+  yellow: "#FDF100",
+  yellowDark: "#D4CC00",
+  yellowLight: "#FEFCE8",
+  silver: "#D2D9D9",
+  silverLight: "#F0F3F3",
 };
 
 // ─── DATA ────────────────────────────────────────────
@@ -62,10 +60,10 @@ const SERVICES = [
 ];
 
 const MARKETPLACE_PRODUCTS = [
-  { id: "hub", name: "Talsom Forge Hub", tagline: "Plateforme de consulting virtuel", desc: "Suite complète d'outils AI pour le consulting : diagnostics automatisés, génération de livrables, chat spécialisé et tableaux de bord.", features: ["Diagnostics AI", "Génération de rapports", "Chat expert", "Tableaux de bord"], tier: "Platform", badgeCls: "bg-[#E8604C]/10 text-[#E8604C] border-[#E8604C]/20" },
-  { id: "backlog", name: "AI Backlog Manager", tagline: "Gestion de portefeuille de cas d'usage", desc: "Identifiez, priorisez et suivez vos cas d'usage AI avec un framework de scoring et des vues portefeuille intelligentes.", features: ["Scoring multicritère", "Vues portefeuille", "Suivi ROI", "Collaboration"], tier: "Tool", badgeCls: "bg-[#2A9D8F]/10 text-[#2A9D8F] border-[#2A9D8F]/20" },
-  { id: "pia", name: "Privacy Impact Assessor", tagline: "EFVP automatisée Loi 25", desc: "Générez des évaluations des facteurs relatifs à la vie privée conformes à la Loi 25 pour vos projets AI en quelques minutes.", features: ["Conformité Loi 25", "Rapport automatisé", "Registre des risques", "Suivi"], tier: "Tool", badgeCls: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
-  { id: "governance-tool", name: "AI Governance Suite", tagline: "Gouvernance AI clé en main", desc: "Cadre de gouvernance complet avec modèles de politiques, matrices RACI, registres de modèles et tableaux de bord de conformité.", features: ["Politiques AI", "RACI automatisé", "Registre de modèles", "Audit trail"], tier: "Suite", badgeCls: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
+  { id: "hub", name: "Talsom Forge Hub", tagline: "Plateforme de consulting virtuel", desc: "Suite complète d'outils AI pour le consulting : diagnostics automatisés, génération de livrables, chat spécialisé et tableaux de bord.", features: ["Diagnostics AI", "Génération de rapports", "Chat expert", "Tableaux de bord"], tier: "Platform", badgeCls: "bg-[#FDF100]/15 text-[#FDF100] border-[#FDF100]/25" },
+  { id: "backlog", name: "AI Backlog Manager", tagline: "Gestion de portefeuille de cas d'usage", desc: "Identifiez, priorisez et suivez vos cas d'usage AI avec un framework de scoring et des vues portefeuille intelligentes.", features: ["Scoring multicritère", "Vues portefeuille", "Suivi ROI", "Collaboration"], tier: "Tool", badgeCls: "bg-emerald-400/15 text-emerald-300 border-emerald-400/25" },
+  { id: "pia", name: "Privacy Impact Assessor", tagline: "EFVP automatisée Loi 25", desc: "Générez des évaluations des facteurs relatifs à la vie privée conformes à la Loi 25 pour vos projets AI en quelques minutes.", features: ["Conformité Loi 25", "Rapport automatisé", "Registre des risques", "Suivi"], tier: "Tool", badgeCls: "bg-amber-400/15 text-amber-300 border-amber-400/25" },
+  { id: "governance-tool", name: "AI Governance Suite", tagline: "Gouvernance AI clé en main", desc: "Cadre de gouvernance complet avec modèles de politiques, matrices RACI, registres de modèles et tableaux de bord de conformité.", features: ["Politiques AI", "RACI automatisé", "Registre de modèles", "Audit trail"], tier: "Suite", badgeCls: "bg-[#D2D9D9]/15 text-[#D2D9D9] border-[#D2D9D9]/25" },
 ];
 
 const CHAT_DEMO_MESSAGES = [
@@ -82,7 +80,7 @@ const STATS = [
   { value: "96%", label: "Satisfaction client" },
 ];
 
-const HDR_FONT = { fontFamily: "'Space Grotesk', system-ui, sans-serif" };
+const HDR_FONT = { fontFamily: "'Space Grotesk', Arial, sans-serif" };
 
 // ─── NAV ─────────────────────────────────────────────
 
@@ -103,8 +101,8 @@ function Nav() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.coral }}>
-            <Brain className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.green }}>
+            <Brain className="w-5 h-5" style={{ color: C.yellow }} />
           </div>
           <span className={`font-semibold text-lg tracking-tight ${scrolled ? "text-gray-900" : "text-white"}`} style={HDR_FONT}>
             Talsom<span className="font-light opacity-70">Forge</span>
@@ -118,7 +116,7 @@ function Nav() {
               {l}
             </a>
           ))}
-          <Button size="sm" className="text-white rounded-full px-5" style={{ background: C.coral }}>
+          <Button size="sm" className="rounded-full px-5 font-semibold border-0 hover:opacity-90" style={{ background: C.yellow, color: C.green }}>
             Démo gratuite
           </Button>
         </div>
@@ -134,7 +132,7 @@ function Nav() {
           {links.map((l) => (
             <a key={l} href={`#${l.toLowerCase().replace(/\s/g, "-")}`} className="block text-sm text-gray-700 py-2" onClick={() => setOpen(false)}>{l}</a>
           ))}
-          <Button className="w-full text-white rounded-full" style={{ background: C.coral }}>Démo gratuite</Button>
+          <Button className="w-full rounded-full font-semibold" style={{ background: C.yellow, color: C.green }}>Démo gratuite</Button>
         </div>
       )}
     </nav>
@@ -146,15 +144,16 @@ function Nav() {
 function Hero() {
   return (
     <section className="bg-hero relative overflow-hidden min-h-screen flex items-center">
-      {/* Grid overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)", backgroundSize: "72px 72px" }} />
+      {/* Chevron pattern overlay */}
+      <div className="absolute inset-0 chevron-pattern" />
       {/* Glow orbs */}
-      <div className="absolute top-1/3 -left-40 w-[480px] h-[480px] rounded-full opacity-15 blur-[140px]" style={{ background: C.coral }} />
-      <div className="absolute bottom-1/4 -right-40 w-[480px] h-[480px] rounded-full opacity-[0.12] blur-[140px]" style={{ background: C.teal }} />
+      <div className="absolute top-1/3 -left-40 w-[480px] h-[480px] rounded-full opacity-[0.18] blur-[140px]" style={{ background: C.yellow }} />
+      <div className="absolute bottom-1/4 -right-40 w-[480px] h-[480px] rounded-full opacity-[0.10] blur-[140px]" style={{ background: "#4AE0D2" }} />
 
       <div className="relative max-w-7xl mx-auto px-6 pt-32 pb-24 w-full">
         <div className="max-w-3xl">
           <Badge variant="outline" className="mb-6 text-white/50 border-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs tracking-widest uppercase">
+            <ChevronsRight className="w-3 h-3 mr-1.5 inline" style={{ color: C.yellow }} />
             Beta · Virtual Consulting Platform
           </Badge>
 
@@ -168,19 +167,23 @@ function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4 mb-16">
-            <Button size="lg" className="text-white rounded-full px-8 h-12 text-base hover:opacity-90" style={{ background: C.coral }}>
-              Explorer les services <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white">
-              Essayer le chat AI
-            </Button>
+            <a href="#services">
+              <Button size="lg" className="rounded-full px-8 h-12 text-base font-semibold hover:opacity-90 border-0" style={{ background: C.yellow, color: C.green }}>
+                Explorer les services <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </a>
+            <a href="#ai-chat">
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white">
+                Essayer le chat AI
+              </Button>
+            </a>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {STATS.map((s) => (
               <div key={s.label}>
-                <div className="text-3xl font-bold text-white tracking-tight" style={HDR_FONT}>{s.value}</div>
+                <div className="text-3xl font-bold tracking-tight" style={{ ...HDR_FONT, color: C.yellow }}>{s.value}</div>
                 <div className="text-sm text-white/35 mt-1">{s.label}</div>
               </div>
             ))}
@@ -215,8 +218,8 @@ function ServicesSection() {
     <section id="services" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
-          <Badge className="mb-4 border-0 rounded-full px-3 text-xs" style={{ background: C.coralLight, color: C.coral }}>Services virtuels</Badge>
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight mb-4" style={HDR_FONT}>
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>Services virtuels</Badge>
+          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>
             Des services AI à la carte,<br />livrés virtuellement.
           </h2>
           <p className="text-lg text-gray-500 leading-relaxed">
@@ -229,12 +232,13 @@ function ServicesSection() {
             <Card key={svc.id} className="group relative border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden">
               {svc.popular && (
                 <div className="absolute top-4 right-4">
-                  <Badge className="text-white border-0 rounded-full text-[10px] px-2.5" style={{ background: C.teal }}>Populaire</Badge>
+                  <Badge className="border-0 rounded-full text-[10px] px-2.5 font-semibold" style={{ background: C.green, color: C.yellow }}>Populaire</Badge>
                 </div>
               )}
               <CardHeader className="pb-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 group-hover:bg-[#FFF0ED] flex items-center justify-center mb-3 transition-colors">
-                  <svc.icon className="w-5 h-5 text-gray-500 group-hover:text-[#E8604C] transition-colors" />
+                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mb-3 transition-colors" style={{ }}
+                >
+                  <svc.icon className="w-5 h-5 text-gray-400 transition-colors" style={{}} />
                 </div>
                 <CardTitle className="text-lg font-semibold text-gray-900">{svc.title}</CardTitle>
                 <p className="text-xs text-gray-400 font-medium">{svc.subtitle}</p>
@@ -249,7 +253,7 @@ function ServicesSection() {
                 <Separator className="mb-4" />
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-gray-900">{svc.price}</span>
-                  <Button variant="ghost" size="sm" className="hover:bg-[#FFF0ED] rounded-full px-3 text-xs" style={{ color: C.coral }}>
+                  <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold" style={{ color: C.green }}>
                     Découvrir <ChevronRight className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
@@ -273,22 +277,22 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="py-24" style={{ background: C.warmGray }}>
+    <section className="py-24" style={{ background: C.silverLight }}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <Badge className="mb-4 border-0 rounded-full px-3 text-xs" style={{ background: C.tealLight, color: C.teal }}>Comment ça marche</Badge>
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight mb-4" style={HDR_FONT}>Du besoin au livrable en quelques clics</h2>
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.greenLight, color: C.green }}>Comment ça marche</Badge>
+          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>Du besoin au livrable en quelques clics</h2>
           <p className="text-gray-500">Notre plateforme combine l'automatisation AI avec l'expertise humaine pour vous livrer des résultats de qualité consulting, plus rapidement.</p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, i) => (
             <div key={step.title} className="relative">
-              {i < steps.length - 1 && <div className="hidden lg:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px bg-gray-200" />}
+              {i < steps.length - 1 && <div className="hidden lg:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px" style={{ background: C.silver }} />}
               <div className="text-center">
                 <div className="w-16 h-16 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mx-auto mb-4 relative">
-                  <step.icon className="w-7 h-7" style={{ color: C.coral }} />
-                  <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ background: C.coral }}>
+                  <step.icon className="w-7 h-7" style={{ color: C.green }} />
+                  <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center" style={{ background: C.yellow, color: C.green }}>
                     {i + 1}
                   </div>
                 </div>
@@ -307,11 +311,15 @@ function HowItWorks() {
 
 function MarketplaceSection() {
   return (
-    <section id="marketplace" className="bg-dark-section py-24">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="marketplace" className="bg-dark-section py-24 relative overflow-hidden">
+      {/* Subtle chevron pattern */}
+      <div className="absolute inset-0 chevron-pattern opacity-50" />
+      <div className="relative max-w-7xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
           <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">Marketplace</Badge>
-          <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>Talsom Forge Hub</h2>
+          <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>
+            Talsom Forge <span style={{ color: C.yellow }}>Hub</span>
+          </h2>
           <p className="text-lg text-white/40 leading-relaxed">Nos outils AI propriétaires, conçus par des consultants pour des consultants. Intégrez-les dans vos processus ou utilisez-les en autonomie.</p>
         </div>
 
@@ -330,7 +338,7 @@ function MarketplaceSection() {
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {p.features.map((f) => (
                   <div key={f} className="flex items-center gap-2 text-xs text-white/45">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.teal }} />
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.yellow }} />
                     {f}
                   </div>
                 ))}
@@ -380,8 +388,8 @@ function AIChatSection() {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left copy */}
           <div className="lg:sticky lg:top-32">
-            <Badge className="mb-4 border-0 rounded-full px-3 text-xs" style={{ background: C.coralLight, color: C.coral }}>AI Chat Expert</Badge>
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight mb-4" style={HDR_FONT}>Un consultant AI,<br />disponible 24/7.</h2>
+            <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>AI Chat Expert</Badge>
+            <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>Un consultant AI,<br />disponible 24/7.</h2>
             <p className="text-lg text-gray-500 leading-relaxed mb-8">Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI. Il comprend votre contexte, pose les bonnes questions et génère des livrables prêts à l'emploi.</p>
             <div className="space-y-4">
               {[
@@ -391,8 +399,8 @@ function AIChatSection() {
                 { icon: Globe, text: "Bilingue français / anglais" },
               ].map((it) => (
                 <div key={it.text} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
-                    <it.icon className="w-4 h-4" style={{ color: C.coral }} />
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: C.greenLight }}>
+                    <it.icon className="w-4 h-4" style={{ color: C.green }} />
                   </div>
                   <span className="text-sm text-gray-600">{it.text}</span>
                 </div>
@@ -401,26 +409,26 @@ function AIChatSection() {
           </div>
 
           {/* Chat panel */}
-          <div className="rounded-2xl border border-gray-100 overflow-hidden shadow-lg" style={{ background: C.warmGray }}>
+          <div className="rounded-2xl border border-gray-100 overflow-hidden shadow-lg" style={{ background: C.silverLight }}>
             {/* Header */}
             <div className="px-5 py-4 border-b border-gray-100 bg-white flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: C.coral }}>
-                <Bot className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: C.green }}>
+                <Bot className="w-5 h-5" style={{ color: C.yellow }} />
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">Talsom Forge Consultant</p>
-                <p className="text-[11px] flex items-center gap-1" style={{ color: C.teal }}>
-                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: C.teal }} /> En ligne
+                <p className="text-[11px] flex items-center gap-1" style={{ color: C.greenMid }}>
+                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#4AE0D2" }} /> En ligne
                 </p>
               </div>
-              <Badge className="ml-auto border-0 text-[10px] rounded-full" style={{ background: C.coralLight, color: C.coral }}>Beta</Badge>
+              <Badge className="ml-auto border-0 text-[10px] rounded-full font-semibold" style={{ background: C.yellowLight, color: C.green }}>Beta</Badge>
             </div>
 
             {/* Messages */}
             <div className="h-[440px] overflow-y-auto px-5 py-5 space-y-4">
               {messages.map((m, i) => (
                 <div key={i} className={`chat-bubble-in flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"}`} style={m.role === "user" ? { background: C.coral } : undefined}>
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"}`} style={m.role === "user" ? { background: C.green } : undefined}>
                     {m.text.split("\n").map((line, li) => (
                       <span key={li}>
                         {li > 0 && <br />}
@@ -436,7 +444,7 @@ function AIChatSection() {
                 <div className="flex justify-start chat-bubble-in">
                   <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                     <div className="flex gap-1.5">
-                      {[0, 150, 300].map((d) => <span key={d} className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                      {[0, 150, 300].map((d) => <span key={d} className="w-2 h-2 rounded-full animate-bounce" style={{ background: C.silver, animationDelay: `${d}ms` }} />)}
                     </div>
                   </div>
                 </div>
@@ -448,7 +456,7 @@ function AIChatSection() {
             <div className="border-t border-gray-100 bg-white p-4">
               <div className="flex gap-2">
                 <Input placeholder="Posez une question sur l'AI…" value={inputVal} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputVal(e.target.value)} onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSend()} className="rounded-full border-gray-200 bg-gray-50 text-sm" />
-                <Button size="icon" onClick={handleSend} className="rounded-full text-white shrink-0 hover:opacity-90" style={{ background: C.coral }}>
+                <Button size="icon" onClick={handleSend} className="rounded-full shrink-0 hover:opacity-90 border-0" style={{ background: C.green, color: C.yellow }}>
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
@@ -471,33 +479,33 @@ function Pricing() {
   ];
 
   return (
-    <section id="tarification" className="py-24" style={{ background: C.warmGray }}>
+    <section id="tarification" className="py-24" style={{ background: C.silverLight }}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <Badge className="mb-4 border-0 rounded-full px-3 text-xs" style={{ background: C.coralLight, color: C.coral }}>Tarification</Badge>
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight mb-4" style={HDR_FONT}>Un plan pour chaque ambition</h2>
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>Tarification</Badge>
+          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>Un plan pour chaque ambition</h2>
           <p className="text-gray-500">Commencez gratuitement, montez en puissance quand vous êtes prêts.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {plans.map((p) => (
-            <Card key={p.name} className={`rounded-2xl overflow-hidden ${p.highlight ? "border-2 shadow-xl relative" : "border-gray-100"}`} style={p.highlight ? { borderColor: C.coral } : undefined}>
-              {p.highlight && <div className="absolute top-0 inset-x-0 h-1" style={{ background: `linear-gradient(90deg, ${C.coral}, ${C.teal})` }} />}
+            <Card key={p.name} className={`rounded-2xl overflow-hidden ${p.highlight ? "border-2 shadow-xl relative" : "border-gray-100"}`} style={p.highlight ? { borderColor: C.green } : undefined}>
+              {p.highlight && <div className="absolute top-0 inset-x-0 h-1" style={{ background: `linear-gradient(90deg, ${C.green}, ${C.yellow})` }} />}
               <CardHeader>
                 <p className="text-sm font-medium text-gray-400 mb-1">{p.sub}</p>
                 <CardTitle className="text-xl font-bold text-gray-900">{p.name}</CardTitle>
-                <p className="text-3xl font-bold text-gray-900 mt-2" style={HDR_FONT}>{p.price}</p>
+                <p className="text-3xl font-bold mt-2" style={{ ...HDR_FONT, color: C.green }}>{p.price}</p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 mb-6">
                   {p.features.map((f) => (
                     <div key={f} className="flex items-start gap-2.5 text-sm text-gray-600">
-                      <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.teal }} />
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.greenMid }} />
                       {f}
                     </div>
                   ))}
                 </div>
-                <Button className={`w-full rounded-full ${p.highlight ? "text-white hover:opacity-90" : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"}`} style={p.highlight ? { background: C.coral } : undefined}>
+                <Button className={`w-full rounded-full font-semibold ${p.highlight ? "hover:opacity-90 border-0" : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"}`} style={p.highlight ? { background: C.yellow, color: C.green } : undefined}>
                   {p.cta}
                 </Button>
               </CardContent>
@@ -514,13 +522,14 @@ function Pricing() {
 function CTABanner() {
   return (
     <section className="bg-hero py-24 relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.12] blur-[140px]" style={{ background: C.coral }} />
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-10 blur-[140px]" style={{ background: C.teal }} />
+      <div className="absolute inset-0 chevron-pattern opacity-40" />
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.15] blur-[140px]" style={{ background: C.yellow }} />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-[140px]" style={{ background: "#4AE0D2" }} />
       <div className="relative max-w-3xl mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>Prêt à transformer votre approche AI?</h2>
         <p className="text-lg text-white/45 mb-8">Rejoignez la beta et accédez à l'expertise AI de Talsom Forge, disponible en quelques clics.</p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 rounded-full px-8 h-12 font-semibold">
+          <Button size="lg" className="rounded-full px-8 h-12 font-semibold hover:opacity-90 border-0" style={{ background: C.yellow, color: C.green }}>
             Demander un accès beta <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white">
@@ -541,12 +550,18 @@ function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.coral }}>
-                <Brain className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.greenMid }}>
+                <Brain className="w-4 h-4" style={{ color: C.yellow }} />
               </div>
               <span className="font-semibold text-white text-lg" style={HDR_FONT}>Talsom<span className="font-light opacity-70">Forge</span></span>
             </div>
             <p className="text-sm text-white/30 leading-relaxed">Plateforme de consulting virtuel.<br />Montréal, Québec.</p>
+            {/* Chevron brand element */}
+            <div className="flex gap-0.5 mt-4">
+              {[0.2, 0.35, 0.5].map((op) => (
+                <ChevronsRight key={op} className="w-4 h-4" style={{ color: C.yellow, opacity: op }} />
+              ))}
+            </div>
           </div>
           {[
             { title: "Services", links: ["AI Roadmap", "Maturity Assessment", "Governance", "Copilot Deployment", "Business Case"] },

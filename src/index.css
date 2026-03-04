@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,63 +6,66 @@
 
 @layer base {
   :root {
-    /* Talsom brand palette — coral primary, dark charcoal, warm tones */
-    --background: 30 20% 97%;
-    --foreground: 230 15% 12%;
+    /* Talsom brand palette — from Charte Graphique 2024 */
+    --background: 170 6% 96%;
+    --foreground: 172 100% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 230 15% 12%;
+    --card-foreground: 172 100% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 230 15% 12%;
-    --primary: 8 76% 56%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 15% 93%;
-    --secondary-foreground: 230 15% 12%;
-    --muted: 30 10% 93%;
-    --muted-foreground: 230 8% 46%;
-    --accent: 175 60% 40%;
-    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 172 100% 10%;
+    --primary: 172 100% 10%;
+    --primary-foreground: 56 100% 50%;
+    --secondary: 180 7% 85%;
+    --secondary-foreground: 172 100% 10%;
+    --muted: 180 7% 90%;
+    --muted-foreground: 172 20% 40%;
+    --accent: 56 100% 50%;
+    --accent-foreground: 172 100% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 30 12% 88%;
-    --input: 30 12% 88%;
-    --ring: 8 76% 56%;
+    --border: 180 7% 85%;
+    --input: 180 7% 85%;
+    --ring: 172 100% 10%;
     --radius: 0.5rem;
 
-    /* Talsom brand tokens */
-    --talsom-coral: #E8604C;
-    --talsom-coral-dark: #D04A38;
-    --talsom-coral-light: #FFF0ED;
-    --talsom-charcoal: #1C1C2E;
-    --talsom-charcoal-mid: #2A2A42;
-    --talsom-teal: #2A9D8F;
-    --talsom-teal-light: #E8F6F4;
-    --talsom-warm-gray: #F7F5F3;
+    /* Talsom brand tokens — Charte 2024 */
+    --talsom-green: #003533;
+    --talsom-green-mid: #00524F;
+    --talsom-green-light: #E6EDEC;
+    --talsom-yellow: #FDF100;
+    --talsom-yellow-dark: #D4CC00;
+    --talsom-yellow-light: #FEFCE8;
+    --talsom-silver: #D2D9D9;
+    --talsom-silver-light: #F0F3F3;
   }
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    font-family: 'Space Grotesk', Arial, sans-serif;
   }
 }
 
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, var(--talsom-coral), var(--talsom-teal));
+    background-image: linear-gradient(135deg, var(--talsom-yellow), #4AE0D2);
   }
   .bg-hero {
-    background: linear-gradient(135deg, var(--talsom-charcoal) 0%, var(--talsom-charcoal-mid) 50%, var(--talsom-charcoal) 100%);
+    background: linear-gradient(160deg, var(--talsom-green) 0%, var(--talsom-green-mid) 50%, var(--talsom-green) 100%);
   }
   .bg-dark-section {
-    background: var(--talsom-charcoal);
+    background: var(--talsom-green);
   }
   .glass-card {
     background: rgba(255, 255, 255, 0.04);
@@ -75,5 +78,10 @@
   @keyframes bubbleIn {
     from { opacity: 0; transform: scale(0.92) translateY(8px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  /* Chevron pattern — Talsom brand element */
+  .chevron-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 4l8 8-8 8' stroke='%23FDF100' stroke-width='1.5' fill='none' opacity='0.07'/%3E%3C/svg%3E");
+    background-size: 24px 24px;
   }
 }
