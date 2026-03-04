@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, createContext, useContext } from "react";
+import { useState, useRef, useEffect, createContext, useContext, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   ArrowRight,
   Brain,
@@ -31,6 +32,12 @@ import {
   ChevronsRight,
   Clock,
   Layers,
+  Moon,
+  Sun,
+  Mail,
+  Building2,
+  User,
+  Quote,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════
@@ -58,6 +65,31 @@ const useLang = () => useContext(LangContext);
 
 /* Helper: pick value by lang */
 function t(lang: Lang, fr: string, en: string) { return lang === "fr" ? fr : en; }
+
+// ─── DARK MODE ───────────────────────────────────────
+
+type Theme = "light" | "dark";
+const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({ theme: "light", toggle: () => {} });
+const useTheme = () => useContext(ThemeContext);
+
+// ─── SCROLL REVEAL HOOK ─────────────────────────────
+
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); } }),
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    obs.observe(el);
+    // observe stagger children
+    el.querySelectorAll(":scope > .reveal").forEach((c) => obs.observe(c));
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
 // ─── BILINGUAL DATA ─────────────────────────────────
 
@@ -126,6 +158,25 @@ function getPlans(lang: Lang) {
     { name: "Explorer", price: t(lang, "Gratuit", "Free"), sub: t(lang, "Pour découvrir", "To explore"), features: [t(lang, "Chat AI (10 messages/mois)", "AI Chat (10 messages/month)"), t(lang, "1 diagnostic de maturité", "1 maturity diagnostic"), t(lang, "Accès marketplace (lecture)", "Marketplace access (read-only)"), t(lang, "Support communautaire", "Community support")], cta: t(lang, "Commencer gratuitement", "Start for free"), highlight: false },
     { name: "Professional", price: t(lang, "990$/mois", "$990/month"), sub: t(lang, "Pour les équipes", "For teams"), features: [t(lang, "Chat AI illimité", "Unlimited AI Chat"), t(lang, "Tous les diagnostics", "All diagnostics"), t(lang, "Génération de livrables", "Deliverable generation"), t(lang, "5 services virtuels/mois", "5 virtual services/month"), t(lang, "Support prioritaire", "Priority support"), t(lang, "Intégration Microsoft 365", "Microsoft 365 integration")], cta: t(lang, "Essai gratuit 14 jours", "Free 14-day trial"), highlight: true },
     { name: "Enterprise", price: t(lang, "Sur mesure", "Custom"), sub: t(lang, "Pour les grandes organisations", "For large organizations"), features: [t(lang, "Tout Professional +", "Everything in Professional +"), t(lang, "Consultants dédiés", "Dedicated consultants"), t(lang, "Personnalisation complète", "Full customization"), t(lang, "SLA garanti", "Guaranteed SLA"), t(lang, "Formation sur site", "On-site training"), "API & integrations"], cta: t(lang, "Contactez-nous", "Contact us"), highlight: false },
+  ];
+}
+
+function getTestimonials(lang: Lang) {
+  return [
+    { name: "Marie-Claire Dubois", role: t(lang, "VP Transformation Digitale", "VP Digital Transformation"), company: "Desjardins", quote: t(lang, "Talsom Forge a accéléré notre roadmap AI de 6 mois. L'outil de diagnostic et le chat expert nous ont permis de prioriser nos cas d'usage avec une rigueur qu'on n'avait pas avant.", "Talsom Forge accelerated our AI roadmap by 6 months. The diagnostic tool and expert chat helped us prioritize use cases with a rigor we didn't have before.") },
+    { name: "Jean-Philippe Tremblay", role: "CIO", company: "Pomerleau", quote: t(lang, "Le déploiement Copilot 365 accompagné par Talsom Forge a été remarquablement fluide. 92% d'adoption après 8 semaines, bien au-dessus de nos attentes.", "The Copilot 365 deployment supported by Talsom Forge was remarkably smooth. 92% adoption after 8 weeks, well above our expectations.") },
+    { name: "Sophie Lavoie", role: t(lang, "Directrice Conformité", "Director of Compliance"), company: "Beneva", quote: t(lang, "Le Privacy Impact Assessor nous a fait gagner des semaines sur nos EFVP. La conformité Loi 25 est maintenant un processus simple et structuré.", "The Privacy Impact Assessor saved us weeks on our PIAs. Bill 25 compliance is now a simple, structured process.") },
+  ];
+}
+
+function getFAQ(lang: Lang) {
+  return [
+    { q: t(lang, "Qu'est-ce que Talsom Forge exactement?", "What is Talsom Forge exactly?"), a: t(lang, "Talsom Forge est une plateforme de consulting virtuel qui combine l'expertise AI de Talsom avec des outils propriétaires. Vous accédez à des services de consulting AI en libre-service : diagnostics, génération de livrables, chat expert et marketplace d'outils spécialisés.", "Talsom Forge is a virtual consulting platform that combines Talsom's AI expertise with proprietary tools. You access self-service AI consulting services: diagnostics, deliverable generation, expert chat, and a marketplace of specialized tools.") },
+    { q: t(lang, "Comment fonctionne le chat AI?", "How does the AI chat work?"), a: t(lang, "Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI réalisés par Talsom. Il comprend le contexte québécois et canadien, les réglementations (Loi 25, EU AI Act), et peut générer des livrables structurés comme des roadmaps, analyses de risques et business cases.", "Our AI chat is trained on thousands of digital transformation and AI projects completed by Talsom. It understands the Quebec and Canadian context, regulations (Bill 25, EU AI Act), and can generate structured deliverables like roadmaps, risk analyses, and business cases.") },
+    { q: t(lang, "Est-ce que mes données sont sécurisées?", "Is my data secure?"), a: t(lang, "Absolument. Vos données sont hébergées au Canada, chiffrées au repos et en transit, et ne sont jamais utilisées pour entraîner nos modèles. Nous sommes conformes à la Loi 25 et au RGPD. Chaque organisation dispose d'un environnement isolé.", "Absolutely. Your data is hosted in Canada, encrypted at rest and in transit, and never used to train our models. We are compliant with Bill 25 and GDPR. Each organization has an isolated environment.") },
+    { q: t(lang, "Quelle est la différence entre un service virtuel et du consulting traditionnel?", "What's the difference between a virtual service and traditional consulting?"), a: t(lang, "Les services virtuels combinent l'automatisation AI avec l'expertise humaine. Vous obtenez des livrables de qualité consulting plus rapidement et à moindre coût. Pour des mandats complexes ou sur mesure, nos consultants interviennent en complément de la plateforme.", "Virtual services combine AI automation with human expertise. You get consulting-quality deliverables faster and at lower cost. For complex or custom engagements, our consultants step in to complement the platform.") },
+    { q: t(lang, "Puis-je essayer avant de m'engager?", "Can I try before committing?"), a: t(lang, "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat AI par mois, un diagnostic de maturité et l'accès en lecture à la marketplace. Vous pouvez aussi demander un essai gratuit de 14 jours du plan Professional.", "Yes! The Explorer plan is free and includes 10 AI chat messages per month, one maturity diagnostic, and read-only marketplace access. You can also request a free 14-day trial of the Professional plan.") },
+    { q: t(lang, "Combien de temps prend un projet typique?", "How long does a typical project take?"), a: t(lang, "Cela dépend du service. Un AI Business Case prend 2-3 semaines, un Maturity Assessment 3-4 semaines, un AI Roadmap 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles immédiatement.", "It depends on the service. An AI Business Case takes 2-3 weeks, a Maturity Assessment 3-4 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.") },
   ];
 }
 
@@ -261,10 +312,7 @@ function getServiceDetails(lang: Lang): Record<string, { extendedDesc: string; p
 function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: string; keyBenefits: { title: string; desc: string }[]; integrations: string[]; availability: string }> {
   return {
     hub: {
-      extendedDesc: t(lang,
-        "Talsom Forge Hub est la plateforme centrale qui intègre tous nos outils AI. Elle offre un espace de travail unifié pour piloter vos initiatives de transformation AI : diagnostics automatisés, génération de livrables personnalisés, chat expert et tableaux de bord de suivi en temps réel.",
-        "Talsom Forge Hub is the central platform integrating all our AI tools. It offers a unified workspace to manage your AI transformation initiatives: automated diagnostics, personalized deliverable generation, expert chat, and real-time tracking dashboards."
-      ),
+      extendedDesc: t(lang, "Talsom Forge Hub est la plateforme centrale qui intègre tous nos outils AI. Elle offre un espace de travail unifié pour piloter vos initiatives de transformation AI : diagnostics automatisés, génération de livrables personnalisés, chat expert et tableaux de bord de suivi en temps réel.", "Talsom Forge Hub is the central platform integrating all our AI tools. It offers a unified workspace to manage your AI transformation initiatives: automated diagnostics, personalized deliverable generation, expert chat, and real-time tracking dashboards."),
       keyBenefits: [
         { title: t(lang, "Espace de travail unifié", "Unified workspace"), desc: t(lang, "Tous vos projets AI sur une seule plateforme, avec vue d'ensemble et suivi.", "All your AI projects on one platform, with overview and tracking.") },
         { title: t(lang, "Livrables générés par AI", "AI-generated deliverables"), desc: t(lang, "Rapports, présentations et documents générés automatiquement et personnalisés.", "Reports, presentations, and documents generated automatically and customized.") },
@@ -274,10 +322,7 @@ function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: strin
       availability: t(lang, "Beta privée", "Private beta"),
     },
     backlog: {
-      extendedDesc: t(lang,
-        "AI Backlog Manager permet de centraliser, scorer et prioriser tous vos cas d'usage AI dans un portefeuille structuré. Le framework de scoring multicritère évalue chaque initiative selon l'impact business, la faisabilité technique, l'effort et l'alignement stratégique.",
-        "AI Backlog Manager allows you to centralize, score, and prioritize all your AI use cases in a structured portfolio. The multi-criteria scoring framework evaluates each initiative based on business impact, technical feasibility, effort, and strategic alignment."
-      ),
+      extendedDesc: t(lang, "AI Backlog Manager permet de centraliser, scorer et prioriser tous vos cas d'usage AI dans un portefeuille structuré. Le framework de scoring multicritère évalue chaque initiative selon l'impact business, la faisabilité technique, l'effort et l'alignement stratégique.", "AI Backlog Manager allows you to centralize, score, and prioritize all your AI use cases in a structured portfolio. The multi-criteria scoring framework evaluates each initiative based on business impact, technical feasibility, effort, and strategic alignment."),
       keyBenefits: [
         { title: t(lang, "Priorisation objective", "Objective prioritization"), desc: t(lang, "Framework de scoring sur 4 dimensions pour éliminer les biais de sélection.", "4-dimension scoring framework to eliminate selection bias.") },
         { title: t(lang, "Vue portefeuille", "Portfolio view"), desc: t(lang, "Visualisez tous vos cas d'usage sur une matrice impact/effort interactive.", "Visualize all your use cases on an interactive impact/effort matrix.") },
@@ -287,10 +332,7 @@ function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: strin
       availability: t(lang, "Disponible", "Available"),
     },
     pia: {
-      extendedDesc: t(lang,
-        "Privacy Impact Assessor automatise la production d'Évaluations des Facteurs relatifs à la Vie Privée (EFVP) conformes à la Loi 25. Répondez à un questionnaire guidé et obtenez un rapport complet avec analyse de risques, mesures de mitigation et registre de conformité.",
-        "Privacy Impact Assessor automates the production of Privacy Impact Assessments (PIA) compliant with Quebec's Bill 25. Answer a guided questionnaire and get a complete report with risk analysis, mitigation measures, and compliance registry."
-      ),
+      extendedDesc: t(lang, "Privacy Impact Assessor automatise la production d'Évaluations des Facteurs relatifs à la Vie Privée (EFVP) conformes à la Loi 25. Répondez à un questionnaire guidé et obtenez un rapport complet avec analyse de risques, mesures de mitigation et registre de conformité.", "Privacy Impact Assessor automates the production of Privacy Impact Assessments (PIA) compliant with Quebec's Bill 25. Answer a guided questionnaire and get a complete report with risk analysis, mitigation measures, and compliance registry."),
       keyBenefits: [
         { title: t(lang, "Conformité accélérée", "Accelerated compliance"), desc: t(lang, "De plusieurs semaines à quelques heures pour produire une EFVP complète.", "From several weeks to a few hours to produce a complete PIA.") },
         { title: t(lang, "Registre centralisé", "Centralized registry"), desc: t(lang, "Tous vos projets AI avec leur statut de conformité sur un seul tableau de bord.", "All your AI projects with their compliance status on a single dashboard.") },
@@ -300,10 +342,7 @@ function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: strin
       availability: t(lang, "Disponible", "Available"),
     },
     "governance-tool": {
-      extendedDesc: t(lang,
-        "AI Governance Suite est une solution complète pour implanter et opérer votre cadre de gouvernance AI. Elle inclut des modèles de politiques pré-rédigés, des workflows d'approbation automatisés, un registre de modèles AI et des tableaux de bord de conformité en temps réel.",
-        "AI Governance Suite is a complete solution for implementing and operating your AI governance framework. It includes pre-drafted policy templates, automated approval workflows, an AI model registry, and real-time compliance dashboards."
-      ),
+      extendedDesc: t(lang, "AI Governance Suite est une solution complète pour implanter et opérer votre cadre de gouvernance AI. Elle inclut des modèles de politiques pré-rédigés, des workflows d'approbation automatisés, un registre de modèles AI et des tableaux de bord de conformité en temps réel.", "AI Governance Suite is a complete solution for implementing and operating your AI governance framework. It includes pre-drafted policy templates, automated approval workflows, an AI model registry, and real-time compliance dashboards."),
       keyBenefits: [
         { title: t(lang, "Politiques prêtes à l'emploi", "Ready-to-use policies"), desc: t(lang, "Modèles de politiques AI adaptés aux standards canadiens et européens.", "AI policy templates adapted to Canadian and European standards.") },
         { title: t(lang, "Workflows automatisés", "Automated workflows"), desc: t(lang, "Processus d'approbation, revue éthique et classification des risques automatisés.", "Automated approval processes, ethical review, and risk classification.") },
@@ -319,6 +358,7 @@ function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: strin
 
 function Nav() {
   const { lang, setLang } = useLang();
+  const { theme, toggle } = useTheme();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -329,18 +369,20 @@ function Nav() {
   }, []);
 
   const links = lang === "fr"
-    ? [{ label: "Services", href: "#services" }, { label: "Marketplace", href: "#marketplace" }, { label: "AI Chat", href: "#ai-chat" }, { label: "Tarification", href: "#tarification" }]
-    : [{ label: "Services", href: "#services" }, { label: "Marketplace", href: "#marketplace" }, { label: "AI Chat", href: "#ai-chat" }, { label: "Pricing", href: "#tarification" }];
+    ? [{ label: "Services", href: "#services" }, { label: "Marketplace", href: "#marketplace" }, { label: "AI Chat", href: "#ai-chat" }, { label: "Tarification", href: "#tarification" }, { label: "Contact", href: "#contact" }]
+    : [{ label: "Services", href: "#services" }, { label: "Marketplace", href: "#marketplace" }, { label: "AI Chat", href: "#ai-chat" }, { label: "Pricing", href: "#tarification" }, { label: "Contact", href: "#contact" }];
+
+  const dark = theme === "dark";
 
   return (
-    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-lg shadow-sm border-b" : "bg-transparent"}`}>
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? (dark ? "bg-gray-950/90 backdrop-blur-lg shadow-sm border-b border-white/5" : "bg-white/90 backdrop-blur-lg shadow-sm border-b") : "bg-transparent"}`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.green }}>
             <Brain className="w-5 h-5" style={{ color: C.yellow }} />
           </div>
-          <span className={`font-semibold text-lg tracking-tight ${scrolled ? "text-gray-900" : "text-white"}`} style={HDR_FONT}>
+          <span className={`font-semibold text-lg tracking-tight ${scrolled ? (dark ? "text-white" : "text-gray-900") : "text-white"}`} style={HDR_FONT}>
             Talsom<span className="font-light opacity-70">Forge</span>
           </span>
         </a>
@@ -348,39 +390,53 @@ function Nav() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.label} href={l.href} className={`text-sm font-medium transition-colors ${scrolled ? "text-gray-500 hover:text-gray-900" : "text-white/60 hover:text-white"}`}>
+            <a key={l.label} href={l.href} className={`text-sm font-medium transition-colors ${scrolled ? (dark ? "text-white/50 hover:text-white" : "text-gray-500 hover:text-gray-900") : "text-white/60 hover:text-white"}`}>
               {l.label}
             </a>
           ))}
 
           {/* Language toggle */}
-          <div className={`flex items-center gap-0.5 text-xs font-semibold rounded-full border px-1 py-0.5 ${scrolled ? "border-gray-200" : "border-white/15"}`}>
-            <button onClick={() => setLang("fr")} className={`px-2 py-0.5 rounded-full transition-all ${lang === "fr" ? "text-white" : scrolled ? "text-gray-400 hover:text-gray-600" : "text-white/40 hover:text-white/70"}`} style={lang === "fr" ? { background: C.green } : undefined}>FR</button>
-            <button onClick={() => setLang("en")} className={`px-2 py-0.5 rounded-full transition-all ${lang === "en" ? "text-white" : scrolled ? "text-gray-400 hover:text-gray-600" : "text-white/40 hover:text-white/70"}`} style={lang === "en" ? { background: C.green } : undefined}>EN</button>
+          <div className={`flex items-center gap-0.5 text-xs font-semibold rounded-full border px-1 py-0.5 ${scrolled ? (dark ? "border-white/10" : "border-gray-200") : "border-white/15"}`}>
+            <button onClick={() => setLang("fr")} className={`px-2 py-0.5 rounded-full transition-all ${lang === "fr" ? "text-white" : scrolled ? (dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-600") : "text-white/40 hover:text-white/70"}`} style={lang === "fr" ? { background: C.green } : undefined}>FR</button>
+            <button onClick={() => setLang("en")} className={`px-2 py-0.5 rounded-full transition-all ${lang === "en" ? "text-white" : scrolled ? (dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-600") : "text-white/40 hover:text-white/70"}`} style={lang === "en" ? { background: C.green } : undefined}>EN</button>
           </div>
 
-          <Button size="sm" className="rounded-full px-5 font-semibold border-0 hover:opacity-90" style={{ background: C.yellow, color: C.green }}>
-            {t(lang, "Démo gratuite", "Free demo")}
-          </Button>
+          {/* Dark mode toggle */}
+          <button onClick={toggle} className={`p-2 rounded-full transition-colors ${scrolled ? (dark ? "text-white/50 hover:text-white hover:bg-white/5" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100") : "text-white/50 hover:text-white hover:bg-white/10"}`} aria-label="Toggle theme">
+            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          <a href="#contact">
+            <Button size="sm" className="rounded-full px-5 font-semibold border-0 hover:opacity-90 transition-opacity" style={{ background: C.yellow, color: C.green }}>
+              {t(lang, "Démo gratuite", "Free demo")}
+            </Button>
+          </a>
         </div>
 
         {/* Mobile toggle */}
-        <button className="md:hidden" onClick={() => setOpen(!open)} aria-label={open ? t(lang, "Fermer le menu", "Close menu") : t(lang, "Ouvrir le menu", "Open menu")}>
-          {open ? <X className={`w-5 h-5 ${scrolled ? "text-gray-900" : "text-white"}`} /> : <Menu className={`w-5 h-5 ${scrolled ? "text-gray-900" : "text-white"}`} />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <button onClick={toggle} className={`p-2 rounded-full ${scrolled ? (dark ? "text-white" : "text-gray-900") : "text-white"}`} aria-label="Toggle theme">
+            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <button onClick={() => setOpen(!open)} aria-label={open ? t(lang, "Fermer le menu", "Close menu") : t(lang, "Ouvrir le menu", "Open menu")}>
+            {open ? <X className={`w-5 h-5 ${scrolled ? (dark ? "text-white" : "text-gray-900") : "text-white"}`} /> : <Menu className={`w-5 h-5 ${scrolled ? (dark ? "text-white" : "text-gray-900") : "text-white"}`} />}
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="md:hidden bg-white border-t p-4 space-y-3">
+        <div className={`md:hidden border-t p-4 space-y-3 ${dark ? "bg-gray-950 border-white/5" : "bg-white"}`}>
           {links.map((l) => (
-            <a key={l.label} href={l.href} className="block text-sm text-gray-700 py-2" onClick={() => setOpen(false)}>{l.label}</a>
+            <a key={l.label} href={l.href} className={`block text-sm py-2 ${dark ? "text-white/70" : "text-gray-700"}`} onClick={() => setOpen(false)}>{l.label}</a>
           ))}
           {/* Mobile lang toggle */}
           <div className="flex items-center gap-2 py-2">
-            <button onClick={() => setLang("fr")} className={`text-xs font-semibold px-3 py-1 rounded-full ${lang === "fr" ? "text-white" : "text-gray-400 border border-gray-200"}`} style={lang === "fr" ? { background: C.green } : undefined}>FR</button>
-            <button onClick={() => setLang("en")} className={`text-xs font-semibold px-3 py-1 rounded-full ${lang === "en" ? "text-white" : "text-gray-400 border border-gray-200"}`} style={lang === "en" ? { background: C.green } : undefined}>EN</button>
+            <button onClick={() => setLang("fr")} className={`text-xs font-semibold px-3 py-1 rounded-full ${lang === "fr" ? "text-white" : (dark ? "text-white/40 border border-white/10" : "text-gray-400 border border-gray-200")}`} style={lang === "fr" ? { background: C.green } : undefined}>FR</button>
+            <button onClick={() => setLang("en")} className={`text-xs font-semibold px-3 py-1 rounded-full ${lang === "en" ? "text-white" : (dark ? "text-white/40 border border-white/10" : "text-gray-400 border border-gray-200")}`} style={lang === "en" ? { background: C.green } : undefined}>EN</button>
           </div>
-          <Button className="w-full rounded-full font-semibold" style={{ background: C.yellow, color: C.green }}>{t(lang, "Démo gratuite", "Free demo")}</Button>
+          <a href="#contact" onClick={() => setOpen(false)}>
+            <Button className="w-full rounded-full font-semibold" style={{ background: C.yellow, color: C.green }}>{t(lang, "Démo gratuite", "Free demo")}</Button>
+          </a>
         </div>
       )}
     </nav>
@@ -419,12 +475,12 @@ function Hero() {
 
           <div className="flex flex-wrap gap-4 mb-16">
             <a href="#services">
-              <Button size="lg" className="rounded-full px-8 h-12 text-base font-semibold hover:opacity-90 border-0" style={{ background: C.yellow, color: C.green }}>
+              <Button size="lg" className="rounded-full px-8 h-12 text-base font-semibold hover:opacity-90 border-0 transition-opacity" style={{ background: C.yellow, color: C.green }}>
                 {t(lang, "Explorer les services", "Explore services")} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </a>
             <a href="#ai-chat">
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white">
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-base text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
                 {t(lang, "Essayer le chat AI", "Try AI chat")}
               </Button>
             </a>
@@ -448,13 +504,15 @@ function Hero() {
 
 function TrustBar() {
   const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   return (
-    <section className="bg-white border-b py-8">
+    <section className={`border-b py-8 ${dark ? "bg-gray-950 border-white/5" : "bg-white"}`}>
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] text-center mb-6">{t(lang, "Ils nous font confiance", "Trusted by")}</p>
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 opacity-30">
+        <p className={`text-[10px] uppercase tracking-[0.2em] text-center mb-6 ${dark ? "text-white/25" : "text-gray-400"}`}>{t(lang, "Ils nous font confiance", "Trusted by")}</p>
+        <div className={`flex flex-wrap items-center justify-center gap-x-12 gap-y-4 ${dark ? "opacity-20" : "opacity-30"}`}>
           {["Desjardins", "BNC", "Québecor", "CGI", "WSP", "Pomerleau", "STM", "Beneva"].map((n) => (
-            <span key={n} className="text-lg font-semibold text-gray-900 tracking-tight">{n}</span>
+            <span key={n} className={`text-lg font-semibold tracking-tight ${dark ? "text-white" : "text-gray-900"}`}>{n}</span>
           ))}
         </div>
       </div>
@@ -560,12 +618,16 @@ function ServiceDetailContent({ serviceId }: { serviceId: string }) {
               {detail.timeline}
             </Badge>
           </div>
-          <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2" style={{ background: C.yellow, color: C.green }}>
-            {t(lang, "Demander une consultation", "Request a consultation")} <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-          <Button variant="outline" className="w-full rounded-full text-sm">
-            {t(lang, "Planifier un appel", "Schedule a call")}
-          </Button>
+          <a href="#contact">
+            <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2 transition-opacity" style={{ background: C.yellow, color: C.green }}>
+              {t(lang, "Demander une consultation", "Request a consultation")} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </a>
+          <a href="#contact">
+            <Button variant="outline" className="w-full rounded-full text-sm">
+              {t(lang, "Planifier un appel", "Schedule a call")}
+            </Button>
+          </a>
         </div>
       </div>
     </ScrollArea>
@@ -646,9 +708,11 @@ function MarketplaceDetailContent({ productId }: { productId: string }) {
 
         {/* Footer CTA */}
         <div className="pt-5 pb-2">
-          <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2" style={{ background: C.green, color: C.yellow }}>
-            {t(lang, "Demander un accès", "Request access")} <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          <a href="#contact">
+            <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2 transition-opacity" style={{ background: C.green, color: C.yellow }}>
+              {t(lang, "Demander un accès", "Request access")} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </a>
           <Button variant="outline" className="w-full rounded-full text-sm">
             {t(lang, "Voir la documentation", "View documentation")}
           </Button>
@@ -662,17 +726,20 @@ function MarketplaceDetailContent({ productId }: { productId: string }) {
 
 function ServicesSection() {
   const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   const services = getServices(lang);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const ref = useReveal();
   return (
-    <section id="services" className="py-24 bg-white">
+    <section id="services" className={`py-24 ${dark ? "bg-gray-950" : "bg-white"}`}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-2xl mb-16">
+        <div ref={ref} className="reveal max-w-2xl mb-16">
           <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Services virtuels", "Virtual services")}</Badge>
-          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>
+          <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
             {lang === "fr" ? <>Des services AI à la carte,<br />livrés virtuellement.</> : <>À la carte AI services,<br />delivered virtually.</>}
           </h2>
-          <p className="text-lg text-gray-500 leading-relaxed">
+          <p className={`text-lg leading-relaxed ${dark ? "text-white/45" : "text-gray-500"}`}>
             {t(lang,
               "Choisissez les expertises dont vous avez besoin. Chaque service combine l'intelligence artificielle de notre plateforme avec l'accompagnement de nos consultants.",
               "Choose the expertise you need. Each service combines our platform's artificial intelligence with the guidance of our consultants."
@@ -680,32 +747,32 @@ function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
           {services.map((svc) => (
-            <Card key={svc.id} className="group relative border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden">
+            <Card key={svc.id} className={`reveal group relative border hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden ${dark ? "bg-gray-900 border-white/5 hover:border-white/10" : "border-gray-100 hover:border-gray-200"}`}>
               {svc.popular && (
                 <div className="absolute top-4 right-4">
                   <Badge className="border-0 rounded-full text-[10px] px-2.5 font-semibold" style={{ background: C.green, color: C.yellow }}>{t(lang, "Populaire", "Popular")}</Badge>
                 </div>
               )}
               <CardHeader className="pb-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mb-3">
-                  <svc.icon className="w-5 h-5 text-gray-400" />
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 ${dark ? "bg-white/5" : "bg-gray-50"}`}>
+                  <svc.icon className={`w-5 h-5 ${dark ? "text-white/40" : "text-gray-400"}`} />
                 </div>
-                <CardTitle className="text-lg font-semibold text-gray-900">{svc.title}</CardTitle>
-                <p className="text-xs text-gray-400 font-medium">{svc.subtitle}</p>
+                <CardTitle className={`text-lg font-semibold ${dark ? "text-white" : "text-gray-900"}`}>{svc.title}</CardTitle>
+                <p className={`text-xs font-medium ${dark ? "text-white/30" : "text-gray-400"}`}>{svc.subtitle}</p>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-500 leading-relaxed mb-4">{svc.desc}</p>
+                <p className={`text-sm leading-relaxed mb-4 ${dark ? "text-white/45" : "text-gray-500"}`}>{svc.desc}</p>
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {svc.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-[10px] rounded-full bg-gray-50 text-gray-500 border-0 px-2.5">{tag}</Badge>
+                    <Badge key={tag} variant="secondary" className={`text-[10px] rounded-full border-0 px-2.5 ${dark ? "bg-white/5 text-white/40" : "bg-gray-50 text-gray-500"}`}>{tag}</Badge>
                   ))}
                 </div>
-                <Separator className="mb-4" />
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-900">{svc.price}</span>
-                  <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold" style={{ color: C.green }} onClick={() => setSelectedId(svc.id)}>
+                <Separator className={dark ? "bg-white/5" : ""} />
+                <div className="flex items-center justify-between mt-4">
+                  <span className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>{svc.price}</span>
+                  <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold hover:scale-105 transition-transform" style={{ color: dark ? C.yellow : C.green }} onClick={() => setSelectedId(svc.id)}>
                     {t(lang, "Découvrir", "Discover")} <ChevronRight className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
@@ -728,6 +795,9 @@ function ServicesSection() {
 
 function HowItWorks() {
   const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const ref = useReveal();
   const steps = lang === "fr"
     ? [
         { icon: Target, title: "Choisissez", desc: "Sélectionnez un service ou un outil AI depuis notre marketplace." },
@@ -743,27 +813,27 @@ function HowItWorks() {
       ];
 
   return (
-    <section className="py-24" style={{ background: C.silverLight }}>
+    <section className="py-24" style={{ background: dark ? "#071716" : C.silverLight }}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.greenLight, color: C.green }}>{t(lang, "Comment ça marche", "How it works")}</Badge>
-          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>{t(lang, "Du besoin au livrable en quelques clics", "From need to deliverable in a few clicks")}</h2>
-          <p className="text-gray-500">{t(lang, "Notre plateforme combine l'automatisation AI avec l'expertise humaine pour vous livrer des résultats de qualité consulting, plus rapidement.", "Our platform combines AI automation with human expertise to deliver consulting-grade results, faster.")}</p>
+        <div ref={ref} className="reveal text-center max-w-2xl mx-auto mb-16">
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight, color: dark ? C.yellow : C.green }}>{t(lang, "Comment ça marche", "How it works")}</Badge>
+          <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>{t(lang, "Du besoin au livrable en quelques clics", "From need to deliverable in a few clicks")}</h2>
+          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Notre plateforme combine l'automatisation AI avec l'expertise humaine pour vous livrer des résultats de qualité consulting, plus rapidement.", "Our platform combines AI automation with human expertise to deliver consulting-grade results, faster.")}</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 reveal-stagger">
           {steps.map((step, i) => (
-            <div key={step.title} className="relative">
-              {i < steps.length - 1 && <div className="hidden lg:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px" style={{ background: C.silver }} />}
+            <div key={step.title} className="reveal relative">
+              {i < steps.length - 1 && <div className="hidden lg:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px" style={{ background: dark ? "rgba(255,255,255,0.06)" : C.silver }} />}
               <div className="text-center">
-                <div className="w-16 h-16 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mx-auto mb-4 relative">
-                  <step.icon className="w-7 h-7" style={{ color: C.green }} />
+                <div className={`w-16 h-16 rounded-2xl border shadow-sm flex items-center justify-center mx-auto mb-4 relative group hover:scale-105 transition-transform duration-300 ${dark ? "bg-gray-900 border-white/5" : "bg-white border-gray-100"}`}>
+                  <step.icon className="w-7 h-7" style={{ color: dark ? C.yellow : C.green }} />
                   <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center" style={{ background: C.yellow, color: C.green }}>
                     {i + 1}
                   </div>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+                <h3 className={`font-semibold mb-2 ${dark ? "text-white" : "text-gray-900"}`}>{step.title}</h3>
+                <p className={`text-sm leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>{step.desc}</p>
               </div>
             </div>
           ))}
@@ -779,11 +849,12 @@ function MarketplaceSection() {
   const { lang } = useLang();
   const products = getMarketplace(lang);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const ref = useReveal();
   return (
     <section id="marketplace" className="bg-dark-section py-24 relative overflow-hidden">
       <div className="absolute inset-0 chevron-pattern opacity-50" />
       <div className="relative max-w-7xl mx-auto px-6">
-        <div className="max-w-2xl mb-16">
+        <div ref={ref} className="reveal max-w-2xl mb-16">
           <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">Marketplace</Badge>
           <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>
             Talsom Forge <span style={{ color: C.yellow }}>Hub</span>
@@ -791,16 +862,16 @@ function MarketplaceSection() {
           <p className="text-lg text-white/40 leading-relaxed">{t(lang, "Nos outils AI propriétaires, conçus par des consultants pour des consultants. Intégrez-les dans vos processus ou utilisez-les en autonomie.", "Our proprietary AI tools, designed by consultants for consultants. Integrate them into your processes or use them independently.")}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-5 reveal-stagger">
           {products.map((p) => (
-            <div key={p.id} className="glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group">
+            <div key={p.id} className="reveal glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group hover:translate-y-[-2px]">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <Badge className={`${p.badgeCls} border rounded-full text-[10px] px-2.5 mb-3`}>{p.tier}</Badge>
                   <h3 className="text-xl font-semibold text-white mb-1">{p.name}</h3>
                   <p className="text-sm text-white/35">{p.tagline}</p>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 transition-colors" />
+                <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
               </div>
               <p className="text-sm text-white/45 leading-relaxed mb-5">{p.desc}</p>
               <div className="grid grid-cols-2 gap-2 mb-5">
@@ -811,7 +882,7 @@ function MarketplaceSection() {
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full" onClick={() => setSelectedId(p.id)}>{t(lang, "En savoir plus", "Learn more")}</Button>
+              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{t(lang, "En savoir plus", "Learn more")}</Button>
             </div>
           ))}
         </div>
@@ -826,12 +897,56 @@ function MarketplaceSection() {
   );
 }
 
+// ─── TESTIMONIALS ────────────────────────────────────
+
+function Testimonials() {
+  const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const testimonials = getTestimonials(lang);
+  const ref = useReveal();
+
+  return (
+    <section className={`py-24 ${dark ? "bg-gray-950" : "bg-white"}`}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div ref={ref} className="reveal text-center max-w-2xl mx-auto mb-16">
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Témoignages", "Testimonials")}</Badge>
+          <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>{t(lang, "Ce que disent nos clients", "What our clients say")}</h2>
+          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Des leaders de l'industrie nous font confiance pour accélérer leur transformation AI.", "Industry leaders trust us to accelerate their AI transformation.")}</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 reveal-stagger">
+          {testimonials.map((tm) => (
+            <Card key={tm.name} className={`reveal rounded-2xl border transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] ${dark ? "bg-gray-900 border-white/5" : "border-gray-100"}`}>
+              <CardContent className="pt-6">
+                <Quote className="w-8 h-8 mb-4 opacity-15" style={{ color: C.yellow }} />
+                <p className={`text-sm leading-relaxed mb-6 ${dark ? "text-white/60" : "text-gray-600"}`}>{tm.quote}</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: C.greenLight, color: C.green }}>
+                    {tm.name.split(" ").map(n => n[0]).join("")}
+                  </div>
+                  <div>
+                    <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>{tm.name}</p>
+                    <p className={`text-xs ${dark ? "text-white/35" : "text-gray-400"}`}>{tm.role} · {tm.company}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── AI CHAT ─────────────────────────────────────────
 
 type ChatMsg = { role: "user" | "assistant"; text: string };
 
 function AIChatSection() {
   const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   const exchanges = getChatExchanges(lang);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [inputVal, setInputVal] = useState(exchanges[0]?.user ?? "");
@@ -842,6 +957,7 @@ function AIChatSection() {
   const busy = useRef(false);
   const isInitialMount = useRef(true);
   const prevLang = useRef(lang);
+  const ref = useReveal();
 
   // Reset demo when language changes
   useEffect(() => {
@@ -918,34 +1034,34 @@ function AIChatSection() {
       ];
 
   return (
-    <section id="ai-chat" className="py-24 bg-white">
+    <section id="ai-chat" className={`py-24 ${dark ? "bg-gray-950" : "bg-white"}`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
-          <div className="lg:sticky lg:top-32">
+          <div ref={ref} className="reveal lg:sticky lg:top-32">
             <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>AI Chat Expert</Badge>
-            <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>
+            <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
               {lang === "fr" ? <>Un consultant AI,<br />disponible 24/7.</> : <>An AI consultant,<br />available 24/7.</>}
             </h2>
-            <p className="text-lg text-gray-500 leading-relaxed mb-8">{t(lang, "Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI. Il comprend votre contexte, pose les bonnes questions et génère des livrables prêts à l'emploi.", "Our AI chat is trained on thousands of digital transformation and AI projects. It understands your context, asks the right questions, and generates ready-to-use deliverables.")}</p>
+            <p className={`text-lg leading-relaxed mb-8 ${dark ? "text-white/45" : "text-gray-500"}`}>{t(lang, "Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI. Il comprend votre contexte, pose les bonnes questions et génère des livrables prêts à l'emploi.", "Our AI chat is trained on thousands of digital transformation and AI projects. It understands your context, asks the right questions, and generates ready-to-use deliverables.")}</p>
             <div className="space-y-4">
               {chatFeatures.map((it) => (
                 <div key={it.text} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: C.greenLight }}>
-                    <it.icon className="w-4 h-4" style={{ color: C.green }} />
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}>
+                    <it.icon className="w-4 h-4" style={{ color: dark ? C.yellow : C.green }} />
                   </div>
-                  <span className="text-sm text-gray-600">{it.text}</span>
+                  <span className={`text-sm ${dark ? "text-white/60" : "text-gray-600"}`}>{it.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-gray-100 overflow-hidden shadow-lg" style={{ background: C.silverLight }}>
-            <div className="px-5 py-4 border-b border-gray-100 bg-white flex items-center gap-3">
+          <div className={`rounded-2xl border overflow-hidden shadow-lg ${dark ? "border-white/5" : "border-gray-100"}`} style={{ background: dark ? "#0a1f1e" : C.silverLight }}>
+            <div className={`px-5 py-4 border-b flex items-center gap-3 ${dark ? "bg-gray-900 border-white/5" : "bg-white border-gray-100"}`}>
               <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: C.green }}>
                 <Bot className="w-5 h-5" style={{ color: C.yellow }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">Talsom Forge Consultant</p>
+                <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>Talsom Forge Consultant</p>
                 <p className="text-[11px] flex items-center gap-1" style={{ color: C.greenMid }}>
                   <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#4AE0D2" }} /> {t(lang, "En ligne", "Online")}
                 </p>
@@ -956,7 +1072,7 @@ function AIChatSection() {
             <div className="h-[440px] overflow-y-auto px-5 py-5 space-y-4">
               {messages.length === 0 && !typing && (
                 <div className="flex justify-start chat-bubble-in">
-                  <div className="max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3 text-sm leading-relaxed bg-white border border-gray-100 text-gray-700 shadow-sm">
+                  <div className={`max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3 text-sm leading-relaxed shadow-sm ${dark ? "bg-gray-900 border border-white/5 text-white/70" : "bg-white border border-gray-100 text-gray-700"}`}>
                     {t(lang,
                       "Bonjour! Je suis votre consultant AI Talsom Forge. Cliquez **Envoyer** pour démarrer la démo interactive.",
                       "Hello! I'm your Talsom Forge AI consultant. Click **Send** to start the interactive demo."
@@ -969,7 +1085,7 @@ function AIChatSection() {
 
               {messages.map((m, i) => (
                 <div key={i} className={`chat-bubble-in flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"}`} style={m.role === "user" ? { background: C.green } : undefined}>
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "text-white rounded-br-md" : (dark ? "bg-gray-900 border border-white/5 text-white/70 rounded-bl-md" : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm")}`} style={m.role === "user" ? { background: C.green } : undefined}>
                     {m.text.split("\n").map((line, li) => (
                       <span key={li}>
                         {li > 0 && <br />}
@@ -983,7 +1099,7 @@ function AIChatSection() {
               ))}
               {typing && (
                 <div className="flex justify-start chat-bubble-in">
-                  <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                  <div className={`rounded-2xl rounded-bl-md px-4 py-3 shadow-sm ${dark ? "bg-gray-900 border border-white/5" : "bg-white border border-gray-100"}`}>
                     <div className="flex gap-1.5">
                       {[0, 150, 300].map((d) => <span key={d} className="w-2 h-2 rounded-full animate-bounce" style={{ background: C.silver, animationDelay: `${d}ms` }} />)}
                     </div>
@@ -993,12 +1109,12 @@ function AIChatSection() {
 
               {demoEnded && (
                 <div className="chat-bubble-in flex flex-col items-center gap-3 py-4">
-                  <p className="text-xs text-gray-400">{t(lang, "Fin de la démo interactive", "End of interactive demo")}</p>
+                  <p className={`text-xs ${dark ? "text-white/25" : "text-gray-400"}`}>{t(lang, "Fin de la démo interactive", "End of interactive demo")}</p>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="rounded-full text-xs border-gray-200" onClick={restart}>
+                    <Button size="sm" variant="outline" className={`rounded-full text-xs ${dark ? "border-white/10" : "border-gray-200"}`} onClick={restart}>
                       {t(lang, "Recommencer la démo", "Restart demo")}
                     </Button>
-                    <Button size="sm" className="rounded-full text-xs border-0 hover:opacity-90" style={{ background: C.yellow, color: C.green }}>
+                    <Button size="sm" className="rounded-full text-xs border-0 hover:opacity-90 transition-opacity" style={{ background: C.yellow, color: C.green }}>
                       {t(lang, "Accéder au chat complet", "Access full chat")}
                     </Button>
                   </div>
@@ -1007,26 +1123,26 @@ function AIChatSection() {
               <div ref={chatEnd} />
             </div>
 
-            <div className="border-t border-gray-100 bg-white p-4">
+            <div className={`border-t p-4 ${dark ? "bg-gray-900 border-white/5" : "bg-white border-gray-100"}`}>
               <div className="flex gap-2">
                 <Input
                   placeholder={demoEnded ? t(lang, "Démo terminée — recommencez ou accédez au chat complet", "Demo ended — restart or access full chat") : t(lang, "Posez une question sur l'AI…", "Ask an AI question…")}
                   value={inputVal}
                   readOnly
                   onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSend()}
-                  className="rounded-full border-gray-200 bg-gray-50 text-sm cursor-default"
+                  className={`rounded-full text-sm cursor-default ${dark ? "border-white/10 bg-white/5 text-white" : "border-gray-200 bg-gray-50"}`}
                 />
                 <Button
                   size="icon"
                   onClick={handleSend}
                   disabled={busy.current || demoEnded}
-                  className="rounded-full shrink-0 hover:opacity-90 border-0 disabled:opacity-40"
+                  className="rounded-full shrink-0 hover:opacity-90 border-0 disabled:opacity-40 transition-opacity"
                   style={{ background: C.green, color: C.yellow }}
                 >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 text-center">
+              <p className={`text-[10px] mt-2 text-center ${dark ? "text-white/20" : "text-gray-400"}`}>
                 {demoEnded
                   ? t(lang, "Merci d'avoir exploré la démo!", "Thanks for exploring the demo!")
                   : `${t(lang, "Démo interactive", "Interactive demo")} · ${t(lang, "Étape", "Step")} ${exchangeIdx + 1}/${exchanges.length}`}
@@ -1043,41 +1159,182 @@ function AIChatSection() {
 
 function Pricing() {
   const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   const plans = getPlans(lang);
+  const ref = useReveal();
 
   return (
-    <section id="tarification" className="py-24" style={{ background: C.silverLight }}>
+    <section id="tarification" className="py-24" style={{ background: dark ? "#071716" : C.silverLight }}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div ref={ref} className="reveal text-center max-w-2xl mx-auto mb-16">
           <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Tarification", "Pricing")}</Badge>
-          <h2 className="text-4xl font-bold tracking-tight mb-4" style={{ ...HDR_FONT, color: C.green }}>{t(lang, "Un plan pour chaque ambition", "A plan for every ambition")}</h2>
-          <p className="text-gray-500">{t(lang, "Commencez gratuitement, montez en puissance quand vous êtes prêts.", "Start free, scale up when you're ready.")}</p>
+          <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>{t(lang, "Un plan pour chaque ambition", "A plan for every ambition")}</h2>
+          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Commencez gratuitement, montez en puissance quand vous êtes prêts.", "Start free, scale up when you're ready.")}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto reveal-stagger">
           {plans.map((p) => (
-            <Card key={p.name} className={`rounded-2xl overflow-hidden ${p.highlight ? "border-2 shadow-xl relative" : "border-gray-100"}`} style={p.highlight ? { borderColor: C.green } : undefined}>
+            <Card key={p.name} className={`reveal rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl ${p.highlight ? "border-2 shadow-xl relative" : ""} ${dark ? "bg-gray-900 border-white/5" : "border-gray-100"}`} style={p.highlight ? { borderColor: C.green } : undefined}>
               {p.highlight && <div className="absolute top-0 inset-x-0 h-1" style={{ background: `linear-gradient(90deg, ${C.green}, ${C.yellow})` }} />}
               <CardHeader>
-                <p className="text-sm font-medium text-gray-400 mb-1">{p.sub}</p>
-                <CardTitle className="text-xl font-bold text-gray-900">{p.name}</CardTitle>
-                <p className="text-3xl font-bold mt-2" style={{ ...HDR_FONT, color: C.green }}>{p.price}</p>
+                <p className={`text-sm font-medium mb-1 ${dark ? "text-white/30" : "text-gray-400"}`}>{p.sub}</p>
+                <CardTitle className={`text-xl font-bold ${dark ? "text-white" : "text-gray-900"}`}>{p.name}</CardTitle>
+                <p className="text-3xl font-bold mt-2" style={{ ...HDR_FONT, color: dark ? C.yellow : C.green }}>{p.price}</p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 mb-6">
                   {p.features.map((f) => (
-                    <div key={f} className="flex items-start gap-2.5 text-sm text-gray-600">
+                    <div key={f} className={`flex items-start gap-2.5 text-sm ${dark ? "text-white/50" : "text-gray-600"}`}>
                       <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.greenMid }} />
                       {f}
                     </div>
                   ))}
                 </div>
-                <Button className={`w-full rounded-full font-semibold ${p.highlight ? "hover:opacity-90 border-0" : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"}`} style={p.highlight ? { background: C.yellow, color: C.green } : undefined}>
+                <Button className={`w-full rounded-full font-semibold transition-all ${p.highlight ? "hover:opacity-90 border-0" : (dark ? "bg-white/5 border border-white/10 text-white hover:bg-white/10" : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50")}`} style={p.highlight ? { background: C.yellow, color: C.green } : undefined}>
                   {p.cta}
                 </Button>
               </CardContent>
             </Card>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── FAQ ─────────────────────────────────────────────
+
+function FAQSection() {
+  const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const faq = getFAQ(lang);
+  const ref = useReveal();
+
+  return (
+    <section className={`py-24 ${dark ? "bg-gray-950" : "bg-white"}`}>
+      <div className="max-w-3xl mx-auto px-6">
+        <div ref={ref} className="reveal text-center mb-16">
+          <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>FAQ</Badge>
+          <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>{t(lang, "Questions fréquentes", "Frequently asked questions")}</h2>
+          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Tout ce que vous devez savoir pour commencer.", "Everything you need to know to get started.")}</p>
+        </div>
+
+        <Accordion type="single" collapsible className="space-y-3">
+          {faq.map((item, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className={`border rounded-xl px-5 transition-all ${dark ? "border-white/5 data-[state=open]:border-white/10 data-[state=open]:bg-white/[0.02]" : "border-gray-100 data-[state=open]:border-gray-200 data-[state=open]:bg-gray-50/50"}`}>
+              <AccordionTrigger className={`text-sm font-semibold text-left py-4 hover:no-underline ${dark ? "text-white" : "text-gray-900"}`}>
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className={`text-sm leading-relaxed pb-4 ${dark ? "text-white/50" : "text-gray-500"}`}>
+                {item.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  );
+}
+
+// ─── CONTACT FORM ────────────────────────────────────
+
+function ContactSection() {
+  const { lang } = useLang();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const [sent, setSent] = useState(false);
+  const ref = useReveal();
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    // In production, connect to email API (Resend, EmailJS, etc.)
+    // For now, open mailto
+    const subject = encodeURIComponent(`[Talsom Forge] ${t(lang, "Demande de", "Request from")} ${form.name}`);
+    const body = encodeURIComponent(`${t(lang, "Nom", "Name")}: ${form.name}\n${t(lang, "Courriel", "Email")}: ${form.email}\n${t(lang, "Entreprise", "Company")}: ${form.company}\n\n${form.message}`);
+    window.open(`mailto:info@talsom.com?subject=${subject}&body=${body}`, "_blank");
+    setSent(true);
+    setTimeout(() => setSent(false), 4000);
+  }, [form, lang]);
+
+  return (
+    <section id="contact" className="py-24" style={{ background: dark ? "#071716" : C.silverLight }}>
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16">
+          <div ref={ref} className="reveal">
+            <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Contact", "Contact")}</Badge>
+            <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
+              {t(lang, "Parlons de votre projet", "Let's talk about your project")}
+            </h2>
+            <p className={`text-lg leading-relaxed mb-8 ${dark ? "text-white/45" : "text-gray-500"}`}>
+              {t(lang,
+                "Que vous souhaitiez une démo, un accès beta ou un accompagnement personnalisé, notre équipe est disponible pour vous guider.",
+                "Whether you want a demo, beta access, or personalized guidance, our team is available to help."
+              )}
+            </p>
+            <div className="space-y-4">
+              {[
+                { icon: Mail, text: "info@talsom.com" },
+                { icon: MapPin, text: t(lang, "Montréal, QC, Canada", "Montreal, QC, Canada") },
+                { icon: Globe, text: t(lang, "talsom.com", "talsom.com") },
+              ].map((c) => (
+                <div key={c.text} className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}>
+                    <c.icon className="w-4 h-4" style={{ color: dark ? C.yellow : C.green }} />
+                  </div>
+                  <span className={`text-sm ${dark ? "text-white/60" : "text-gray-600"}`}>{c.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className={`rounded-2xl border p-6 space-y-4 ${dark ? "bg-gray-900 border-white/5" : "bg-white border-gray-100"}`}>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className={`text-xs font-medium mb-1.5 block ${dark ? "text-white/50" : "text-gray-500"}`}>
+                  <User className="w-3 h-3 inline mr-1" />{t(lang, "Nom complet", "Full name")}
+                </label>
+                <Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Jean Dupont" className={`rounded-lg ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : ""}`} />
+              </div>
+              <div>
+                <label className={`text-xs font-medium mb-1.5 block ${dark ? "text-white/50" : "text-gray-500"}`}>
+                  <Mail className="w-3 h-3 inline mr-1" />{t(lang, "Courriel", "Email")}
+                </label>
+                <Input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="jean@entreprise.com" className={`rounded-lg ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : ""}`} />
+              </div>
+            </div>
+            <div>
+              <label className={`text-xs font-medium mb-1.5 block ${dark ? "text-white/50" : "text-gray-500"}`}>
+                <Building2 className="w-3 h-3 inline mr-1" />{t(lang, "Entreprise", "Company")}
+              </label>
+              <Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} placeholder={t(lang, "Votre entreprise", "Your company")} className={`rounded-lg ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : ""}`} />
+            </div>
+            <div>
+              <label className={`text-xs font-medium mb-1.5 block ${dark ? "text-white/50" : "text-gray-500"}`}>
+                <MessageSquare className="w-3 h-3 inline mr-1" />{t(lang, "Message", "Message")}
+              </label>
+              <textarea
+                required
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                rows={4}
+                placeholder={t(lang, "Décrivez votre projet ou posez vos questions…", "Describe your project or ask your questions…")}
+                className={`w-full rounded-lg border px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : "border-gray-200 bg-gray-50"}`}
+              />
+            </div>
+            <Button type="submit" className="w-full rounded-full font-semibold hover:opacity-90 border-0 transition-all" style={{ background: C.yellow, color: C.green }}>
+              {sent ? (
+                <><CheckCircle2 className="w-4 h-4 mr-2" />{t(lang, "Message ouvert!", "Message opened!")}</>
+              ) : (
+                <><Send className="w-4 h-4 mr-2" />{t(lang, "Envoyer le message", "Send message")}</>
+              )}
+            </Button>
+            <p className={`text-[10px] text-center ${dark ? "text-white/20" : "text-gray-400"}`}>
+              {t(lang, "Nous répondons généralement sous 24h.", "We typically respond within 24 hours.")}
+            </p>
+          </form>
         </div>
       </div>
     </section>
@@ -1097,12 +1354,16 @@ function CTABanner() {
         <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>{t(lang, "Prêt à transformer votre approche AI?", "Ready to transform your AI approach?")}</h2>
         <p className="text-lg text-white/45 mb-8">{t(lang, "Rejoignez la beta et accédez à l'expertise AI de Talsom Forge, disponible en quelques clics.", "Join the beta and access Talsom Forge AI expertise, available in just a few clicks.")}</p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Button size="lg" className="rounded-full px-8 h-12 font-semibold hover:opacity-90 border-0" style={{ background: C.yellow, color: C.green }}>
-            {t(lang, "Demander un accès beta", "Request beta access")} <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-          <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white">
-            {t(lang, "Planifier une démo", "Schedule a demo")}
-          </Button>
+          <a href="#contact">
+            <Button size="lg" className="rounded-full px-8 h-12 font-semibold hover:opacity-90 border-0 transition-opacity" style={{ background: C.yellow, color: C.green }}>
+              {t(lang, "Demander un accès beta", "Request beta access")} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </a>
+          <a href="#contact">
+            <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-white border-white/12 bg-white/5 hover:bg-white/10 hover:text-white transition-all">
+              {t(lang, "Planifier une démo", "Schedule a demo")}
+            </Button>
+          </a>
         </div>
       </div>
     </section>
@@ -1169,21 +1430,41 @@ function Footer() {
 
 export default function App() {
   const [lang, setLang] = useState<Lang>("fr");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("talsom-theme");
+      if (saved === "dark" || saved === "light") return saved;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("talsom-theme", theme);
+  }, [theme]);
+
+  const toggle = useCallback(() => setTheme((t) => t === "dark" ? "light" : "dark"), []);
 
   return (
-    <LangContext.Provider value={{ lang, setLang }}>
-      <div className="min-h-screen">
-        <Nav />
-        <Hero />
-        <TrustBar />
-        <ServicesSection />
-        <HowItWorks />
-        <MarketplaceSection />
-        <AIChatSection />
-        <Pricing />
-        <CTABanner />
-        <Footer />
-      </div>
-    </LangContext.Provider>
+    <ThemeContext.Provider value={{ theme, toggle }}>
+      <LangContext.Provider value={{ lang, setLang }}>
+        <div className="min-h-screen">
+          <Nav />
+          <Hero />
+          <TrustBar />
+          <ServicesSection />
+          <HowItWorks />
+          <MarketplaceSection />
+          <Testimonials />
+          <AIChatSection />
+          <Pricing />
+          <FAQSection />
+          <ContactSection />
+          <CTABanner />
+          <Footer />
+        </div>
+      </LangContext.Provider>
+    </ThemeContext.Provider>
   );
 }
