@@ -10,8 +10,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight,
   Brain,
-  Shield,
-  BarChart3,
   Users,
   Sparkles,
   ChevronRight,
@@ -38,6 +36,9 @@ import {
   Building2,
   User,
   Quote,
+  Settings2,
+  Server,
+  Briefcase,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════
@@ -95,12 +96,10 @@ function useReveal() {
 
 function getServices(lang: Lang) {
   return [
-    { id: "roadmap", icon: MapPin, title: "AI Roadmap", subtitle: t(lang, "Feuille de route stratégique", "Strategic roadmap"), desc: t(lang, "Définissez votre trajectoire de transformation AI avec une roadmap personnalisée, priorisée et alignée sur vos objectifs d'affaires.", "Define your AI transformation trajectory with a personalized, prioritized roadmap aligned with your business goals."), tags: t(lang, "Stratégie,Priorisation,12 semaines", "Strategy,Prioritization,12 weeks").split(","), price: t(lang, "À partir de 15 000$", "Starting at $15,000"), popular: true },
-    { id: "maturity", icon: BarChart3, title: "AI Maturity Assessment", subtitle: t(lang, "Diagnostic de maturité", "Maturity diagnostic"), desc: t(lang, "Évaluez votre niveau de préparation AI à travers 6 dimensions clés : stratégie, données, technologie, talents, gouvernance et culture.", "Assess your AI readiness across 6 key dimensions: strategy, data, technology, talent, governance, and culture."), tags: t(lang, "Diagnostic,Benchmark,4 semaines", "Diagnostic,Benchmark,4 weeks").split(","), price: t(lang, "À partir de 8 000$", "Starting at $8,000"), popular: false },
-    { id: "governance", icon: Shield, title: "AI Governance", subtitle: t(lang, "Cadre de gouvernance IA", "AI governance framework"), desc: t(lang, "Implantez un cadre de gouvernance AI responsable incluant politiques, RACI, comités et conformité réglementaire (Loi 25, EU AI Act).", "Implement a responsible AI governance framework including policies, RACI, committees, and regulatory compliance (Bill 25, EU AI Act)."), tags: t(lang, "Conformité,Éthique,8 semaines", "Compliance,Ethics,8 weeks").split(","), price: t(lang, "À partir de 12 000$", "Starting at $12,000"), popular: false },
-    { id: "copilot", icon: Sparkles, title: "Copilot 365 Deployment", subtitle: t(lang, "Déploiement Microsoft Copilot", "Microsoft Copilot deployment"), desc: t(lang, "Accélérez l'adoption de Microsoft 365 Copilot avec un plan de déploiement structuré, de la préparation des données à la gestion du changement.", "Accelerate Microsoft 365 Copilot adoption with a structured deployment plan, from data preparation to change management."), tags: t(lang, "Microsoft,Adoption,10 semaines", "Microsoft,Adoption,10 weeks").split(","), price: t(lang, "À partir de 20 000$", "Starting at $20,000"), popular: true },
-    { id: "business-case", icon: TrendingUp, title: "AI Business Case", subtitle: t(lang, "Analyse de rentabilité", "ROI analysis"), desc: t(lang, "Construisez un dossier d'affaires solide avec analyse ROI, projection de valeur et cadre de mesure pour justifier vos investissements AI.", "Build a solid business case with ROI analysis, value projection, and measurement framework to justify your AI investments."), tags: t(lang, "ROI,Valeur,3 semaines", "ROI,Value,3 weeks").split(","), price: t(lang, "À partir de 6 000$", "Starting at $6,000"), popular: false },
-    { id: "change", icon: Users, title: "Change Management AI", subtitle: t(lang, "Conduite du changement", "Change management"), desc: t(lang, "Assurez l'adoption réussie de vos initiatives AI avec un plan de changement complet : communication, formation, résistance et mesure.", "Ensure successful adoption of your AI initiatives with a comprehensive change plan: communication, training, resistance management, and measurement."), tags: t(lang, "Adoption,Formation,Continu", "Adoption,Training,Ongoing").split(","), price: t(lang, "À partir de 10 000$", "Starting at $10,000"), popular: false },
+    { id: "process-design", icon: Settings2, title: "Business et Process Design", subtitle: t(lang, "Conception de processus et modèle opérationnel", "Process design and operating model"), desc: t(lang, "Optimisez vos processus d'affaires et concevez votre modèle opérationnel cible grâce à des ateliers virtuels co-facilités par nos consultants et agents AI.", "Optimize your business processes and design your target operating model through virtual workshops co-facilitated by our consultants and AI agents."), tags: t(lang, "Processus,Opérations,4-10 semaines", "Process,Operations,4-10 weeks").split(","), price: t(lang, "À partir de 15 000$", "Starting at $15,000"), popular: true },
+    { id: "modernisation", icon: Server, title: t(lang, "Roadmap de modernisation", "Modernization Roadmap"), subtitle: t(lang, "Stratégie de modernisation technologique", "Technology modernization strategy"), desc: t(lang, "Planifiez la modernisation de vos systèmes hérités et votre migration vers le cloud avec une feuille de route séquencée et budgétisée.", "Plan the modernization of your legacy systems and cloud migration with a sequenced and budgeted roadmap."), tags: t(lang, "Cloud,Architecture,6-12 semaines", "Cloud,Architecture,6-12 weeks").split(","), price: t(lang, "À partir de 15 000$", "Starting at $15,000"), popular: false },
+    { id: "roadmap-ia", icon: Brain, title: "Roadmap IA", subtitle: t(lang, "Stratégie et feuille de route AI", "AI strategy and roadmap"), desc: t(lang, "Définissez votre trajectoire AI avec une roadmap personnalisée couvrant stratégie, maturité, gouvernance et déploiement d'outils comme Copilot 365.", "Define your AI trajectory with a personalized roadmap covering strategy, maturity, governance, and tool deployment like Copilot 365."), tags: t(lang, "IA,Stratégie,4-14 semaines", "AI,Strategy,4-14 weeks").split(","), price: t(lang, "À partir de 8 000$", "Starting at $8,000"), popular: true },
+    { id: "performance-org", icon: Users, title: t(lang, "Performance organisationnelle", "Organizational Performance"), subtitle: t(lang, "Gestion du changement et leadership", "Change management and leadership"), desc: t(lang, "Renforcez les capacités humaines de votre organisation : gestion du changement, design organisationnel, leadership et culture.", "Strengthen your organization's human capabilities: change management, organizational design, leadership, and culture."), tags: t(lang, "Changement,Leadership,Continu", "Change,Leadership,Ongoing").split(","), price: t(lang, "À partir de 10 000$", "Starting at $10,000"), popular: false },
   ];
 }
 
@@ -116,38 +115,38 @@ function getMarketplace(lang: Lang) {
 function getChatExchanges(lang: Lang): { user: string; assistant: string }[] {
   if (lang === "en") return [
     {
-      user: "I want to deploy Microsoft Copilot in my 500-person organization. Where do I start?",
-      assistant: "Great choice! For a Copilot 365 deployment at this scale, I recommend a 4-phase approach:\n\n1. **Readiness assessment** — Audit your M365 environment, SharePoint/OneDrive data quality, current licenses\n2. **Targeted pilot** — 50 power users over 4-6 weeks\n3. **Progressive rollout** — Waves of 100-150 users with tailored training\n4. **Continuous optimization** — Adoption measurement, prompt tuning, best practices\n\nWould you like me to generate a detailed deployment plan with timeline and budget estimate?",
+      user: "Our order-to-cash process is slow and full of manual steps. Can you help us diagnose the problem?",
+      assistant: "Absolutely! Let's start with a rapid diagnostic. Based on the symptoms you describe, here's what I'll analyze:\n\n1. **Process mapping** — I'll generate a current-state (AS-IS) map of your order-to-cash flow from your description\n2. **Bottleneck identification** — Manual handoffs, approval loops, and data re-entry points\n3. **Benchmark comparison** — Your cycle time vs industry standards\n4. **Quick-win opportunities** — Automation and simplification candidates\n\nCan you describe the main steps from when a customer places an order to when payment is received?",
     },
     {
-      user: "Yes, generate the full plan with budget estimate.",
-      assistant: "I'm preparing your Copilot 365 deployment plan. Here's an overview:\n\n**Plan generated** — Copilot365_Deployment_Talsom.pdf\n\n**Estimated budget:**\n→ Copilot licenses (500 users): ~$450,000/year\n→ Talsom support: $45,000\n→ Training & change management: $25,000\n→ **Year 1 total: ~$520,000**\n\n**Projected ROI:** Productivity gain of 8-12h/month/user, estimated 2.1x return over 18 months.\n\nThe document is ready. Would you also like the risk analysis and change management plan?",
+      user: "Yes, we receive orders by email, then manually enter them in our ERP, verify inventory, send for approval, then ship. Invoicing is done separately in accounting.",
+      assistant: "I've mapped your process. Here's the diagnostic:\n\n**Report generated** — OTC_Diagnostic_Talsom.pdf\n\n**Key findings:**\n→ **6 manual handoffs** identified (industry best practice: 2)\n→ **Estimated cycle time:** 8-12 days (benchmark: 3-4 days)\n→ **Data re-entry:** 3 points (order, inventory, invoice)\n\n**Top 3 quick wins:**\n1. Automated order intake (email parsing + ERP integration) — saves ~2 days\n2. Real-time inventory check — eliminates manual verification\n3. Auto-invoicing on shipment confirmation — saves ~1.5 days\n\n**Estimated improvement:** 55-65% cycle time reduction. Want me to generate the target operating model (TO-BE) with an implementation roadmap?",
     },
     {
-      user: "Yes, include the risk analysis.",
-      assistant: "Here are the key risks identified for your deployment:\n\n**High risks:**\n→ Insufficient SharePoint data quality — **mitigation:** pre-deployment audit and cleanup\n→ Team resistance to change — **mitigation:** department ambassadors + targeted training\n\n**Moderate risks:**\n→ License budget overrun — **mitigation:** measured pilot before annual commitment\n→ Microsoft vendor dependency — **mitigation:** multi-cloud governance\n\nI can generate the full report with risk matrix and mitigation plan. Would you like to receive it as PDF?",
+      user: "Yes, generate the target model and roadmap.",
+      assistant: "Here's your transformation roadmap:\n\n**Phase 1 — Quick wins (4 weeks):**\n→ Automated order intake via email parsing\n→ ERP integration for real-time inventory\n→ **Investment:** ~$25,000 | **Impact:** -3 days cycle time\n\n**Phase 2 — Process redesign (8 weeks):**\n→ Approval workflow automation\n→ Auto-invoicing on shipment\n→ **Investment:** ~$45,000 | **Impact:** -2 days additional\n\n**Phase 3 — Continuous optimization:**\n→ AI-powered demand forecasting\n→ Predictive exception handling\n\n**Total projected ROI:** 3.2x over 12 months. The full report with TO-BE process map is ready. Would you like to schedule a workshop with our consultants to validate the roadmap?",
     },
   ];
   return [
     {
-      user: "Je veux déployer Microsoft Copilot dans mon organisation de 500 personnes. Par où commencer?",
-      assistant: "Excellent choix! Pour un déploiement Copilot 365 à cette échelle, je recommande une approche en 4 phases :\n\n1. **Évaluation de préparation** — Audit de votre environnement M365, qualité des données SharePoint/OneDrive, licences actuelles\n2. **Pilote ciblé** — 50 utilisateurs power-users sur 4-6 semaines\n3. **Déploiement progressif** — Vagues de 100-150 utilisateurs avec formation adaptée\n4. **Optimisation continue** — Mesure d'adoption, ajustement des prompts, bonnes pratiques\n\nVoulez-vous que je génère un plan de déploiement détaillé avec échéancier et budget estimé?",
+      user: "Notre processus order-to-cash est lent et plein d'étapes manuelles. Pouvez-vous nous aider à diagnostiquer le problème?",
+      assistant: "Absolument! Commençons par un diagnostic rapide. D'après les symptômes que vous décrivez, voici ce que je vais analyser :\n\n1. **Cartographie du processus** — Je vais générer une carte de l'état actuel (AS-IS) de votre flux order-to-cash\n2. **Identification des goulots** — Transferts manuels, boucles d'approbation et ressaisies de données\n3. **Comparaison benchmark** — Votre temps de cycle vs les standards de l'industrie\n4. **Gains rapides** — Candidats à l'automatisation et à la simplification\n\nPouvez-vous décrire les étapes principales depuis la réception d'une commande jusqu'au paiement?",
     },
     {
-      user: "Oui, génère-moi le plan complet avec l'estimation budgétaire.",
-      assistant: "Je prépare votre plan de déploiement Copilot 365. Voici un aperçu :\n\n**Plan généré** — Copilot365_Deployment_Talsom.pdf\n\n**Budget estimé :**\n→ Licences Copilot (500 users) : ~450 000$ /an\n→ Accompagnement Talsom : 45 000$\n→ Formation & change management : 25 000$\n→ **Total Année 1 : ~520 000$**\n\n**ROI projeté :** Gain de productivité de 8-12h/mois/utilisateur, retour estimé de 2.1x sur 18 mois.\n\nLe document est prêt. Voulez-vous aussi l'analyse de risques et le plan de gestion du changement?",
+      user: "Oui, on reçoit les commandes par courriel, puis on les saisit manuellement dans notre ERP, on vérifie l'inventaire, on envoie pour approbation, puis on expédie. La facturation est faite séparément par la comptabilité.",
+      assistant: "J'ai cartographié votre processus. Voici le diagnostic :\n\n**Rapport généré** — OTC_Diagnostic_Talsom.pdf\n\n**Constats clés :**\n→ **6 transferts manuels** identifiés (meilleure pratique : 2)\n→ **Temps de cycle estimé :** 8-12 jours (benchmark : 3-4 jours)\n→ **Ressaisie de données :** 3 points (commande, inventaire, facture)\n\n**Top 3 gains rapides :**\n1. Saisie automatisée des commandes (parsing courriel + intégration ERP) — économie de ~2 jours\n2. Vérification d'inventaire en temps réel — élimine la vérification manuelle\n3. Facturation automatique à la confirmation d'expédition — économie de ~1.5 jours\n\n**Amélioration estimée :** Réduction de 55-65% du temps de cycle. Voulez-vous que je génère le modèle opérationnel cible (TO-BE) avec une feuille de route de mise en œuvre?",
     },
     {
-      user: "Oui, inclus l'analyse de risques.",
-      assistant: "Voici les principaux risques identifiés pour votre déploiement :\n\n**Risques élevés :**\n→ Qualité des données SharePoint insuffisante — **mitigation :** audit et nettoyage pré-déploiement\n→ Résistance au changement des équipes — **mitigation :** ambassadeurs par département + formation ciblée\n\n**Risques modérés :**\n→ Dépassement de budget licences — **mitigation :** pilote mesuré avant engagement annuel\n→ Dépendance fournisseur Microsoft — **mitigation :** gouvernance multi-cloud\n\nJe peux générer le rapport complet avec matrice de risques et plan de mitigation. Souhaitez-vous le recevoir en PDF?",
+      user: "Oui, génère le modèle cible et la feuille de route.",
+      assistant: "Voici votre feuille de route de transformation :\n\n**Phase 1 — Gains rapides (4 semaines) :**\n→ Saisie automatisée des commandes via parsing courriel\n→ Intégration ERP pour inventaire en temps réel\n→ **Investissement :** ~25 000$ | **Impact :** -3 jours temps de cycle\n\n**Phase 2 — Refonte du processus (8 semaines) :**\n→ Automatisation du workflow d'approbation\n→ Facturation automatique à l'expédition\n→ **Investissement :** ~45 000$ | **Impact :** -2 jours supplémentaires\n\n**Phase 3 — Optimisation continue :**\n→ Prévision de la demande par AI\n→ Gestion prédictive des exceptions\n\n**ROI total projeté :** 3.2x sur 12 mois. Le rapport complet avec la cartographie TO-BE est prêt. Souhaitez-vous planifier un atelier avec nos consultants pour valider la feuille de route?",
     },
   ];
 }
 
 function getStats(lang: Lang) {
   return [
-    { value: "150+", label: t(lang, "Projets AI livrés", "AI projects delivered") },
-    { value: "42", label: t(lang, "Clients actifs", "Active clients") },
+    { value: "250+", label: t(lang, "Mandats livrés", "Engagements delivered") },
+    { value: "80+", label: t(lang, "Clients actifs", "Active clients") },
     { value: "8.5x", label: t(lang, "ROI moyen", "Average ROI") },
     { value: "96%", label: t(lang, "Satisfaction client", "Client satisfaction") },
   ];
@@ -155,45 +154,110 @@ function getStats(lang: Lang) {
 
 function getPlans(lang: Lang) {
   return [
-    { name: "Explorer", price: t(lang, "Gratuit", "Free"), sub: t(lang, "Pour découvrir", "To explore"), features: [t(lang, "Chat AI (10 messages/mois)", "AI Chat (10 messages/month)"), t(lang, "1 diagnostic de maturité", "1 maturity diagnostic"), t(lang, "Accès marketplace (lecture)", "Marketplace access (read-only)"), t(lang, "Support communautaire", "Community support")], cta: t(lang, "Commencer gratuitement", "Start for free"), highlight: false },
-    { name: "Professional", price: t(lang, "990$/mois", "$990/month"), sub: t(lang, "Pour les équipes", "For teams"), features: [t(lang, "Chat AI illimité", "Unlimited AI Chat"), t(lang, "Tous les diagnostics", "All diagnostics"), t(lang, "Génération de livrables", "Deliverable generation"), t(lang, "5 services virtuels/mois", "5 virtual services/month"), t(lang, "Support prioritaire", "Priority support"), t(lang, "Intégration Microsoft 365", "Microsoft 365 integration")], cta: t(lang, "Essai gratuit 14 jours", "Free 14-day trial"), highlight: true },
-    { name: "Enterprise", price: t(lang, "Sur mesure", "Custom"), sub: t(lang, "Pour les grandes organisations", "For large organizations"), features: [t(lang, "Tout Professional +", "Everything in Professional +"), t(lang, "Consultants dédiés", "Dedicated consultants"), t(lang, "Personnalisation complète", "Full customization"), t(lang, "SLA garanti", "Guaranteed SLA"), t(lang, "Formation sur site", "On-site training"), "API & integrations"], cta: t(lang, "Contactez-nous", "Contact us"), highlight: false },
+    { name: "Explorer", price: t(lang, "Gratuit", "Free"), sub: t(lang, "Pour découvrir", "To explore"), features: [t(lang, "Chat AI (10 messages/mois)", "AI Chat (10 messages/month)"), t(lang, "1 diagnostic d'affaires", "1 business diagnostic"), t(lang, "Accès marketplace (lecture)", "Marketplace access (read-only)"), t(lang, "Support communautaire", "Community support")], cta: t(lang, "Commencer gratuitement", "Start for free"), highlight: false },
+    { name: "Professional", price: t(lang, "990$/mois", "$990/month"), sub: t(lang, "Pour les équipes", "For teams"), features: [t(lang, "Chat AI illimité", "Unlimited AI Chat"), t(lang, "Diagnostics processus et maturité", "Process and maturity diagnostics"), t(lang, "Génération de livrables", "Deliverable generation"), t(lang, "5 services virtuels/mois", "5 virtual services/month"), t(lang, "Support prioritaire", "Priority support"), t(lang, "Ateliers virtuels co-facilités AI", "AI co-facilitated virtual workshops")], cta: t(lang, "Essai gratuit 14 jours", "Free 14-day trial"), highlight: true },
+    { name: "Enterprise", price: t(lang, "Sur mesure", "Custom"), sub: t(lang, "Pour les grandes organisations", "For large organizations"), features: [t(lang, "Tout Professional +", "Everything in Professional +"), t(lang, "Consultants seniors dédiés", "Dedicated senior consultants"), t(lang, "Personnalisation complète", "Full customization"), t(lang, "SLA garanti", "Guaranteed SLA"), t(lang, "Ateliers et formations sur mesure", "Custom workshops and training"), "API & integrations"], cta: t(lang, "Contactez-nous", "Contact us"), highlight: false },
   ];
 }
 
 function getTestimonials(lang: Lang) {
   return [
-    { name: "Marie-Claire Dubois", role: t(lang, "VP Transformation Digitale", "VP Digital Transformation"), company: "Desjardins", quote: t(lang, "Talsom Forge a accéléré notre roadmap AI de 6 mois. L'outil de diagnostic et le chat expert nous ont permis de prioriser nos cas d'usage avec une rigueur qu'on n'avait pas avant.", "Talsom Forge accelerated our AI roadmap by 6 months. The diagnostic tool and expert chat helped us prioritize use cases with a rigor we didn't have before.") },
-    { name: "Jean-Philippe Tremblay", role: "CIO", company: "Pomerleau", quote: t(lang, "Le déploiement Copilot 365 accompagné par Talsom Forge a été remarquablement fluide. 92% d'adoption après 8 semaines, bien au-dessus de nos attentes.", "The Copilot 365 deployment supported by Talsom Forge was remarkably smooth. 92% adoption after 8 weeks, well above our expectations.") },
-    { name: "Sophie Lavoie", role: t(lang, "Directrice Conformité", "Director of Compliance"), company: "Beneva", quote: t(lang, "Le Privacy Impact Assessor nous a fait gagner des semaines sur nos EFVP. La conformité Loi 25 est maintenant un processus simple et structuré.", "The Privacy Impact Assessor saved us weeks on our PIAs. Bill 25 compliance is now a simple, structured process.") },
+    { name: "Marie-Claire Dubois", role: t(lang, "VP Transformation Digitale", "VP Digital Transformation"), company: "Desjardins", quote: t(lang, "L'accompagnement de Talsom Forge sur notre modèle opérationnel cible a été déterminant. La combinaison d'ateliers virtuels et d'outils AI a réduit notre temps de diagnostic de plusieurs semaines.", "Talsom Forge's support on our target operating model was decisive. The combination of virtual workshops and AI tools reduced our diagnostic time by several weeks.") },
+    { name: "Jean-Philippe Tremblay", role: "CIO", company: "Pomerleau", quote: t(lang, "La feuille de route de modernisation livrée par Talsom Forge nous a permis de séquencer nos investissements TI avec une rigueur qu'on n'avait pas avant. 40% de réduction de notre dette technique en 18 mois.", "The modernization roadmap delivered by Talsom Forge allowed us to sequence our IT investments with a rigor we didn't have before. 40% reduction in technical debt in 18 months.") },
+    { name: "Isabelle Marchand", role: t(lang, "Directrice RH", "HR Director"), company: "Hydro-Québec", quote: t(lang, "Le programme de gestion du changement accompagné par Talsom Forge a transformé notre capacité d'adoption. Nos équipes ont vu la valeur dès la première session d'atelier virtuel.", "The change management program supported by Talsom Forge transformed our adoption capability. Our teams saw the value from the very first virtual workshop session.") },
   ];
 }
 
 function getFAQ(lang: Lang) {
   return [
-    { q: t(lang, "Qu'est-ce que Talsom Forge exactement?", "What is Talsom Forge exactly?"), a: t(lang, "Talsom Forge est une plateforme de consulting virtuel qui combine l'expertise AI de Talsom avec des outils propriétaires. Vous accédez à des services de consulting AI en libre-service : diagnostics, génération de livrables, chat expert et marketplace d'outils spécialisés.", "Talsom Forge is a virtual consulting platform that combines Talsom's AI expertise with proprietary tools. You access self-service AI consulting services: diagnostics, deliverable generation, expert chat, and a marketplace of specialized tools.") },
-    { q: t(lang, "Comment fonctionne le chat AI?", "How does the AI chat work?"), a: t(lang, "Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI réalisés par Talsom. Il comprend le contexte québécois et canadien, les réglementations (Loi 25, EU AI Act), et peut générer des livrables structurés comme des roadmaps, analyses de risques et business cases.", "Our AI chat is trained on thousands of digital transformation and AI projects completed by Talsom. It understands the Quebec and Canadian context, regulations (Bill 25, EU AI Act), and can generate structured deliverables like roadmaps, risk analyses, and business cases.") },
+    { q: t(lang, "Qu'est-ce que Talsom Forge exactement?", "What is Talsom Forge exactly?"), a: t(lang, "Talsom Forge est une plateforme de consulting virtuel qui couvre 4 domaines d'expertise : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. Chaque mandat combine l'accompagnement de consultants seniors avec la puissance de nos agents AI pour des livrables de qualité, livrés plus rapidement.", "Talsom Forge is a virtual consulting platform covering 4 areas of expertise: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. Each engagement combines senior consultant guidance with the power of our AI agents for quality deliverables, delivered faster.") },
+    { q: t(lang, "Comment fonctionnent les ateliers virtuels avec AI?", "How do virtual workshops with AI work?"), a: t(lang, "Nos ateliers sont co-facilités par un consultant senior et des agents AI. L'AI synthétise les contributions en temps réel, génère des cartographies de processus, analyse les données partagées et produit un rapport de séance immédiatement après chaque atelier. Le résultat : des ateliers 3x plus productifs.", "Our workshops are co-facilitated by a senior consultant and AI agents. The AI synthesizes contributions in real time, generates process maps, analyzes shared data, and produces a session report immediately after each workshop. The result: workshops that are 3x more productive.") },
     { q: t(lang, "Est-ce que mes données sont sécurisées?", "Is my data secure?"), a: t(lang, "Absolument. Vos données sont hébergées au Canada, chiffrées au repos et en transit, et ne sont jamais utilisées pour entraîner nos modèles. Nous sommes conformes à la Loi 25 et au RGPD. Chaque organisation dispose d'un environnement isolé.", "Absolutely. Your data is hosted in Canada, encrypted at rest and in transit, and never used to train our models. We are compliant with Bill 25 and GDPR. Each organization has an isolated environment.") },
-    { q: t(lang, "Quelle est la différence entre un service virtuel et du consulting traditionnel?", "What's the difference between a virtual service and traditional consulting?"), a: t(lang, "Les services virtuels combinent l'automatisation AI avec l'expertise humaine. Vous obtenez des livrables de qualité consulting plus rapidement et à moindre coût. Pour des mandats complexes ou sur mesure, nos consultants interviennent en complément de la plateforme.", "Virtual services combine AI automation with human expertise. You get consulting-quality deliverables faster and at lower cost. For complex or custom engagements, our consultants step in to complement the platform.") },
-    { q: t(lang, "Puis-je essayer avant de m'engager?", "Can I try before committing?"), a: t(lang, "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat AI par mois, un diagnostic de maturité et l'accès en lecture à la marketplace. Vous pouvez aussi demander un essai gratuit de 14 jours du plan Professional.", "Yes! The Explorer plan is free and includes 10 AI chat messages per month, one maturity diagnostic, and read-only marketplace access. You can also request a free 14-day trial of the Professional plan.") },
-    { q: t(lang, "Combien de temps prend un projet typique?", "How long does a typical project take?"), a: t(lang, "Cela dépend du service. Un AI Business Case prend 2-3 semaines, un Maturity Assessment 3-4 semaines, un AI Roadmap 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles immédiatement.", "It depends on the service. An AI Business Case takes 2-3 weeks, a Maturity Assessment 3-4 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.") },
+    { q: t(lang, "Quelle est la différence entre un service virtuel et du consulting traditionnel?", "What's the difference between a virtual service and traditional consulting?"), a: t(lang, "Les services virtuels combinent l'expertise humaine de consultants seniors avec l'automatisation AI. Vous obtenez des livrables de qualité consulting plus rapidement et à moindre coût. Les ateliers sont virtuels mais interactifs, enrichis par des agents AI qui dynamisent l'output. Pour des mandats complexes, nos consultants interviennent en complément.", "Virtual services combine senior consultant human expertise with AI automation. You get consulting-quality deliverables faster and at lower cost. Workshops are virtual but interactive, enhanced by AI agents that boost output. For complex engagements, our consultants step in to complement the platform.") },
+    { q: t(lang, "Puis-je essayer avant de m'engager?", "Can I try before committing?"), a: t(lang, "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat par mois, un diagnostic d'affaires et l'accès en lecture à la marketplace. Vous pouvez aussi demander un essai gratuit de 14 jours du plan Professional.", "Yes! The Explorer plan is free and includes 10 chat messages per month, one business diagnostic, and read-only marketplace access. You can also request a free 14-day trial of the Professional plan.") },
+    { q: t(lang, "Combien de temps prend un mandat typique?", "How long does a typical engagement take?"), a: t(lang, "Cela dépend du domaine. Un diagnostic de processus prend 3-4 semaines, une roadmap de modernisation 8-10 semaines, une Roadmap IA 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles immédiatement.", "It depends on the domain. A process diagnostic takes 3-4 weeks, a modernization roadmap 8-10 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.") },
   ];
 }
 
 // ─── SERVICE & MARKETPLACE DETAIL DATA ──────────────
 
-function getServiceDetails(lang: Lang): Record<string, { extendedDesc: string; phases: { name: string; duration: string; desc: string }[]; deliverables: string[]; timeline: string; idealFor: string[] }> {
+type SubService = { name: string; price: string; desc: string; deliverables: string[]; timeline: string };
+type CategoryDetail = { extendedDesc: string; differentiator: string; phases: { name: string; duration: string; desc: string }[]; deliverables: string[]; timeline: string; idealFor: string[]; subServices: SubService[] };
+
+function getServiceDetails(lang: Lang): Record<string, CategoryDetail> {
   return {
-    roadmap: {
+    "process-design": {
       extendedDesc: t(lang,
-        "Notre service AI Roadmap combine l'expertise stratégique de Talsom avec des outils d'analyse propriétaires pour créer une feuille de route AI actionnable. Nous analysons votre maturité actuelle, identifions les cas d'usage à fort impact et construisons un plan d'exécution réaliste aligné sur vos capacités et votre budget.",
-        "Our AI Roadmap service combines Talsom's strategic expertise with proprietary analysis tools to create an actionable AI roadmap. We analyze your current maturity, identify high-impact use cases, and build a realistic execution plan aligned with your capabilities and budget."
+        "Notre équipe de consultants seniors conçoit et optimise vos processus d'affaires à travers des ateliers virtuels interactifs. Les agents AI cartographient vos flux en temps réel, identifient les goulots d'étranglement et génèrent les livrables de chaque séance automatiquement.",
+        "Our senior consultants design and optimize your business processes through interactive virtual workshops. AI agents map your flows in real time, identify bottlenecks, and automatically generate each session's deliverables."
+      ),
+      differentiator: t(lang,
+        "Nos ateliers sont co-facilités par un consultant senior et des agents AI qui synthétisent les contributions en temps réel — cartographies de processus, analyses de données et rapports de séance sont produits immédiatement après chaque atelier.",
+        "Our workshops are co-facilitated by a senior consultant and AI agents that synthesize contributions in real time — process maps, data analyses, and session reports are produced immediately after each workshop."
       ),
       phases: [
-        { name: t(lang, "Découverte & Diagnostic", "Discovery & Diagnostic"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Analyse de votre environnement technologique, entrevues avec les parties prenantes et évaluation de maturité AI.", "Analysis of your technology environment, stakeholder interviews, and AI maturity assessment.") },
+        { name: t(lang, "Diagnostic & Cadrage", "Diagnostic & Scoping"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Entrevues parties prenantes, collecte documentaire et cartographie AS-IS des processus ciblés.", "Stakeholder interviews, document collection, and AS-IS mapping of targeted processes.") },
+        { name: t(lang, "Ateliers de co-design", "Co-design Workshops"), duration: t(lang, "3-4 semaines", "3-4 weeks"), desc: t(lang, "Sessions virtuelles collaboratives avec agents AI pour concevoir le modèle TO-BE et les quick wins.", "Collaborative virtual sessions with AI agents to design the TO-BE model and quick wins.") },
+        { name: t(lang, "Livraison & Feuille de route", "Delivery & Roadmap"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Documentation finale, plan de mise en œuvre séquencé et présentation exécutive.", "Final documentation, sequenced implementation plan, and executive presentation.") },
+      ],
+      deliverables: [
+        t(lang, "Cartographie AS-IS / TO-BE des processus", "AS-IS / TO-BE process mapping"),
+        t(lang, "Analyse des goulots et recommandations", "Bottleneck analysis and recommendations"),
+        t(lang, "Modèle opérationnel cible", "Target operating model"),
+        t(lang, "Feuille de route de mise en œuvre", "Implementation roadmap"),
+        t(lang, "Présentation exécutive", "Executive presentation"),
+      ],
+      timeline: t(lang, "6-8 semaines", "6-8 weeks"),
+      idealFor: [t(lang, "VP Opérations / COO", "VP Operations / COO"), t(lang, "Directeur Processus", "Process Director"), t(lang, "Directeur Transformation", "Director of Transformation")],
+      subServices: [
+        { name: t(lang, "Diagnostic de processus", "Process Diagnostic"), price: t(lang, "15 000$", "$15,000"), desc: t(lang, "Cartographie rapide AS-IS de 3 à 5 processus clés avec identification des goulots et quick wins.", "Rapid AS-IS mapping of 3-5 key processes with bottleneck identification and quick wins."), deliverables: [t(lang, "Cartographies AS-IS (BPMN)", "AS-IS maps (BPMN)"), t(lang, "Rapport d'analyse des goulots", "Bottleneck analysis report"), t(lang, "Liste de quick wins priorisés", "Prioritized quick wins list")], timeline: t(lang, "3-4 semaines", "3-4 weeks") },
+        { name: t(lang, "Design de modèle opérationnel", "Operating Model Design"), price: t(lang, "25 000$", "$25,000"), desc: t(lang, "Conception complète du modèle opérationnel cible incluant structure, processus, gouvernance et technologie.", "Complete target operating model design including structure, processes, governance, and technology."), deliverables: [t(lang, "Modèle opérationnel TO-BE", "TO-BE operating model"), t(lang, "Blueprint organisationnel", "Organizational blueprint"), t(lang, "Plan de transition", "Transition plan")], timeline: t(lang, "6-8 semaines", "6-8 weeks") },
+        { name: t(lang, "Automatisation de processus", "Process Automation"), price: t(lang, "20 000$", "$20,000"), desc: t(lang, "Identification et implémentation des opportunités d'automatisation RPA et AI dans vos processus existants.", "Identification and implementation of RPA and AI automation opportunities in your existing processes."), deliverables: [t(lang, "Analyse d'automatisation", "Automation analysis"), t(lang, "Plan d'implémentation RPA/AI", "RPA/AI implementation plan"), t(lang, "Estimation ROI par processus", "ROI estimation per process")], timeline: t(lang, "4-6 semaines", "4-6 weeks") },
+      ],
+    },
+    modernisation: {
+      extendedDesc: t(lang,
+        "Nous planifions la modernisation de vos systèmes hérités et votre migration vers le cloud avec une feuille de route séquencée, budgétisée et alignée sur vos priorités d'affaires. Nos consultants combinent expertise en architecture d'entreprise et outils d'analyse AI pour des recommandations fondées sur les données.",
+        "We plan the modernization of your legacy systems and cloud migration with a sequenced, budgeted roadmap aligned with your business priorities. Our consultants combine enterprise architecture expertise with AI analysis tools for data-driven recommendations."
+      ),
+      differentiator: t(lang,
+        "Notre plateforme AI analyse automatiquement votre parc applicatif, évalue la dette technique et génère des scénarios de modernisation comparés — vous gagnez des semaines d'analyse manuelle et obtenez des recommandations basées sur des données réelles.",
+        "Our AI platform automatically analyzes your application portfolio, evaluates technical debt, and generates compared modernization scenarios — you save weeks of manual analysis and get recommendations based on real data."
+      ),
+      phases: [
+        { name: t(lang, "Inventaire & Évaluation", "Inventory & Assessment"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Cartographie du parc applicatif, évaluation de la dette technique et analyse des dépendances.", "Application portfolio mapping, technical debt assessment, and dependency analysis.") },
+        { name: t(lang, "Stratégie & Scénarios", "Strategy & Scenarios"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Définition de la cible, comparaison de scénarios (cloud, hybride, refactoring) et analyse coûts-bénéfices.", "Target definition, scenario comparison (cloud, hybrid, refactoring), and cost-benefit analysis.") },
+        { name: t(lang, "Roadmap & Gouvernance", "Roadmap & Governance"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Feuille de route séquencée par vagues, estimation budgétaire et cadre de gouvernance.", "Wave-sequenced roadmap, budget estimation, and governance framework.") },
+      ],
+      deliverables: [
+        t(lang, "Cartographie du parc applicatif", "Application portfolio mapping"),
+        t(lang, "Évaluation de la dette technique", "Technical debt assessment"),
+        t(lang, "Comparaison de scénarios de modernisation", "Modernization scenario comparison"),
+        t(lang, "Roadmap de modernisation sur 18-24 mois", "18-24 month modernization roadmap"),
+        t(lang, "Estimation budgétaire par vague", "Wave-by-wave budget estimation"),
+      ],
+      timeline: t(lang, "8-10 semaines", "8-10 weeks"),
+      idealFor: [t(lang, "CIO / VP TI", "CIO / VP IT"), t(lang, "Directeur Architecture", "Architecture Director"), t(lang, "VP Infrastructure", "VP Infrastructure")],
+      subServices: [
+        { name: t(lang, "Audit de dette technique", "Technical Debt Audit"), price: t(lang, "15 000$", "$15,000"), desc: t(lang, "Évaluation approfondie de votre dette technique avec scoring par application et recommandations de remédiation.", "In-depth technical debt evaluation with per-application scoring and remediation recommendations."), deliverables: [t(lang, "Rapport de dette technique", "Technical debt report"), t(lang, "Scoring par application", "Per-application scoring"), t(lang, "Plan de remédiation priorisé", "Prioritized remediation plan")], timeline: t(lang, "3-4 semaines", "3-4 weeks") },
+        { name: t(lang, "Stratégie cloud et migration", "Cloud Strategy & Migration"), price: t(lang, "25 000$", "$25,000"), desc: t(lang, "Définition de votre stratégie cloud (public, privé, hybride) avec plan de migration séquencé.", "Definition of your cloud strategy (public, private, hybrid) with sequenced migration plan."), deliverables: [t(lang, "Stratégie cloud", "Cloud strategy"), t(lang, "Plan de migration par vagues", "Wave-based migration plan"), t(lang, "Analyse financière CapEx/OpEx", "CapEx/OpEx financial analysis")], timeline: t(lang, "6-8 semaines", "6-8 weeks") },
+        { name: t(lang, "Architecture d'entreprise cible", "Target Enterprise Architecture"), price: t(lang, "30 000$", "$30,000"), desc: t(lang, "Conception de l'architecture cible alignée sur votre stratégie d'affaires, incluant intégrations et sécurité.", "Target architecture design aligned with your business strategy, including integrations and security."), deliverables: [t(lang, "Architecture de référence", "Reference architecture"), t(lang, "Modèle d'intégration", "Integration model"), t(lang, "Roadmap d'implémentation", "Implementation roadmap")], timeline: t(lang, "8-10 semaines", "8-10 weeks") },
+      ],
+    },
+    "roadmap-ia": {
+      extendedDesc: t(lang,
+        "Définissez votre trajectoire AI avec une roadmap personnalisée couvrant stratégie, maturité, gouvernance et déploiement d'outils. Nos consultants combinent leur expertise en intelligence artificielle avec notre plateforme de diagnostic pour des recommandations basées sur votre contexte réel.",
+        "Define your AI trajectory with a personalized roadmap covering strategy, maturity, governance, and tool deployment. Our consultants combine their artificial intelligence expertise with our diagnostic platform for recommendations based on your actual context."
+      ),
+      differentiator: t(lang,
+        "Notre diagnostic de maturité AI est propulsé par des algorithmes qui comparent votre organisation à plus de 200 benchmarks sectoriels — chaque recommandation est validée par des données réelles, puis enrichie par l'expérience terrain de nos consultants.",
+        "Our AI maturity diagnostic is powered by algorithms that compare your organization against 200+ industry benchmarks — each recommendation is validated by real data, then enriched by our consultants' field experience."
+      ),
+      phases: [
+        { name: t(lang, "Découverte & Diagnostic", "Discovery & Diagnostic"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Analyse de votre environnement technologique, entrevues parties prenantes et évaluation de maturité AI.", "Analysis of your technology environment, stakeholder interviews, and AI maturity assessment.") },
         { name: t(lang, "Idéation & Priorisation", "Ideation & Prioritization"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Identification et scoring des cas d'usage AI selon l'impact business, la faisabilité technique et l'effort requis.", "Identification and scoring of AI use cases based on business impact, technical feasibility, and required effort.") },
         { name: t(lang, "Architecture & Planning", "Architecture & Planning"), duration: t(lang, "4 semaines", "4 weeks"), desc: t(lang, "Conception de l'architecture cible, plan de données, estimation budgétaire et planification par vagues.", "Target architecture design, data plan, budget estimation, and wave-based planning.") },
-        { name: t(lang, "Validation & Livraison", "Validation & Delivery"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Revue avec le comité exécutif, ajustements et livraison du document final avec recommandations.", "Executive committee review, adjustments, and delivery of the final document with recommendations.") },
+        { name: t(lang, "Validation & Livraison", "Validation & Delivery"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Revue avec le comité exécutif, ajustements et livraison du document final.", "Executive committee review, adjustments, and final document delivery.") },
       ],
       deliverables: [
         t(lang, "Roadmap AI sur 12-18 mois", "12-18 month AI roadmap"),
@@ -205,106 +269,41 @@ function getServiceDetails(lang: Lang): Record<string, { extendedDesc: string; p
       ],
       timeline: t(lang, "10-12 semaines", "10-12 weeks"),
       idealFor: [t(lang, "VP Technologie / CIO", "VP Technology / CIO"), t(lang, "Directeur Transformation", "Director of Transformation"), t(lang, "Comité exécutif", "Executive committee")],
+      subServices: [
+        { name: t(lang, "Évaluation de maturité AI", "AI Maturity Assessment"), price: t(lang, "8 000$", "$8,000"), desc: t(lang, "Diagnostic de votre maturité AI sur 6 dimensions avec benchmark sectoriel et plan d'action.", "Diagnostic of your AI maturity across 6 dimensions with industry benchmarking and action plan."), deliverables: [t(lang, "Rapport de maturité AI", "AI maturity report"), t(lang, "Benchmark sectoriel", "Industry benchmark"), t(lang, "Plan d'action priorisé", "Prioritized action plan")], timeline: t(lang, "3-4 semaines", "3-4 weeks") },
+        { name: t(lang, "Gouvernance AI", "AI Governance"), price: t(lang, "15 000$", "$15,000"), desc: t(lang, "Cadre de gouvernance complet : politiques d'utilisation, conformité Loi 25 / EU AI Act, registre de modèles.", "Complete governance framework: usage policies, Bill 25 / EU AI Act compliance, model registry."), deliverables: [t(lang, "Politique d'utilisation de l'IA", "AI usage policy"), t(lang, "Guide de conformité", "Compliance guide"), t(lang, "Matrice RACI", "RACI matrix")], timeline: t(lang, "6-8 semaines", "6-8 weeks") },
+        { name: t(lang, "Déploiement Copilot 365", "Copilot 365 Deployment"), price: t(lang, "20 000$", "$20,000"), desc: t(lang, "Programme complet de déploiement Microsoft Copilot : audit technique, pilote, rollout par vagues et gestion du changement.", "Complete Microsoft Copilot deployment program: technical audit, pilot, wave-based rollout, and change management."), deliverables: [t(lang, "Plan de déploiement", "Deployment plan"), t(lang, "Programme de formation", "Training program"), t(lang, "Dashboard d'adoption", "Adoption dashboard")], timeline: t(lang, "10-14 semaines", "10-14 weeks") },
+        { name: t(lang, "Dossier d'affaires AI", "AI Business Case"), price: t(lang, "10 000$", "$10,000"), desc: t(lang, "Dossier d'affaires AI avec modèle financier ROI, benchmarks sectoriels et présentation exécutive.", "AI business case with ROI financial model, industry benchmarks, and executive presentation."), deliverables: [t(lang, "Dossier d'affaires complet", "Complete business case"), t(lang, "Modèle financier ROI", "ROI financial model"), t(lang, "Présentation exécutive", "Executive presentation")], timeline: t(lang, "2-3 semaines", "2-3 weeks") },
+      ],
     },
-    maturity: {
+    "performance-org": {
       extendedDesc: t(lang,
-        "L'évaluation de maturité AI offre une photographie précise de votre organisation à travers 6 dimensions clés. Notre diagnostic propriétaire combine questionnaires structurés, entrevues ciblées et benchmark sectoriel pour produire un score et des recommandations actionnables.",
-        "The AI Maturity Assessment provides a precise snapshot of your organization across 6 key dimensions. Our proprietary diagnostic combines structured questionnaires, targeted interviews, and industry benchmarking to produce a score and actionable recommendations."
+        "Renforcez les capacités humaines de votre organisation pour réussir vos transformations. Notre approche combine expertise en gestion du changement, design organisationnel et développement du leadership avec des outils AI qui accélèrent les diagnostics et personnalisent les interventions.",
+        "Strengthen your organization's human capabilities to succeed in your transformations. Our approach combines change management expertise, organizational design, and leadership development with AI tools that accelerate diagnostics and personalize interventions."
+      ),
+      differentiator: t(lang,
+        "Nos agents AI analysent les signaux organisationnels (sondages, communications, feedback) pour fournir des diagnostics en temps réel et personnaliser les interventions de changement — chaque employé reçoit un parcours adapté à son profil.",
+        "Our AI agents analyze organizational signals (surveys, communications, feedback) to provide real-time diagnostics and personalize change interventions — each employee receives a journey adapted to their profile."
       ),
       phases: [
-        { name: t(lang, "Cadrage", "Scoping"), duration: t(lang, "3 jours", "3 days"), desc: t(lang, "Définition du périmètre, identification des répondants et planification des entrevues.", "Scope definition, respondent identification, and interview planning.") },
-        { name: t(lang, "Collecte & Analyse", "Collection & Analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Questionnaires en ligne, entrevues avec 8-12 parties prenantes, analyse des résultats.", "Online questionnaires, interviews with 8-12 stakeholders, results analysis.") },
-        { name: t(lang, "Rapport & Recommandations", "Report & Recommendations"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Production du rapport de maturité avec scores par dimension, benchmark et plan d'action.", "Maturity report production with dimension scores, benchmarking, and action plan.") },
+        { name: t(lang, "Diagnostic organisationnel", "Organizational Diagnostic"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Évaluation de la culture, de la readiness au changement et cartographie des parties prenantes.", "Culture assessment, change readiness evaluation, and stakeholder mapping.") },
+        { name: t(lang, "Stratégie d'intervention", "Intervention Strategy"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Plan de changement, programme de formation, réseau d'ambassadeurs et plan de communication.", "Change plan, training program, ambassador network, and communication plan.") },
+        { name: t(lang, "Exécution & Mesure", "Execution & Measurement"), duration: t(lang, "Continu", "Ongoing"), desc: t(lang, "Déploiement du plan, coaching, formation et mesure d'adoption en temps réel.", "Plan deployment, coaching, training, and real-time adoption measurement.") },
       ],
       deliverables: [
-        t(lang, "Rapport de maturité AI (6 dimensions)", "AI maturity report (6 dimensions)"),
-        t(lang, "Score global et par dimension", "Global and per-dimension score"),
-        t(lang, "Benchmark sectoriel", "Industry benchmark"),
-        t(lang, "Plan d'action priorisé", "Prioritized action plan"),
-      ],
-      timeline: t(lang, "3-4 semaines", "3-4 weeks"),
-      idealFor: [t(lang, "CIO / CDO", "CIO / CDO"), t(lang, "Directeur Innovation", "Director of Innovation"), t(lang, "Responsable Data", "Data Lead")],
-    },
-    governance: {
-      extendedDesc: t(lang,
-        "Notre cadre de gouvernance AI vous aide à implanter les politiques, processus et structures nécessaires pour un usage responsable de l'intelligence artificielle. Nous couvrons la conformité réglementaire (Loi 25, EU AI Act, RGPD), l'éthique AI et la gestion des risques algorithmiques.",
-        "Our AI governance framework helps you implement the policies, processes, and structures needed for responsible use of artificial intelligence. We cover regulatory compliance (Bill 25, EU AI Act, GDPR), AI ethics, and algorithmic risk management."
-      ),
-      phases: [
-        { name: t(lang, "Analyse de l'existant", "Current state analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Inventaire des initiatives AI, revue des politiques existantes et analyse des écarts réglementaires.", "AI initiative inventory, existing policy review, and regulatory gap analysis.") },
-        { name: t(lang, "Conception du cadre", "Framework design"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Élaboration des politiques AI, matrices RACI, processus d'approbation et registre de modèles.", "AI policy development, RACI matrices, approval processes, and model registry.") },
-        { name: t(lang, "Implantation & Formation", "Implementation & Training"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Déploiement du cadre, formation des équipes clés et mise en place des comités de gouvernance.", "Framework deployment, key team training, and governance committee setup.") },
-      ],
-      deliverables: [
-        t(lang, "Politique d'utilisation de l'IA", "AI usage policy"),
-        t(lang, "Matrice RACI de gouvernance", "Governance RACI matrix"),
-        t(lang, "Registre des modèles AI", "AI model registry"),
-        t(lang, "Guide de conformité Loi 25 / EU AI Act", "Bill 25 / EU AI Act compliance guide"),
-        t(lang, "Cadre d'évaluation éthique", "Ethical assessment framework"),
-      ],
-      timeline: t(lang, "6-8 semaines", "6-8 weeks"),
-      idealFor: [t(lang, "CISO / DPO", "CISO / DPO"), t(lang, "VP Conformité", "VP Compliance"), t(lang, "Directeur Juridique", "General Counsel")],
-    },
-    copilot: {
-      extendedDesc: t(lang,
-        "Notre programme de déploiement Microsoft 365 Copilot est structuré pour maximiser l'adoption et le ROI. De la préparation technique à la gestion du changement, nous vous accompagnons à chaque étape pour transformer la productivité de vos équipes.",
-        "Our Microsoft 365 Copilot deployment program is structured to maximize adoption and ROI. From technical preparation to change management, we support you at every step to transform your team's productivity."
-      ),
-      phases: [
-        { name: t(lang, "Préparation technique", "Technical preparation"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Audit M365, nettoyage SharePoint/OneDrive, configuration des licences et de la sécurité.", "M365 audit, SharePoint/OneDrive cleanup, license and security configuration.") },
-        { name: t(lang, "Pilote ciblé", "Targeted pilot"), duration: t(lang, "4 semaines", "4 weeks"), desc: t(lang, "Déploiement auprès de 50 power-users, formation personnalisée et collecte de feedback.", "Deployment to 50 power users, personalized training, and feedback collection.") },
-        { name: t(lang, "Déploiement par vagues", "Wave-based rollout"), duration: t(lang, "6 semaines", "6 weeks"), desc: t(lang, "Vagues de 100-150 utilisateurs avec formation adaptée par département et rôle.", "Waves of 100-150 users with training adapted by department and role.") },
-        { name: t(lang, "Optimisation continue", "Continuous optimization"), duration: t(lang, "Continu", "Ongoing"), desc: t(lang, "Mesure d'adoption, bibliothèque de prompts, bonnes pratiques et support.", "Adoption measurement, prompt library, best practices, and support.") },
-      ],
-      deliverables: [
-        t(lang, "Plan de déploiement détaillé", "Detailed deployment plan"),
-        t(lang, "Rapport d'audit technique M365", "M365 technical audit report"),
-        t(lang, "Programme de formation par rôle", "Role-based training program"),
-        t(lang, "Bibliothèque de prompts Copilot", "Copilot prompt library"),
-        t(lang, "Dashboard d'adoption", "Adoption dashboard"),
+        t(lang, "Diagnostic organisationnel", "Organizational diagnostic"),
         t(lang, "Plan de gestion du changement", "Change management plan"),
-      ],
-      timeline: t(lang, "10-14 semaines", "10-14 weeks"),
-      idealFor: [t(lang, "CIO / Directeur TI", "CIO / IT Director"), t(lang, "VP Opérations", "VP Operations"), t(lang, "Responsable M365", "M365 Lead")],
-    },
-    "business-case": {
-      extendedDesc: t(lang,
-        "Construisez un dossier d'affaires AI convaincant grâce à notre méthodologie éprouvée. Nous combinons analyse financière rigoureuse, benchmarks sectoriels et cadre de mesure pour démontrer la valeur de vos investissements AI au comité exécutif.",
-        "Build a compelling AI business case using our proven methodology. We combine rigorous financial analysis, industry benchmarks, and a measurement framework to demonstrate the value of your AI investments to the executive committee."
-      ),
-      phases: [
-        { name: t(lang, "Analyse de valeur", "Value analysis"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Identification des leviers de valeur, collecte des données financières et opérationnelles.", "Value driver identification, financial and operational data collection.") },
-        { name: t(lang, "Modélisation financière", "Financial modeling"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Construction du modèle ROI, analyse de sensibilité et scénarios (pessimiste, réaliste, optimiste).", "ROI model construction, sensitivity analysis, and scenarios (pessimistic, realistic, optimistic).") },
-        { name: t(lang, "Livraison", "Delivery"), duration: t(lang, "3 jours", "3 days"), desc: t(lang, "Présentation exécutive avec recommandations et cadre de mesure post-déploiement.", "Executive presentation with recommendations and post-deployment measurement framework.") },
-      ],
-      deliverables: [
-        t(lang, "Dossier d'affaires complet", "Complete business case document"),
-        t(lang, "Modèle financier ROI (3 scénarios)", "ROI financial model (3 scenarios)"),
-        t(lang, "Présentation exécutive", "Executive presentation"),
-        t(lang, "Cadre de mesure de valeur", "Value measurement framework"),
-      ],
-      timeline: t(lang, "2-3 semaines", "2-3 weeks"),
-      idealFor: [t(lang, "CFO / VP Finance", "CFO / VP Finance"), t(lang, "Sponsor exécutif", "Executive sponsor"), t(lang, "PMO", "PMO")],
-    },
-    change: {
-      extendedDesc: t(lang,
-        "La gestion du changement est le facteur #1 de succès des projets AI. Notre approche couvre la communication, la formation, la gestion de la résistance et la mesure d'adoption pour garantir que vos équipes adoptent réellement les nouvelles capacités AI.",
-        "Change management is the #1 success factor for AI projects. Our approach covers communication, training, resistance management, and adoption measurement to ensure your teams truly adopt new AI capabilities."
-      ),
-      phases: [
-        { name: t(lang, "Analyse d'impact", "Impact analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Cartographie des parties prenantes, analyse d'impact par rôle et évaluation de la readiness.", "Stakeholder mapping, role-based impact analysis, and readiness assessment.") },
-        { name: t(lang, "Stratégie & Planning", "Strategy & Planning"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Plan de communication, programme de formation et réseau d'ambassadeurs.", "Communication plan, training program, and ambassador network.") },
-        { name: t(lang, "Exécution & Accompagnement", "Execution & Support"), duration: t(lang, "Continu", "Ongoing"), desc: t(lang, "Déploiement du plan, sessions de formation, coaching individuel et mesure d'adoption.", "Plan deployment, training sessions, individual coaching, and adoption measurement.") },
-      ],
-      deliverables: [
-        t(lang, "Plan de gestion du changement", "Change management plan"),
-        t(lang, "Kit de communication", "Communication kit"),
         t(lang, "Programme de formation", "Training program"),
-        t(lang, "Dashboard d'adoption", "Adoption dashboard"),
-        t(lang, "Réseau d'ambassadeurs", "Ambassador network"),
+        t(lang, "Dashboard d'adoption en temps réel", "Real-time adoption dashboard"),
+        t(lang, "Kit de communication", "Communication kit"),
       ],
       timeline: t(lang, "Continu (min. 8 semaines)", "Ongoing (min. 8 weeks)"),
-      idealFor: [t(lang, "VP RH", "VP HR"), t(lang, "Directeur Transformation", "Director of Transformation"), t(lang, "Chef de projet AI", "AI Project Manager")],
+      idealFor: [t(lang, "VP RH / CHRO", "VP HR / CHRO"), t(lang, "Directeur Transformation", "Director of Transformation"), t(lang, "VP Opérations", "VP Operations")],
+      subServices: [
+        { name: t(lang, "Gestion du changement", "Change Management"), price: t(lang, "15 000$", "$15,000"), desc: t(lang, "Programme complet de gestion du changement : analyse d'impact, plan de communication, formation et mesure d'adoption.", "Complete change management program: impact analysis, communication plan, training, and adoption measurement."), deliverables: [t(lang, "Plan de changement", "Change plan"), t(lang, "Kit de communication", "Communication kit"), t(lang, "Dashboard d'adoption", "Adoption dashboard")], timeline: t(lang, "8-12 semaines", "8-12 weeks") },
+        { name: t(lang, "Design organisationnel", "Organizational Design"), price: t(lang, "20 000$", "$20,000"), desc: t(lang, "Conception de la structure organisationnelle cible : rôles, responsabilités, gouvernance et mécanismes de coordination.", "Target organizational structure design: roles, responsibilities, governance, and coordination mechanisms."), deliverables: [t(lang, "Organigramme cible", "Target org chart"), t(lang, "Fiches de poste", "Job descriptions"), t(lang, "Plan de transition", "Transition plan")], timeline: t(lang, "6-8 semaines", "6-8 weeks") },
+        { name: t(lang, "Programme de leadership", "Leadership Program"), price: t(lang, "10 000$", "$10,000"), desc: t(lang, "Programme de développement du leadership adapté à votre contexte de transformation, avec coaching individuel et ateliers collectifs.", "Leadership development program adapted to your transformation context, with individual coaching and group workshops."), deliverables: [t(lang, "Programme de développement", "Development program"), t(lang, "Sessions de coaching", "Coaching sessions"), t(lang, "Évaluation 360°", "360° assessment")], timeline: t(lang, "Continu", "Ongoing") },
+      ],
     },
   };
 }
@@ -462,14 +461,14 @@ function Hero() {
           </Badge>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-6" style={HDR_FONT}>
-            {t(lang, "Le consulting AI,", "AI consulting,")}{" "}
+            {t(lang, "Le consulting virtuel,", "Virtual consulting,")}{" "}
             <span className="text-gradient">{t(lang, "réinventé.", "reinvented.")}</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-white/50 leading-relaxed mb-10 max-w-xl">
             {t(lang,
-              "Accédez à l'expertise AI de Talsom Forge en libre-service. Services virtuels, outils spécialisés et chat AI expert — le tout sur une plateforme unique.",
-              "Access Talsom Forge AI expertise on-demand. Virtual services, specialized tools, and expert AI chat — all on a single platform."
+              "Accédez à l'expertise de consultants seniors, amplifiée par l'AI. Processus, modernisation, intelligence artificielle et performance organisationnelle — le tout sur une plateforme unique.",
+              "Access senior consultant expertise, amplified by AI. Process design, modernization, artificial intelligence, and organizational performance — all on a single platform."
             )}
           </p>
 
@@ -553,6 +552,53 @@ function ServiceDetailContent({ serviceId }: { serviceId: string }) {
         </div>
 
         <p className="text-sm text-gray-600 leading-relaxed mb-5">{detail.extendedDesc}</p>
+
+        {/* Differentiator callout */}
+        <div className="rounded-xl p-4 mb-5 flex gap-3" style={{ background: C.greenLight }}>
+          <Sparkles className="w-5 h-5 shrink-0 mt-0.5" style={{ color: C.green }} />
+          <div>
+            <p className="text-xs font-semibold mb-1" style={{ color: C.green }}>{t(lang, "Humain + AI : notre différenciateur", "Human + AI: our differentiator")}</p>
+            <p className="text-xs leading-relaxed" style={{ color: C.greenMid }}>{detail.differentiator}</p>
+          </div>
+        </div>
+        <Separator />
+
+        {/* Sub-services accordion */}
+        {detail.subServices.length > 0 && (
+          <div className="py-5">
+            <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: C.green }}>
+              <Briefcase className="w-4 h-4" />
+              {t(lang, "Sous-services disponibles", "Available sub-services")}
+            </h4>
+            <Accordion type="single" collapsible className="space-y-2">
+              {detail.subServices.map((sub, i) => (
+                <AccordionItem key={i} value={`sub-${i}`} className="border border-gray-100 rounded-xl px-4 data-[state=open]:border-gray-200 data-[state=open]:bg-gray-50/50">
+                  <AccordionTrigger className="text-sm font-semibold text-left py-3 hover:no-underline text-gray-900">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span>{sub.name}</span>
+                      <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 rounded-full ml-auto mr-2">{sub.price}</Badge>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4">
+                    <p className="text-xs text-gray-500 leading-relaxed mb-3">{sub.desc}</p>
+                    <div className="space-y-1.5 mb-3">
+                      {sub.deliverables.map((d) => (
+                        <div key={d} className="flex items-center gap-2 text-xs text-gray-600">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.greenMid }} />
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                    <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 rounded-full">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {sub.timeline}
+                    </Badge>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
         <Separator />
 
         {/* Phases */}
@@ -737,17 +783,17 @@ function ServicesSection() {
         <div ref={ref} className="reveal max-w-2xl mb-16">
           <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Services virtuels", "Virtual services")}</Badge>
           <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
-            {lang === "fr" ? <>Des services AI à la carte,<br />livrés virtuellement.</> : <>À la carte AI services,<br />delivered virtually.</>}
+            {lang === "fr" ? <>Du consulting virtuel,<br />propulsé par l'AI.</> : <>Virtual consulting,<br />powered by AI.</>}
           </h2>
           <p className={`text-lg leading-relaxed ${dark ? "text-white/45" : "text-gray-500"}`}>
             {t(lang,
-              "Choisissez les expertises dont vous avez besoin. Chaque service combine l'intelligence artificielle de notre plateforme avec l'accompagnement de nos consultants.",
-              "Choose the expertise you need. Each service combines our platform's artificial intelligence with the guidance of our consultants."
+              "Choisissez parmi nos 4 domaines d'expertise. Chaque service combine l'accompagnement de consultants seniors avec la puissance de nos agents AI.",
+              "Choose from our 4 areas of expertise. Each service combines senior consultant guidance with the power of our AI agents."
             )}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
+        <div className="grid md:grid-cols-2 gap-5 reveal-stagger">
           {services.map((svc) => (
             <Card key={svc.id} className={`reveal group relative border hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden ${dark ? "bg-gray-900 border-white/5 hover:border-white/10" : "border-gray-100 hover:border-gray-200"}`}>
               {svc.popular && (
@@ -800,15 +846,15 @@ function HowItWorks() {
   const ref = useReveal();
   const steps = lang === "fr"
     ? [
-        { icon: Target, title: "Choisissez", desc: "Sélectionnez un service ou un outil AI depuis notre marketplace." },
-        { icon: MessageSquare, title: "Échangez", desc: "Affinez votre besoin avec notre chat AI spécialisé en consulting." },
-        { icon: Zap, title: "Recevez", desc: "Obtenez vos livrables générés par AI et validés par nos experts." },
+        { icon: Target, title: "Choisissez", desc: "Sélectionnez un domaine d'expertise parmi nos 4 catégories de services." },
+        { icon: MessageSquare, title: "Échangez", desc: "Affinez votre besoin avec nos consultants seniors et notre chat AI expert." },
+        { icon: Zap, title: "Recevez", desc: "Obtenez vos livrables co-produits par nos consultants et agents AI." },
         { icon: TrendingUp, title: "Itérez", desc: "Améliorez continuellement avec le suivi et les recommandations." },
       ]
     : [
-        { icon: Target, title: "Choose", desc: "Select an AI service or tool from our marketplace." },
-        { icon: MessageSquare, title: "Discuss", desc: "Refine your needs with our consulting-specialized AI chat." },
-        { icon: Zap, title: "Receive", desc: "Get your AI-generated deliverables validated by our experts." },
+        { icon: Target, title: "Choose", desc: "Select an area of expertise from our 4 service categories." },
+        { icon: MessageSquare, title: "Discuss", desc: "Refine your needs with our senior consultants and expert AI chat." },
+        { icon: Zap, title: "Receive", desc: "Get your deliverables co-produced by our consultants and AI agents." },
         { icon: TrendingUp, title: "Iterate", desc: "Continuously improve with tracking and recommendations." },
       ];
 
@@ -912,7 +958,7 @@ function Testimonials() {
         <div ref={ref} className="reveal text-center max-w-2xl mx-auto mb-16">
           <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Témoignages", "Testimonials")}</Badge>
           <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>{t(lang, "Ce que disent nos clients", "What our clients say")}</h2>
-          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Des leaders de l'industrie nous font confiance pour accélérer leur transformation AI.", "Industry leaders trust us to accelerate their AI transformation.")}</p>
+          <p className={dark ? "text-white/40" : "text-gray-500"}>{t(lang, "Des leaders de l'industrie nous font confiance pour accélérer leur transformation.", "Industry leaders trust us to accelerate their transformation.")}</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 reveal-stagger">
@@ -1021,14 +1067,14 @@ function AIChatSection() {
 
   const chatFeatures = lang === "fr"
     ? [
-        { icon: Brain, text: "Expertise AI, data et transformation digitale" },
-        { icon: BookOpen, text: "Génération de rapports, roadmaps et analyses" },
+        { icon: Brain, text: "Expertise processus, modernisation, AI et performance" },
+        { icon: BookOpen, text: "Génération de diagnostics, roadmaps et analyses" },
         { icon: Lock, text: "Conformité Loi 25, EU AI Act, RGPD" },
         { icon: Globe, text: "Bilingue français / anglais" },
       ]
     : [
-        { icon: Brain, text: "AI, data, and digital transformation expertise" },
-        { icon: BookOpen, text: "Report, roadmap, and analysis generation" },
+        { icon: Brain, text: "Process, modernization, AI, and performance expertise" },
+        { icon: BookOpen, text: "Diagnostic, roadmap, and analysis generation" },
         { icon: Lock, text: "Bill 25, EU AI Act, GDPR compliance" },
         { icon: Globe, text: "Bilingual French / English" },
       ];
@@ -1040,9 +1086,9 @@ function AIChatSection() {
           <div ref={ref} className="reveal lg:sticky lg:top-32">
             <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>AI Chat Expert</Badge>
             <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
-              {lang === "fr" ? <>Un consultant AI,<br />disponible 24/7.</> : <>An AI consultant,<br />available 24/7.</>}
+              {lang === "fr" ? <>Votre consultant virtuel,<br />disponible 24/7.</> : <>Your virtual consultant,<br />available 24/7.</>}
             </h2>
-            <p className={`text-lg leading-relaxed mb-8 ${dark ? "text-white/45" : "text-gray-500"}`}>{t(lang, "Notre chat AI est entraîné sur des milliers de projets de transformation digitale et AI. Il comprend votre contexte, pose les bonnes questions et génère des livrables prêts à l'emploi.", "Our AI chat is trained on thousands of digital transformation and AI projects. It understands your context, asks the right questions, and generates ready-to-use deliverables.")}</p>
+            <p className={`text-lg leading-relaxed mb-8 ${dark ? "text-white/45" : "text-gray-500"}`}>{t(lang, "Notre chat AI est entraîné sur des milliers de mandats de consulting : processus, modernisation, AI et performance organisationnelle. Il pose les bonnes questions et génère des livrables prêts à l'emploi.", "Our AI chat is trained on thousands of consulting engagements: process, modernization, AI, and organizational performance. It asks the right questions and generates ready-to-use deliverables.")}</p>
             <div className="space-y-4">
               {chatFeatures.map((it) => (
                 <div key={it.text} className="flex items-center gap-3">
@@ -1126,7 +1172,7 @@ function AIChatSection() {
             <div className={`border-t p-4 ${dark ? "bg-gray-900 border-white/5" : "bg-white border-gray-100"}`}>
               <div className="flex gap-2">
                 <Input
-                  placeholder={demoEnded ? t(lang, "Démo terminée — recommencez ou accédez au chat complet", "Demo ended — restart or access full chat") : t(lang, "Posez une question sur l'AI…", "Ask an AI question…")}
+                  placeholder={demoEnded ? t(lang, "Démo terminée — recommencez ou accédez au chat complet", "Demo ended — restart or access full chat") : t(lang, "Posez une question sur vos enjeux d'affaires…", "Ask a question about your business challenges…")}
                   value={inputVal}
                   readOnly
                   onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSend()}
@@ -1351,8 +1397,8 @@ function CTABanner() {
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.15] blur-[140px]" style={{ background: C.yellow }} />
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-[140px]" style={{ background: "#4AE0D2" }} />
       <div className="relative max-w-3xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>{t(lang, "Prêt à transformer votre approche AI?", "Ready to transform your AI approach?")}</h2>
-        <p className="text-lg text-white/45 mb-8">{t(lang, "Rejoignez la beta et accédez à l'expertise AI de Talsom Forge, disponible en quelques clics.", "Join the beta and access Talsom Forge AI expertise, available in just a few clicks.")}</p>
+        <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>{t(lang, "Prêt à transformer votre organisation?", "Ready to transform your organization?")}</h2>
+        <p className="text-lg text-white/45 mb-8">{t(lang, "Rejoignez la beta et accédez à l'expertise de Talsom Forge — consultants seniors et AI, disponibles en quelques clics.", "Join the beta and access Talsom Forge expertise — senior consultants and AI, available in just a few clicks.")}</p>
         <div className="flex flex-wrap justify-center gap-4">
           <a href="#contact">
             <Button size="lg" className="rounded-full px-8 h-12 font-semibold hover:opacity-90 border-0 transition-opacity" style={{ background: C.yellow, color: C.green }}>
@@ -1376,12 +1422,12 @@ function Footer() {
   const { lang } = useLang();
   const footerCols = lang === "fr"
     ? [
-        { title: "Services", links: ["AI Roadmap", "Maturity Assessment", "Governance", "Copilot Deployment", "Business Case"] },
+        { title: "Services", links: ["Business et Process Design", "Roadmap de modernisation", "Roadmap IA", "Performance organisationnelle"] },
         { title: "Marketplace", links: ["Talsom Forge Hub", "AI Backlog Manager", "Privacy Assessor", "Governance Suite"] },
         { title: "Entreprise", links: ["À propos", "Carrières", "Blog", "Contact", "Mentions légales"] },
       ]
     : [
-        { title: "Services", links: ["AI Roadmap", "Maturity Assessment", "Governance", "Copilot Deployment", "Business Case"] },
+        { title: "Services", links: ["Business & Process Design", "Modernization Roadmap", "AI Roadmap", "Organizational Performance"] },
         { title: "Marketplace", links: ["Talsom Forge Hub", "AI Backlog Manager", "Privacy Assessor", "Governance Suite"] },
         { title: "Company", links: ["About", "Careers", "Blog", "Contact", "Legal"] },
       ];
