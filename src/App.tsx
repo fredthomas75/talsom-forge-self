@@ -66,11 +66,24 @@ const MARKETPLACE_PRODUCTS = [
   { id: "governance-tool", name: "AI Governance Suite", tagline: "Gouvernance AI clé en main", desc: "Cadre de gouvernance complet avec modèles de politiques, matrices RACI, registres de modèles et tableaux de bord de conformité.", features: ["Politiques AI", "RACI automatisé", "Registre de modèles", "Audit trail"], tier: "Suite", badgeCls: "bg-[#D2D9D9]/15 text-[#D2D9D9] border-[#D2D9D9]/25" },
 ];
 
-const CHAT_DEMO_MESSAGES = [
-  { role: "user" as const, text: "Je veux déployer Microsoft Copilot dans mon organisation de 500 personnes. Par où commencer?" },
-  { role: "assistant" as const, text: "Excellent choix! Pour un déploiement Copilot 365 à cette échelle, je recommande une approche en 4 phases :\n\n1. **Évaluation de préparation** — Audit de votre environnement M365, qualité des données SharePoint/OneDrive, licences actuelles\n2. **Pilote ciblé** — 50 utilisateurs power-users sur 4-6 semaines\n3. **Déploiement progressif** — Vagues de 100-150 utilisateurs avec formation adaptée\n4. **Optimisation continue** — Mesure d'adoption, ajustement des prompts, bonnes pratiques\n\nVoulez-vous que je génère un plan de déploiement détaillé avec échéancier et budget estimé?" },
-  { role: "user" as const, text: "Oui, génère-moi le plan complet avec l'estimation budgétaire." },
-  { role: "assistant" as const, text: "Je prépare votre plan de déploiement Copilot 365. Voici un aperçu :\n\n📋 **Plan généré** — Copilot365_Deployment_Talsom.pdf\n\n**Budget estimé :**\n→ Licences Copilot (500 users) : ~450 000$ /an\n→ Accompagnement Talsom : 45 000$\n→ Formation & change management : 25 000$\n→ **Total Année 1 : ~520 000$**\n\n**ROI projeté :** Gain de productivité de 8-12h/mois/utilisateur, retour estimé de 2.1x sur 18 mois.\n\nLe document est prêt. Voulez-vous aussi l'analyse de risques et le plan de gestion du changement?" },
+/* Each "exchange" pairs a user message with an assistant reply.
+   The demo pre-fills the input so users know to click Send. */
+const CHAT_EXCHANGES: { user: string; assistant: string }[] = [
+  {
+    user: "Je veux déployer Microsoft Copilot dans mon organisation de 500 personnes. Par où commencer?",
+    assistant:
+      "Excellent choix! Pour un déploiement Copilot 365 à cette échelle, je recommande une approche en 4 phases :\n\n1. **Évaluation de préparation** — Audit de votre environnement M365, qualité des données SharePoint/OneDrive, licences actuelles\n2. **Pilote ciblé** — 50 utilisateurs power-users sur 4-6 semaines\n3. **Déploiement progressif** — Vagues de 100-150 utilisateurs avec formation adaptée\n4. **Optimisation continue** — Mesure d'adoption, ajustement des prompts, bonnes pratiques\n\nVoulez-vous que je génère un plan de déploiement détaillé avec échéancier et budget estimé?",
+  },
+  {
+    user: "Oui, génère-moi le plan complet avec l'estimation budgétaire.",
+    assistant:
+      "Je prépare votre plan de déploiement Copilot 365. Voici un aperçu :\n\n**Plan généré** — Copilot365_Deployment_Talsom.pdf\n\n**Budget estimé :**\n→ Licences Copilot (500 users) : ~450 000$ /an\n→ Accompagnement Talsom : 45 000$\n→ Formation & change management : 25 000$\n→ **Total Année 1 : ~520 000$**\n\n**ROI projeté :** Gain de productivité de 8-12h/mois/utilisateur, retour estimé de 2.1x sur 18 mois.\n\nLe document est prêt. Voulez-vous aussi l'analyse de risques et le plan de gestion du changement?",
+  },
+  {
+    user: "Oui, inclus l'analyse de risques.",
+    assistant:
+      "Voici les principaux risques identifiés pour votre déploiement :\n\n**Risques élevés :**\n→ Qualité des données SharePoint insuffisante — **mitigation :** audit et nettoyage pré-déploiement\n→ Résistance au changement des équipes — **mitigation :** ambassadeurs par département + formation ciblée\n\n**Risques modérés :**\n→ Dépassement de budget licences — **mitigation :** pilote mesuré avant engagement annuel\n→ Dépendance fournisseur Microsoft — **mitigation :** gouvernance multi-cloud\n\nJe peux générer le rapport complet avec matrice de risques et plan de mitigation. Souhaitez-vous le recevoir en PDF?",
+  },
 ];
 
 const STATS = [
@@ -354,32 +367,67 @@ function MarketplaceSection() {
 
 // ─── AI CHAT ─────────────────────────────────────────
 
+type ChatMsg = { role: "user" | "assistant"; text: string };
+
 function AIChatSection() {
-  const [messages, setMessages] = useState(CHAT_DEMO_MESSAGES.slice(0, 1));
-  const [inputVal, setInputVal] = useState("");
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [inputVal, setInputVal] = useState(CHAT_EXCHANGES[0]?.user ?? "");
   const [typing, setTyping] = useState(false);
+  const [exchangeIdx, setExchangeIdx] = useState(0); // which exchange we're on
+  const [demoEnded, setDemoEnded] = useState(false);
   const chatEnd = useRef<HTMLDivElement>(null);
-  const idx = useRef(1);
+  const busy = useRef(false); // prevents double-sends
   const isInitialMount = useRef(true);
 
+  // Scroll to bottom when messages change (skip initial render)
   useEffect(() => {
     if (isInitialMount.current) { isInitialMount.current = false; return; }
     chatEnd.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [messages]);
+  }, [messages, typing]);
 
-  const addNext = () => {
-    if (idx.current >= CHAT_DEMO_MESSAGES.length) return;
-    setTyping(true);
-    setTimeout(() => { setMessages((p) => [...p, CHAT_DEMO_MESSAGES[idx.current]]); idx.current += 1; setTyping(false); }, 1200);
+  const restart = () => {
+    busy.current = false;
+    setMessages([]);
+    setInputVal(CHAT_EXCHANGES[0]?.user ?? "");
+    setExchangeIdx(0);
+    setDemoEnded(false);
+    setTyping(false);
+    isInitialMount.current = true;
   };
 
   const handleSend = () => {
-    if (idx.current >= CHAT_DEMO_MESSAGES.length) return;
-    const next = CHAT_DEMO_MESSAGES[idx.current];
-    if (next.role === "user") {
-      setMessages((p) => [...p, next]); idx.current += 1; setInputVal("");
-      setTimeout(addNext, 500);
-    } else { addNext(); setInputVal(""); }
+    if (busy.current || demoEnded) return;
+    if (exchangeIdx >= CHAT_EXCHANGES.length) { setDemoEnded(true); return; }
+
+    const exchange = CHAT_EXCHANGES[exchangeIdx];
+    busy.current = true;
+
+    // 1. Add user message immediately
+    setMessages((prev) => [...prev, { role: "user", text: exchange.user }]);
+    setInputVal("");
+
+    // 2. Show typing indicator, then add assistant response
+    setTimeout(() => {
+      setTyping(true);
+    }, 400);
+
+    const typingDuration = Math.min(1200 + exchange.assistant.length * 2, 3000);
+    setTimeout(() => {
+      setTyping(false);
+      setMessages((prev) => [...prev, { role: "assistant", text: exchange.assistant }]);
+
+      const nextIdx = exchangeIdx + 1;
+      setExchangeIdx(nextIdx);
+      busy.current = false;
+
+      if (nextIdx >= CHAT_EXCHANGES.length) {
+        setDemoEnded(true);
+        setInputVal("");
+      } else {
+        // Pre-fill next user message
+        setInputVal(CHAT_EXCHANGES[nextIdx].user);
+      }
+    }, typingDuration);
   };
 
   return (
@@ -421,11 +469,20 @@ function AIChatSection() {
                   <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#4AE0D2" }} /> En ligne
                 </p>
               </div>
-              <Badge className="ml-auto border-0 text-[10px] rounded-full font-semibold" style={{ background: C.yellowLight, color: C.green }}>Beta</Badge>
+              <Badge className="ml-auto border-0 text-[10px] rounded-full font-semibold" style={{ background: C.yellowLight, color: C.green }}>Demo</Badge>
             </div>
 
             {/* Messages */}
             <div className="h-[440px] overflow-y-auto px-5 py-5 space-y-4">
+              {/* Welcome message when empty */}
+              {messages.length === 0 && !typing && (
+                <div className="flex justify-start chat-bubble-in">
+                  <div className="max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3 text-sm leading-relaxed bg-white border border-gray-100 text-gray-700 shadow-sm">
+                    Bonjour! Je suis votre consultant AI Talsom Forge. Cliquez <strong>Envoyer</strong> pour démarrer la démo interactive.
+                  </div>
+                </div>
+              )}
+
               {messages.map((m, i) => (
                 <div key={i} className={`chat-bubble-in flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"}`} style={m.role === "user" ? { background: C.green } : undefined}>
@@ -449,18 +506,47 @@ function AIChatSection() {
                   </div>
                 </div>
               )}
+
+              {/* End-of-demo CTA */}
+              {demoEnded && (
+                <div className="chat-bubble-in flex flex-col items-center gap-3 py-4">
+                  <p className="text-xs text-gray-400">Fin de la démo interactive</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" className="rounded-full text-xs border-gray-200" onClick={restart}>
+                      Recommencer la démo
+                    </Button>
+                    <Button size="sm" className="rounded-full text-xs border-0 hover:opacity-90" style={{ background: C.yellow, color: C.green }}>
+                      Accéder au chat complet
+                    </Button>
+                  </div>
+                </div>
+              )}
               <div ref={chatEnd} />
             </div>
 
             {/* Input */}
             <div className="border-t border-gray-100 bg-white p-4">
               <div className="flex gap-2">
-                <Input placeholder="Posez une question sur l'AI…" value={inputVal} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputVal(e.target.value)} onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSend()} className="rounded-full border-gray-200 bg-gray-50 text-sm" />
-                <Button size="icon" onClick={handleSend} className="rounded-full shrink-0 hover:opacity-90 border-0" style={{ background: C.green, color: C.yellow }}>
+                <Input
+                  placeholder={demoEnded ? "Démo terminée — recommencez ou accédez au chat complet" : "Posez une question sur l'AI…"}
+                  value={inputVal}
+                  readOnly
+                  onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && handleSend()}
+                  className="rounded-full border-gray-200 bg-gray-50 text-sm cursor-default"
+                />
+                <Button
+                  size="icon"
+                  onClick={handleSend}
+                  disabled={busy.current || demoEnded}
+                  className="rounded-full shrink-0 hover:opacity-90 border-0 disabled:opacity-40"
+                  style={{ background: C.green, color: C.yellow }}
+                >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 text-center">Démo interactive · Cliquez envoyer pour voir la conversation</p>
+              <p className="text-[10px] text-gray-400 mt-2 text-center">
+                {demoEnded ? "Merci d'avoir exploré la démo!" : `Démo interactive · Étape ${exchangeIdx + 1}/${CHAT_EXCHANGES.length}`}
+              </p>
             </div>
           </div>
         </div>
