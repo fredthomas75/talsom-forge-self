@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ArrowRight,
   Brain,
@@ -27,6 +29,8 @@ import {
   TrendingUp,
   MessageSquare,
   ChevronsRight,
+  Clock,
+  Layers,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════
@@ -123,6 +127,192 @@ function getPlans(lang: Lang) {
     { name: "Professional", price: t(lang, "990$/mois", "$990/month"), sub: t(lang, "Pour les équipes", "For teams"), features: [t(lang, "Chat AI illimité", "Unlimited AI Chat"), t(lang, "Tous les diagnostics", "All diagnostics"), t(lang, "Génération de livrables", "Deliverable generation"), t(lang, "5 services virtuels/mois", "5 virtual services/month"), t(lang, "Support prioritaire", "Priority support"), t(lang, "Intégration Microsoft 365", "Microsoft 365 integration")], cta: t(lang, "Essai gratuit 14 jours", "Free 14-day trial"), highlight: true },
     { name: "Enterprise", price: t(lang, "Sur mesure", "Custom"), sub: t(lang, "Pour les grandes organisations", "For large organizations"), features: [t(lang, "Tout Professional +", "Everything in Professional +"), t(lang, "Consultants dédiés", "Dedicated consultants"), t(lang, "Personnalisation complète", "Full customization"), t(lang, "SLA garanti", "Guaranteed SLA"), t(lang, "Formation sur site", "On-site training"), "API & integrations"], cta: t(lang, "Contactez-nous", "Contact us"), highlight: false },
   ];
+}
+
+// ─── SERVICE & MARKETPLACE DETAIL DATA ──────────────
+
+function getServiceDetails(lang: Lang): Record<string, { extendedDesc: string; phases: { name: string; duration: string; desc: string }[]; deliverables: string[]; timeline: string; idealFor: string[] }> {
+  return {
+    roadmap: {
+      extendedDesc: t(lang,
+        "Notre service AI Roadmap combine l'expertise stratégique de Talsom avec des outils d'analyse propriétaires pour créer une feuille de route AI actionnable. Nous analysons votre maturité actuelle, identifions les cas d'usage à fort impact et construisons un plan d'exécution réaliste aligné sur vos capacités et votre budget.",
+        "Our AI Roadmap service combines Talsom's strategic expertise with proprietary analysis tools to create an actionable AI roadmap. We analyze your current maturity, identify high-impact use cases, and build a realistic execution plan aligned with your capabilities and budget."
+      ),
+      phases: [
+        { name: t(lang, "Découverte & Diagnostic", "Discovery & Diagnostic"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Analyse de votre environnement technologique, entrevues avec les parties prenantes et évaluation de maturité AI.", "Analysis of your technology environment, stakeholder interviews, and AI maturity assessment.") },
+        { name: t(lang, "Idéation & Priorisation", "Ideation & Prioritization"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Identification et scoring des cas d'usage AI selon l'impact business, la faisabilité technique et l'effort requis.", "Identification and scoring of AI use cases based on business impact, technical feasibility, and required effort.") },
+        { name: t(lang, "Architecture & Planning", "Architecture & Planning"), duration: t(lang, "4 semaines", "4 weeks"), desc: t(lang, "Conception de l'architecture cible, plan de données, estimation budgétaire et planification par vagues.", "Target architecture design, data plan, budget estimation, and wave-based planning.") },
+        { name: t(lang, "Validation & Livraison", "Validation & Delivery"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Revue avec le comité exécutif, ajustements et livraison du document final avec recommandations.", "Executive committee review, adjustments, and delivery of the final document with recommendations.") },
+      ],
+      deliverables: [
+        t(lang, "Roadmap AI sur 12-18 mois", "12-18 month AI roadmap"),
+        t(lang, "Matrice de priorisation des cas d'usage", "Use case prioritization matrix"),
+        t(lang, "Estimation budgétaire par phase", "Phase-by-phase budget estimation"),
+        t(lang, "Architecture cible de données et infrastructure", "Target data and infrastructure architecture"),
+        t(lang, "Plan de gouvernance AI", "AI governance plan"),
+        t(lang, "Présentation exécutive", "Executive presentation"),
+      ],
+      timeline: t(lang, "10-12 semaines", "10-12 weeks"),
+      idealFor: [t(lang, "VP Technologie / CIO", "VP Technology / CIO"), t(lang, "Directeur Transformation", "Director of Transformation"), t(lang, "Comité exécutif", "Executive committee")],
+    },
+    maturity: {
+      extendedDesc: t(lang,
+        "L'évaluation de maturité AI offre une photographie précise de votre organisation à travers 6 dimensions clés. Notre diagnostic propriétaire combine questionnaires structurés, entrevues ciblées et benchmark sectoriel pour produire un score et des recommandations actionnables.",
+        "The AI Maturity Assessment provides a precise snapshot of your organization across 6 key dimensions. Our proprietary diagnostic combines structured questionnaires, targeted interviews, and industry benchmarking to produce a score and actionable recommendations."
+      ),
+      phases: [
+        { name: t(lang, "Cadrage", "Scoping"), duration: t(lang, "3 jours", "3 days"), desc: t(lang, "Définition du périmètre, identification des répondants et planification des entrevues.", "Scope definition, respondent identification, and interview planning.") },
+        { name: t(lang, "Collecte & Analyse", "Collection & Analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Questionnaires en ligne, entrevues avec 8-12 parties prenantes, analyse des résultats.", "Online questionnaires, interviews with 8-12 stakeholders, results analysis.") },
+        { name: t(lang, "Rapport & Recommandations", "Report & Recommendations"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Production du rapport de maturité avec scores par dimension, benchmark et plan d'action.", "Maturity report production with dimension scores, benchmarking, and action plan.") },
+      ],
+      deliverables: [
+        t(lang, "Rapport de maturité AI (6 dimensions)", "AI maturity report (6 dimensions)"),
+        t(lang, "Score global et par dimension", "Global and per-dimension score"),
+        t(lang, "Benchmark sectoriel", "Industry benchmark"),
+        t(lang, "Plan d'action priorisé", "Prioritized action plan"),
+      ],
+      timeline: t(lang, "3-4 semaines", "3-4 weeks"),
+      idealFor: [t(lang, "CIO / CDO", "CIO / CDO"), t(lang, "Directeur Innovation", "Director of Innovation"), t(lang, "Responsable Data", "Data Lead")],
+    },
+    governance: {
+      extendedDesc: t(lang,
+        "Notre cadre de gouvernance AI vous aide à implanter les politiques, processus et structures nécessaires pour un usage responsable de l'intelligence artificielle. Nous couvrons la conformité réglementaire (Loi 25, EU AI Act, RGPD), l'éthique AI et la gestion des risques algorithmiques.",
+        "Our AI governance framework helps you implement the policies, processes, and structures needed for responsible use of artificial intelligence. We cover regulatory compliance (Bill 25, EU AI Act, GDPR), AI ethics, and algorithmic risk management."
+      ),
+      phases: [
+        { name: t(lang, "Analyse de l'existant", "Current state analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Inventaire des initiatives AI, revue des politiques existantes et analyse des écarts réglementaires.", "AI initiative inventory, existing policy review, and regulatory gap analysis.") },
+        { name: t(lang, "Conception du cadre", "Framework design"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Élaboration des politiques AI, matrices RACI, processus d'approbation et registre de modèles.", "AI policy development, RACI matrices, approval processes, and model registry.") },
+        { name: t(lang, "Implantation & Formation", "Implementation & Training"), duration: t(lang, "3 semaines", "3 weeks"), desc: t(lang, "Déploiement du cadre, formation des équipes clés et mise en place des comités de gouvernance.", "Framework deployment, key team training, and governance committee setup.") },
+      ],
+      deliverables: [
+        t(lang, "Politique d'utilisation de l'IA", "AI usage policy"),
+        t(lang, "Matrice RACI de gouvernance", "Governance RACI matrix"),
+        t(lang, "Registre des modèles AI", "AI model registry"),
+        t(lang, "Guide de conformité Loi 25 / EU AI Act", "Bill 25 / EU AI Act compliance guide"),
+        t(lang, "Cadre d'évaluation éthique", "Ethical assessment framework"),
+      ],
+      timeline: t(lang, "6-8 semaines", "6-8 weeks"),
+      idealFor: [t(lang, "CISO / DPO", "CISO / DPO"), t(lang, "VP Conformité", "VP Compliance"), t(lang, "Directeur Juridique", "General Counsel")],
+    },
+    copilot: {
+      extendedDesc: t(lang,
+        "Notre programme de déploiement Microsoft 365 Copilot est structuré pour maximiser l'adoption et le ROI. De la préparation technique à la gestion du changement, nous vous accompagnons à chaque étape pour transformer la productivité de vos équipes.",
+        "Our Microsoft 365 Copilot deployment program is structured to maximize adoption and ROI. From technical preparation to change management, we support you at every step to transform your team's productivity."
+      ),
+      phases: [
+        { name: t(lang, "Préparation technique", "Technical preparation"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Audit M365, nettoyage SharePoint/OneDrive, configuration des licences et de la sécurité.", "M365 audit, SharePoint/OneDrive cleanup, license and security configuration.") },
+        { name: t(lang, "Pilote ciblé", "Targeted pilot"), duration: t(lang, "4 semaines", "4 weeks"), desc: t(lang, "Déploiement auprès de 50 power-users, formation personnalisée et collecte de feedback.", "Deployment to 50 power users, personalized training, and feedback collection.") },
+        { name: t(lang, "Déploiement par vagues", "Wave-based rollout"), duration: t(lang, "6 semaines", "6 weeks"), desc: t(lang, "Vagues de 100-150 utilisateurs avec formation adaptée par département et rôle.", "Waves of 100-150 users with training adapted by department and role.") },
+        { name: t(lang, "Optimisation continue", "Continuous optimization"), duration: t(lang, "Continu", "Ongoing"), desc: t(lang, "Mesure d'adoption, bibliothèque de prompts, bonnes pratiques et support.", "Adoption measurement, prompt library, best practices, and support.") },
+      ],
+      deliverables: [
+        t(lang, "Plan de déploiement détaillé", "Detailed deployment plan"),
+        t(lang, "Rapport d'audit technique M365", "M365 technical audit report"),
+        t(lang, "Programme de formation par rôle", "Role-based training program"),
+        t(lang, "Bibliothèque de prompts Copilot", "Copilot prompt library"),
+        t(lang, "Dashboard d'adoption", "Adoption dashboard"),
+        t(lang, "Plan de gestion du changement", "Change management plan"),
+      ],
+      timeline: t(lang, "10-14 semaines", "10-14 weeks"),
+      idealFor: [t(lang, "CIO / Directeur TI", "CIO / IT Director"), t(lang, "VP Opérations", "VP Operations"), t(lang, "Responsable M365", "M365 Lead")],
+    },
+    "business-case": {
+      extendedDesc: t(lang,
+        "Construisez un dossier d'affaires AI convaincant grâce à notre méthodologie éprouvée. Nous combinons analyse financière rigoureuse, benchmarks sectoriels et cadre de mesure pour démontrer la valeur de vos investissements AI au comité exécutif.",
+        "Build a compelling AI business case using our proven methodology. We combine rigorous financial analysis, industry benchmarks, and a measurement framework to demonstrate the value of your AI investments to the executive committee."
+      ),
+      phases: [
+        { name: t(lang, "Analyse de valeur", "Value analysis"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Identification des leviers de valeur, collecte des données financières et opérationnelles.", "Value driver identification, financial and operational data collection.") },
+        { name: t(lang, "Modélisation financière", "Financial modeling"), duration: t(lang, "1 semaine", "1 week"), desc: t(lang, "Construction du modèle ROI, analyse de sensibilité et scénarios (pessimiste, réaliste, optimiste).", "ROI model construction, sensitivity analysis, and scenarios (pessimistic, realistic, optimistic).") },
+        { name: t(lang, "Livraison", "Delivery"), duration: t(lang, "3 jours", "3 days"), desc: t(lang, "Présentation exécutive avec recommandations et cadre de mesure post-déploiement.", "Executive presentation with recommendations and post-deployment measurement framework.") },
+      ],
+      deliverables: [
+        t(lang, "Dossier d'affaires complet", "Complete business case document"),
+        t(lang, "Modèle financier ROI (3 scénarios)", "ROI financial model (3 scenarios)"),
+        t(lang, "Présentation exécutive", "Executive presentation"),
+        t(lang, "Cadre de mesure de valeur", "Value measurement framework"),
+      ],
+      timeline: t(lang, "2-3 semaines", "2-3 weeks"),
+      idealFor: [t(lang, "CFO / VP Finance", "CFO / VP Finance"), t(lang, "Sponsor exécutif", "Executive sponsor"), t(lang, "PMO", "PMO")],
+    },
+    change: {
+      extendedDesc: t(lang,
+        "La gestion du changement est le facteur #1 de succès des projets AI. Notre approche couvre la communication, la formation, la gestion de la résistance et la mesure d'adoption pour garantir que vos équipes adoptent réellement les nouvelles capacités AI.",
+        "Change management is the #1 success factor for AI projects. Our approach covers communication, training, resistance management, and adoption measurement to ensure your teams truly adopt new AI capabilities."
+      ),
+      phases: [
+        { name: t(lang, "Analyse d'impact", "Impact analysis"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Cartographie des parties prenantes, analyse d'impact par rôle et évaluation de la readiness.", "Stakeholder mapping, role-based impact analysis, and readiness assessment.") },
+        { name: t(lang, "Stratégie & Planning", "Strategy & Planning"), duration: t(lang, "2 semaines", "2 weeks"), desc: t(lang, "Plan de communication, programme de formation et réseau d'ambassadeurs.", "Communication plan, training program, and ambassador network.") },
+        { name: t(lang, "Exécution & Accompagnement", "Execution & Support"), duration: t(lang, "Continu", "Ongoing"), desc: t(lang, "Déploiement du plan, sessions de formation, coaching individuel et mesure d'adoption.", "Plan deployment, training sessions, individual coaching, and adoption measurement.") },
+      ],
+      deliverables: [
+        t(lang, "Plan de gestion du changement", "Change management plan"),
+        t(lang, "Kit de communication", "Communication kit"),
+        t(lang, "Programme de formation", "Training program"),
+        t(lang, "Dashboard d'adoption", "Adoption dashboard"),
+        t(lang, "Réseau d'ambassadeurs", "Ambassador network"),
+      ],
+      timeline: t(lang, "Continu (min. 8 semaines)", "Ongoing (min. 8 weeks)"),
+      idealFor: [t(lang, "VP RH", "VP HR"), t(lang, "Directeur Transformation", "Director of Transformation"), t(lang, "Chef de projet AI", "AI Project Manager")],
+    },
+  };
+}
+
+function getMarketplaceDetails(lang: Lang): Record<string, { extendedDesc: string; keyBenefits: { title: string; desc: string }[]; integrations: string[]; availability: string }> {
+  return {
+    hub: {
+      extendedDesc: t(lang,
+        "Talsom Forge Hub est la plateforme centrale qui intègre tous nos outils AI. Elle offre un espace de travail unifié pour piloter vos initiatives de transformation AI : diagnostics automatisés, génération de livrables personnalisés, chat expert et tableaux de bord de suivi en temps réel.",
+        "Talsom Forge Hub is the central platform integrating all our AI tools. It offers a unified workspace to manage your AI transformation initiatives: automated diagnostics, personalized deliverable generation, expert chat, and real-time tracking dashboards."
+      ),
+      keyBenefits: [
+        { title: t(lang, "Espace de travail unifié", "Unified workspace"), desc: t(lang, "Tous vos projets AI sur une seule plateforme, avec vue d'ensemble et suivi.", "All your AI projects on one platform, with overview and tracking.") },
+        { title: t(lang, "Livrables générés par AI", "AI-generated deliverables"), desc: t(lang, "Rapports, présentations et documents générés automatiquement et personnalisés.", "Reports, presentations, and documents generated automatically and customized.") },
+        { title: t(lang, "Collaboration en temps réel", "Real-time collaboration"), desc: t(lang, "Partagez et collaborez avec vos équipes et consultants Talsom.", "Share and collaborate with your teams and Talsom consultants.") },
+      ],
+      integrations: ["Microsoft 365", "SharePoint", "Teams", "Power BI", "Slack", "Jira"],
+      availability: t(lang, "Beta privée", "Private beta"),
+    },
+    backlog: {
+      extendedDesc: t(lang,
+        "AI Backlog Manager permet de centraliser, scorer et prioriser tous vos cas d'usage AI dans un portefeuille structuré. Le framework de scoring multicritère évalue chaque initiative selon l'impact business, la faisabilité technique, l'effort et l'alignement stratégique.",
+        "AI Backlog Manager allows you to centralize, score, and prioritize all your AI use cases in a structured portfolio. The multi-criteria scoring framework evaluates each initiative based on business impact, technical feasibility, effort, and strategic alignment."
+      ),
+      keyBenefits: [
+        { title: t(lang, "Priorisation objective", "Objective prioritization"), desc: t(lang, "Framework de scoring sur 4 dimensions pour éliminer les biais de sélection.", "4-dimension scoring framework to eliminate selection bias.") },
+        { title: t(lang, "Vue portefeuille", "Portfolio view"), desc: t(lang, "Visualisez tous vos cas d'usage sur une matrice impact/effort interactive.", "Visualize all your use cases on an interactive impact/effort matrix.") },
+        { title: t(lang, "Suivi du ROI", "ROI tracking"), desc: t(lang, "Mesurez la valeur réalisée vs projetée pour chaque initiative déployée.", "Measure realized vs projected value for each deployed initiative.") },
+      ],
+      integrations: ["Jira", "Azure DevOps", "Notion", "Excel", "Power BI"],
+      availability: t(lang, "Disponible", "Available"),
+    },
+    pia: {
+      extendedDesc: t(lang,
+        "Privacy Impact Assessor automatise la production d'Évaluations des Facteurs relatifs à la Vie Privée (EFVP) conformes à la Loi 25. Répondez à un questionnaire guidé et obtenez un rapport complet avec analyse de risques, mesures de mitigation et registre de conformité.",
+        "Privacy Impact Assessor automates the production of Privacy Impact Assessments (PIA) compliant with Quebec's Bill 25. Answer a guided questionnaire and get a complete report with risk analysis, mitigation measures, and compliance registry."
+      ),
+      keyBenefits: [
+        { title: t(lang, "Conformité accélérée", "Accelerated compliance"), desc: t(lang, "De plusieurs semaines à quelques heures pour produire une EFVP complète.", "From several weeks to a few hours to produce a complete PIA.") },
+        { title: t(lang, "Registre centralisé", "Centralized registry"), desc: t(lang, "Tous vos projets AI avec leur statut de conformité sur un seul tableau de bord.", "All your AI projects with their compliance status on a single dashboard.") },
+        { title: t(lang, "Mises à jour réglementaires", "Regulatory updates"), desc: t(lang, "Le questionnaire évolue automatiquement avec les changements réglementaires.", "The questionnaire automatically evolves with regulatory changes.") },
+      ],
+      integrations: ["OneTrust", "Microsoft Purview", "ServiceNow", "Excel"],
+      availability: t(lang, "Disponible", "Available"),
+    },
+    "governance-tool": {
+      extendedDesc: t(lang,
+        "AI Governance Suite est une solution complète pour implanter et opérer votre cadre de gouvernance AI. Elle inclut des modèles de politiques pré-rédigés, des workflows d'approbation automatisés, un registre de modèles AI et des tableaux de bord de conformité en temps réel.",
+        "AI Governance Suite is a complete solution for implementing and operating your AI governance framework. It includes pre-drafted policy templates, automated approval workflows, an AI model registry, and real-time compliance dashboards."
+      ),
+      keyBenefits: [
+        { title: t(lang, "Politiques prêtes à l'emploi", "Ready-to-use policies"), desc: t(lang, "Modèles de politiques AI adaptés aux standards canadiens et européens.", "AI policy templates adapted to Canadian and European standards.") },
+        { title: t(lang, "Workflows automatisés", "Automated workflows"), desc: t(lang, "Processus d'approbation, revue éthique et classification des risques automatisés.", "Automated approval processes, ethical review, and risk classification.") },
+        { title: t(lang, "Audit trail complet", "Complete audit trail"), desc: t(lang, "Traçabilité complète de toutes les décisions et modifications de gouvernance.", "Full traceability of all governance decisions and changes.") },
+      ],
+      integrations: ["Microsoft 365", "ServiceNow", "Confluence", "Azure ML", "AWS SageMaker"],
+      availability: t(lang, "Beta", "Beta"),
+    },
+  };
 }
 
 // ─── NAV ─────────────────────────────────────────────
@@ -272,11 +462,208 @@ function TrustBar() {
   );
 }
 
+// ─── SERVICE DETAIL SHEET ────────────────────────────
+
+function ServiceDetailContent({ serviceId }: { serviceId: string }) {
+  const { lang } = useLang();
+  const services = getServices(lang);
+  const allDetails = getServiceDetails(lang);
+  const svc = services.find((s) => s.id === serviceId);
+  const detail = allDetails[serviceId];
+  if (!svc || !detail) return null;
+
+  return (
+    <ScrollArea className="h-full">
+      <div className="p-6">
+        <SheetHeader className="pr-6 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: C.greenLight }}>
+              <svc.icon className="w-6 h-6" style={{ color: C.green }} />
+            </div>
+            <div className="flex-1">
+              <SheetTitle className="text-xl font-bold" style={{ ...HDR_FONT, color: C.green }}>{svc.title}</SheetTitle>
+              <SheetDescription className="text-xs">{svc.subtitle}</SheetDescription>
+            </div>
+          </div>
+          {svc.popular && (
+            <Badge className="mt-2 border-0 rounded-full text-[10px] px-2.5 font-semibold w-fit" style={{ background: C.green, color: C.yellow }}>{t(lang, "Populaire", "Popular")}</Badge>
+          )}
+        </SheetHeader>
+
+        <div className="flex flex-wrap gap-1.5 mb-5">
+          {svc.tags.map((tag) => <Badge key={tag} variant="secondary" className="text-[10px] rounded-full bg-gray-50 text-gray-500 border-0 px-2.5">{tag}</Badge>)}
+        </div>
+
+        <p className="text-sm text-gray-600 leading-relaxed mb-5">{detail.extendedDesc}</p>
+        <Separator />
+
+        {/* Phases */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: C.green }}>
+            <Layers className="w-4 h-4" />
+            {t(lang, "Notre approche", "Our approach")}
+          </h4>
+          <div className="space-y-4">
+            {detail.phases.map((phase, i) => (
+              <div key={i} className="flex gap-3">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5" style={{ background: C.yellow, color: C.green }}>{i + 1}</div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-sm font-semibold text-gray-900">{phase.name}</p>
+                    <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 rounded-full">{phase.duration}</Badge>
+                  </div>
+                  <p className="text-xs text-gray-500 leading-relaxed">{phase.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Deliverables */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: C.green }}>
+            <CheckCircle2 className="w-4 h-4" />
+            {t(lang, "Livrables", "Deliverables")}
+          </h4>
+          <div className="space-y-2">
+            {detail.deliverables.map((d) => (
+              <div key={d} className="flex items-start gap-2.5 text-sm text-gray-600">
+                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.greenMid }} />
+                {d}
+              </div>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Ideal for */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{t(lang, "Idéal pour", "Ideal for")}</h4>
+          <div className="flex flex-wrap gap-2">
+            {detail.idealFor.map((p) => (
+              <Badge key={p} variant="secondary" className="rounded-full text-xs bg-gray-50 text-gray-600 px-3">{p}</Badge>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Footer CTA */}
+        <div className="pt-5 pb-2">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">{t(lang, "À partir de", "Starting at")}</p>
+              <p className="text-lg font-bold" style={{ ...HDR_FONT, color: C.green }}>{svc.price}</p>
+            </div>
+            <Badge variant="outline" className="text-xs rounded-full px-3 flex items-center gap-1.5">
+              <Clock className="w-3 h-3" />
+              {detail.timeline}
+            </Badge>
+          </div>
+          <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2" style={{ background: C.yellow, color: C.green }}>
+            {t(lang, "Demander une consultation", "Request a consultation")} <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+          <Button variant="outline" className="w-full rounded-full text-sm">
+            {t(lang, "Planifier un appel", "Schedule a call")}
+          </Button>
+        </div>
+      </div>
+    </ScrollArea>
+  );
+}
+
+// ─── MARKETPLACE DETAIL SHEET ────────────────────────
+
+function MarketplaceDetailContent({ productId }: { productId: string }) {
+  const { lang } = useLang();
+  const products = getMarketplace(lang);
+  const allDetails = getMarketplaceDetails(lang);
+  const product = products.find((p) => p.id === productId);
+  const detail = allDetails[productId];
+  if (!product || !detail) return null;
+
+  return (
+    <ScrollArea className="h-full">
+      <div className="p-6">
+        <SheetHeader className="pr-6 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Badge className={`${product.badgeCls} border rounded-full text-[10px] px-2.5`}>{product.tier}</Badge>
+            <Badge className="rounded-full text-[10px] px-2.5 border" style={{ background: C.yellowLight, color: C.green, borderColor: C.yellowDark + "40" }}>{detail.availability}</Badge>
+          </div>
+          <SheetTitle className="text-xl font-bold" style={{ ...HDR_FONT, color: C.green }}>{product.name}</SheetTitle>
+          <SheetDescription>{product.tagline}</SheetDescription>
+        </SheetHeader>
+
+        {/* Screenshot placeholder */}
+        <div className="mb-5 rounded-xl border border-gray-100 h-40 flex items-center justify-center" style={{ background: C.silverLight }}>
+          <div className="text-center text-gray-300">
+            <Bot className="w-8 h-8 mx-auto mb-2" />
+            <p className="text-xs">{t(lang, "Aperçu à venir", "Preview coming soon")}</p>
+          </div>
+        </div>
+
+        <p className="text-sm text-gray-600 leading-relaxed mb-5">{detail.extendedDesc}</p>
+        <Separator />
+
+        {/* Features */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{t(lang, "Fonctionnalités", "Features")}</h4>
+          <div className="space-y-2">
+            {product.features.map((f) => (
+              <div key={f} className="flex items-center gap-2.5 text-sm text-gray-600">
+                <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: C.yellow }} />
+                {f}
+              </div>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Key benefits */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{t(lang, "Avantages clés", "Key benefits")}</h4>
+          <div className="space-y-4">
+            {detail.keyBenefits.map((b, i) => (
+              <div key={i}>
+                <p className="text-sm font-medium text-gray-900">{b.title}</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Integrations */}
+        <div className="py-5">
+          <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{t(lang, "Intégrations", "Integrations")}</h4>
+          <div className="flex flex-wrap gap-2">
+            {detail.integrations.map((intg) => (
+              <Badge key={intg} variant="secondary" className="rounded-full text-xs bg-gray-50 text-gray-600 px-3">{intg}</Badge>
+            ))}
+          </div>
+        </div>
+        <Separator />
+
+        {/* Footer CTA */}
+        <div className="pt-5 pb-2">
+          <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2" style={{ background: C.green, color: C.yellow }}>
+            {t(lang, "Demander un accès", "Request access")} <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+          <Button variant="outline" className="w-full rounded-full text-sm">
+            {t(lang, "Voir la documentation", "View documentation")}
+          </Button>
+        </div>
+      </div>
+    </ScrollArea>
+  );
+}
+
 // ─── SERVICES ────────────────────────────────────────
 
 function ServicesSection() {
   const { lang } = useLang();
   const services = getServices(lang);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
     <section id="services" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -318,7 +705,7 @@ function ServicesSection() {
                 <Separator className="mb-4" />
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-gray-900">{svc.price}</span>
-                  <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold" style={{ color: C.green }}>
+                  <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold" style={{ color: C.green }} onClick={() => setSelectedId(svc.id)}>
                     {t(lang, "Découvrir", "Discover")} <ChevronRight className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
@@ -327,6 +714,12 @@ function ServicesSection() {
           ))}
         </div>
       </div>
+
+      <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
+        <SheetContent side="right" className="w-full sm:max-w-xl p-0">
+          {selectedId && <ServiceDetailContent serviceId={selectedId} />}
+        </SheetContent>
+      </Sheet>
     </section>
   );
 }
@@ -385,6 +778,7 @@ function HowItWorks() {
 function MarketplaceSection() {
   const { lang } = useLang();
   const products = getMarketplace(lang);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   return (
     <section id="marketplace" className="bg-dark-section py-24 relative overflow-hidden">
       <div className="absolute inset-0 chevron-pattern opacity-50" />
@@ -417,11 +811,17 @@ function MarketplaceSection() {
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full">{t(lang, "En savoir plus", "Learn more")}</Button>
+              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full" onClick={() => setSelectedId(p.id)}>{t(lang, "En savoir plus", "Learn more")}</Button>
             </div>
           ))}
         </div>
       </div>
+
+      <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
+        <SheetContent side="right" className="w-full sm:max-w-xl p-0">
+          {selectedId && <MarketplaceDetailContent productId={selectedId} />}
+        </SheetContent>
+      </Sheet>
     </section>
   );
 }
