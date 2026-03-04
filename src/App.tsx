@@ -62,7 +62,7 @@ const SERVICES = [
 ];
 
 const MARKETPLACE_PRODUCTS = [
-  { id: "hub", name: "Talsom AI Hub", tagline: "Plateforme de consulting virtuel", desc: "Suite complète d'outils AI pour le consulting : diagnostics automatisés, génération de livrables, chat spécialisé et tableaux de bord.", features: ["Diagnostics AI", "Génération de rapports", "Chat expert", "Tableaux de bord"], tier: "Platform", badgeCls: "bg-[#E8604C]/10 text-[#E8604C] border-[#E8604C]/20" },
+  { id: "hub", name: "Talsom Forge Hub", tagline: "Plateforme de consulting virtuel", desc: "Suite complète d'outils AI pour le consulting : diagnostics automatisés, génération de livrables, chat spécialisé et tableaux de bord.", features: ["Diagnostics AI", "Génération de rapports", "Chat expert", "Tableaux de bord"], tier: "Platform", badgeCls: "bg-[#E8604C]/10 text-[#E8604C] border-[#E8604C]/20" },
   { id: "backlog", name: "AI Backlog Manager", tagline: "Gestion de portefeuille de cas d'usage", desc: "Identifiez, priorisez et suivez vos cas d'usage AI avec un framework de scoring et des vues portefeuille intelligentes.", features: ["Scoring multicritère", "Vues portefeuille", "Suivi ROI", "Collaboration"], tier: "Tool", badgeCls: "bg-[#2A9D8F]/10 text-[#2A9D8F] border-[#2A9D8F]/20" },
   { id: "pia", name: "Privacy Impact Assessor", tagline: "EFVP automatisée Loi 25", desc: "Générez des évaluations des facteurs relatifs à la vie privée conformes à la Loi 25 pour vos projets AI en quelques minutes.", features: ["Conformité Loi 25", "Rapport automatisé", "Registre des risques", "Suivi"], tier: "Tool", badgeCls: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
   { id: "governance-tool", name: "AI Governance Suite", tagline: "Gouvernance AI clé en main", desc: "Cadre de gouvernance complet avec modèles de politiques, matrices RACI, registres de modèles et tableaux de bord de conformité.", features: ["Politiques AI", "RACI automatisé", "Registre de modèles", "Audit trail"], tier: "Suite", badgeCls: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
@@ -107,7 +107,7 @@ function Nav() {
             <Brain className="w-5 h-5 text-white" />
           </div>
           <span className={`font-semibold text-lg tracking-tight ${scrolled ? "text-gray-900" : "text-white"}`} style={HDR_FONT}>
-            Talsom<span className="font-light opacity-70">AI</span>
+            Talsom<span className="font-light opacity-70">Forge</span>
           </span>
         </a>
 
@@ -164,7 +164,7 @@ function Hero() {
           </h1>
 
           <p className="text-lg sm:text-xl text-white/50 leading-relaxed mb-10 max-w-xl">
-            Accédez à l'expertise AI de Talsom en libre-service. Services virtuels, outils spécialisés et chat AI expert — le tout sur une plateforme unique.
+            Accédez à l'expertise AI de Talsom Forge en libre-service. Services virtuels, outils spécialisés et chat AI expert — le tout sur une plateforme unique.
           </p>
 
           <div className="flex flex-wrap gap-4 mb-16">
@@ -311,7 +311,7 @@ function MarketplaceSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
           <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">Marketplace</Badge>
-          <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>Talsom AI Hub</h2>
+          <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>Talsom Forge Hub</h2>
           <p className="text-lg text-white/40 leading-relaxed">Nos outils AI propriétaires, conçus par des consultants pour des consultants. Intégrez-les dans vos processus ou utilisez-les en autonomie.</p>
         </div>
 
@@ -352,8 +352,12 @@ function AIChatSection() {
   const [typing, setTyping] = useState(false);
   const chatEnd = useRef<HTMLDivElement>(null);
   const idx = useRef(1);
+  const isInitialMount = useRef(true);
 
-  useEffect(() => { chatEnd.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => {
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    chatEnd.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [messages]);
 
   const addNext = () => {
     if (idx.current >= CHAT_DEMO_MESSAGES.length) return;
@@ -404,7 +408,7 @@ function AIChatSection() {
                 <Bot className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">Talsom AI Consultant</p>
+                <p className="text-sm font-semibold text-gray-900">Talsom Forge Consultant</p>
                 <p className="text-[11px] flex items-center gap-1" style={{ color: C.teal }}>
                   <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: C.teal }} /> En ligne
                 </p>
@@ -514,7 +518,7 @@ function CTABanner() {
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-10 blur-[140px]" style={{ background: C.teal }} />
       <div className="relative max-w-3xl mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>Prêt à transformer votre approche AI?</h2>
-        <p className="text-lg text-white/45 mb-8">Rejoignez la beta et accédez à l'expertise AI de Talsom, disponible en quelques clics.</p>
+        <p className="text-lg text-white/45 mb-8">Rejoignez la beta et accédez à l'expertise AI de Talsom Forge, disponible en quelques clics.</p>
         <div className="flex flex-wrap justify-center gap-4">
           <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 rounded-full px-8 h-12 font-semibold">
             Demander un accès beta <ArrowRight className="w-4 h-4 ml-2" />
@@ -540,13 +544,13 @@ function Footer() {
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.coral }}>
                 <Brain className="w-4 h-4 text-white" />
               </div>
-              <span className="font-semibold text-white text-lg" style={HDR_FONT}>Talsom<span className="font-light opacity-70">AI</span></span>
+              <span className="font-semibold text-white text-lg" style={HDR_FONT}>Talsom<span className="font-light opacity-70">Forge</span></span>
             </div>
-            <p className="text-sm text-white/30 leading-relaxed">Plateforme de consulting virtuel AI.<br />Montréal, Québec.</p>
+            <p className="text-sm text-white/30 leading-relaxed">Plateforme de consulting virtuel.<br />Montréal, Québec.</p>
           </div>
           {[
             { title: "Services", links: ["AI Roadmap", "Maturity Assessment", "Governance", "Copilot Deployment", "Business Case"] },
-            { title: "Marketplace", links: ["Talsom AI Hub", "AI Backlog Manager", "Privacy Assessor", "Governance Suite"] },
+            { title: "Marketplace", links: ["Talsom Forge Hub", "AI Backlog Manager", "Privacy Assessor", "Governance Suite"] },
             { title: "Entreprise", links: ["À propos", "Carrières", "Blog", "Contact", "Mentions légales"] },
           ].map((col) => (
             <div key={col.title}>
