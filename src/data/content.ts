@@ -1,0 +1,69 @@
+import type { Lang } from "@/lib/constants";
+import { t } from "@/lib/constants";
+
+export function getChatExchanges(lang: Lang): { user: string; assistant: string }[] {
+  if (lang === "en") return [
+    {
+      user: "Our order-to-cash process is slow and full of manual steps. Can you help us diagnose the problem?",
+      assistant: "Absolutely! Let's start with a rapid diagnostic. Based on the symptoms you describe, here's what I'll analyze:\n\n1. **Process mapping** \u2014 I'll generate a current-state (AS-IS) map of your order-to-cash flow from your description\n2. **Bottleneck identification** \u2014 Manual handoffs, approval loops, and data re-entry points\n3. **Benchmark comparison** \u2014 Your cycle time vs industry standards\n4. **Quick-win opportunities** \u2014 Automation and simplification candidates\n\nCan you describe the main steps from when a customer places an order to when payment is received?",
+    },
+    {
+      user: "Yes, we receive orders by email, then manually enter them in our ERP, verify inventory, send for approval, then ship. Invoicing is done separately in accounting.",
+      assistant: "I've mapped your process. Here's the diagnostic:\n\n**Report generated** \u2014 OTC_Diagnostic_Talsom.pdf\n\n**Key findings:**\n\u2192 **6 manual handoffs** identified (industry best practice: 2)\n\u2192 **Estimated cycle time:** 8-12 days (benchmark: 3-4 days)\n\u2192 **Data re-entry:** 3 points (order, inventory, invoice)\n\n**Top 3 quick wins:**\n1. Automated order intake (email parsing + ERP integration) \u2014 saves ~2 days\n2. Real-time inventory check \u2014 eliminates manual verification\n3. Auto-invoicing on shipment confirmation \u2014 saves ~1.5 days\n\n**Estimated improvement:** 55-65% cycle time reduction. Want me to generate the target operating model (TO-BE) with an implementation roadmap?",
+    },
+    {
+      user: "Yes, generate the target model and roadmap.",
+      assistant: "Here's your transformation roadmap:\n\n**Phase 1 \u2014 Quick wins (4 weeks):**\n\u2192 Automated order intake via email parsing\n\u2192 ERP integration for real-time inventory\n\u2192 **Investment:** ~$25,000 | **Impact:** -3 days cycle time\n\n**Phase 2 \u2014 Process redesign (8 weeks):**\n\u2192 Approval workflow automation\n\u2192 Auto-invoicing on shipment\n\u2192 **Investment:** ~$45,000 | **Impact:** -2 days additional\n\n**Phase 3 \u2014 Continuous optimization:**\n\u2192 AI-powered demand forecasting\n\u2192 Predictive exception handling\n\n**Total projected ROI:** 3.2x over 12 months. The full report with TO-BE process map is ready. Would you like to schedule a workshop with our consultants to validate the roadmap?",
+    },
+  ];
+  return [
+    {
+      user: "Notre processus order-to-cash est lent et plein d'\u00e9tapes manuelles. Pouvez-vous nous aider \u00e0 diagnostiquer le probl\u00e8me?",
+      assistant: "Absolument! Commen\u00e7ons par un diagnostic rapide. D'apr\u00e8s les sympt\u00f4mes que vous d\u00e9crivez, voici ce que je vais analyser :\n\n1. **Cartographie du processus** \u2014 Je vais g\u00e9n\u00e9rer une carte de l'\u00e9tat actuel (AS-IS) de votre flux order-to-cash\n2. **Identification des goulots** \u2014 Transferts manuels, boucles d'approbation et ressaisies de donn\u00e9es\n3. **Comparaison benchmark** \u2014 Votre temps de cycle vs les standards de l'industrie\n4. **Gains rapides** \u2014 Candidats \u00e0 l'automatisation et \u00e0 la simplification\n\nPouvez-vous d\u00e9crire les \u00e9tapes principales depuis la r\u00e9ception d'une commande jusqu'au paiement?",
+    },
+    {
+      user: "Oui, on re\u00e7oit les commandes par courriel, puis on les saisit manuellement dans notre ERP, on v\u00e9rifie l'inventaire, on envoie pour approbation, puis on exp\u00e9die. La facturation est faite s\u00e9par\u00e9ment par la comptabilit\u00e9.",
+      assistant: "J'ai cartographi\u00e9 votre processus. Voici le diagnostic :\n\n**Rapport g\u00e9n\u00e9r\u00e9** \u2014 OTC_Diagnostic_Talsom.pdf\n\n**Constats cl\u00e9s :**\n\u2192 **6 transferts manuels** identifi\u00e9s (meilleure pratique : 2)\n\u2192 **Temps de cycle estim\u00e9 :** 8-12 jours (benchmark : 3-4 jours)\n\u2192 **Ressaisie de donn\u00e9es :** 3 points (commande, inventaire, facture)\n\n**Top 3 gains rapides :**\n1. Saisie automatis\u00e9e des commandes (parsing courriel + int\u00e9gration ERP) \u2014 \u00e9conomie de ~2 jours\n2. V\u00e9rification d'inventaire en temps r\u00e9el \u2014 \u00e9limine la v\u00e9rification manuelle\n3. Facturation automatique \u00e0 la confirmation d'exp\u00e9dition \u2014 \u00e9conomie de ~1.5 jours\n\n**Am\u00e9lioration estim\u00e9e :** R\u00e9duction de 55-65% du temps de cycle. Voulez-vous que je g\u00e9n\u00e8re le mod\u00e8le op\u00e9rationnel cible (TO-BE) avec une feuille de route de mise en \u0153uvre?",
+    },
+    {
+      user: "Oui, g\u00e9n\u00e8re le mod\u00e8le cible et la feuille de route.",
+      assistant: "Voici votre feuille de route de transformation :\n\n**Phase 1 \u2014 Gains rapides (4 semaines) :**\n\u2192 Saisie automatis\u00e9e des commandes via parsing courriel\n\u2192 Int\u00e9gration ERP pour inventaire en temps r\u00e9el\n\u2192 **Investissement :** ~25 000$ | **Impact :** -3 jours temps de cycle\n\n**Phase 2 \u2014 Refonte du processus (8 semaines) :**\n\u2192 Automatisation du workflow d'approbation\n\u2192 Facturation automatique \u00e0 l'exp\u00e9dition\n\u2192 **Investissement :** ~45 000$ | **Impact :** -2 jours suppl\u00e9mentaires\n\n**Phase 3 \u2014 Optimisation continue :**\n\u2192 Pr\u00e9vision de la demande par AI\n\u2192 Gestion pr\u00e9dictive des exceptions\n\n**ROI total projet\u00e9 :** 3.2x sur 12 mois. Le rapport complet avec la cartographie TO-BE est pr\u00eat. Souhaitez-vous planifier un atelier avec nos consultants pour valider la feuille de route?",
+    },
+  ];
+}
+
+export function getStats(lang: Lang) {
+  return [
+    { value: "250+", label: t(lang, "Mandats livr\u00e9s", "Engagements delivered") },
+    { value: "80+", label: t(lang, "Clients actifs", "Active clients") },
+    { value: "8.5x", label: t(lang, "ROI moyen", "Average ROI") },
+    { value: "96%", label: t(lang, "Satisfaction client", "Client satisfaction") },
+  ];
+}
+
+export function getPlans(lang: Lang) {
+  return [
+    { name: "Explorer", price: t(lang, "Gratuit", "Free"), sub: t(lang, "Pour d\u00e9couvrir", "To explore"), features: [t(lang, "Chat AI (10 messages/mois)", "AI Chat (10 messages/month)"), t(lang, "1 diagnostic d\u2019affaires", "1 business diagnostic"), t(lang, "Acc\u00e8s marketplace (lecture)", "Marketplace access (read-only)"), t(lang, "Support communautaire", "Community support")], cta: t(lang, "Commencer gratuitement", "Start for free"), highlight: false },
+    { name: "Professional", price: t(lang, "990$/mois", "$990/month"), sub: t(lang, "Pour les \u00e9quipes", "For teams"), features: [t(lang, "Chat AI illimit\u00e9", "Unlimited AI Chat"), t(lang, "Diagnostics processus et maturit\u00e9", "Process and maturity diagnostics"), t(lang, "G\u00e9n\u00e9ration de livrables", "Deliverable generation"), t(lang, "5 services virtuels/mois", "5 virtual services/month"), t(lang, "Support prioritaire", "Priority support"), t(lang, "Ateliers virtuels co-facilit\u00e9s AI", "AI co-facilitated virtual workshops")], cta: t(lang, "Essai gratuit 14 jours", "Free 14-day trial"), highlight: true },
+    { name: "Enterprise", price: t(lang, "Sur mesure", "Custom"), sub: t(lang, "Pour les grandes organisations", "For large organizations"), features: [t(lang, "Tout Professional +", "Everything in Professional +"), t(lang, "Consultants seniors d\u00e9di\u00e9s", "Dedicated senior consultants"), t(lang, "Personnalisation compl\u00e8te", "Full customization"), t(lang, "SLA garanti", "Guaranteed SLA"), t(lang, "Ateliers et formations sur mesure", "Custom workshops and training"), "API & integrations"], cta: t(lang, "Contactez-nous", "Contact us"), highlight: false },
+  ];
+}
+
+export function getTestimonials(lang: Lang) {
+  return [
+    { name: "Marie-Claire Dubois", role: t(lang, "VP Transformation Digitale", "VP Digital Transformation"), company: "Desjardins", quote: t(lang, "L\u2019accompagnement de Talsom Forge sur notre mod\u00e8le op\u00e9rationnel cible a \u00e9t\u00e9 d\u00e9terminant. La combinaison d\u2019ateliers virtuels et d\u2019outils AI a r\u00e9duit notre temps de diagnostic de plusieurs semaines.", "Talsom Forge\u2019s support on our target operating model was decisive. The combination of virtual workshops and AI tools reduced our diagnostic time by several weeks.") },
+    { name: "Jean-Philippe Tremblay", role: "CIO", company: "Pomerleau", quote: t(lang, "La feuille de route de modernisation livr\u00e9e par Talsom Forge nous a permis de s\u00e9quencer nos investissements TI avec une rigueur qu\u2019on n\u2019avait pas avant. 40% de r\u00e9duction de notre dette technique en 18 mois.", "The modernization roadmap delivered by Talsom Forge allowed us to sequence our IT investments with a rigor we didn\u2019t have before. 40% reduction in technical debt in 18 months.") },
+    { name: "Isabelle Marchand", role: t(lang, "Directrice RH", "HR Director"), company: "Hydro-Qu\u00e9bec", quote: t(lang, "Le programme de gestion du changement accompagn\u00e9 par Talsom Forge a transform\u00e9 notre capacit\u00e9 d\u2019adoption. Nos \u00e9quipes ont vu la valeur d\u00e8s la premi\u00e8re session d\u2019atelier virtuel.", "The change management program supported by Talsom Forge transformed our adoption capability. Our teams saw the value from the very first virtual workshop session.") },
+  ];
+}
+
+export function getFAQ(lang: Lang) {
+  return [
+    { q: t(lang, "Qu\u2019est-ce que Talsom Forge exactement?", "What is Talsom Forge exactly?"), a: t(lang, "Talsom Forge est une plateforme de consulting virtuel qui couvre 4 domaines d\u2019expertise : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. Chaque mandat combine l\u2019accompagnement de consultants seniors avec la puissance de nos agents AI pour des livrables de qualit\u00e9, livr\u00e9s plus rapidement.", "Talsom Forge is a virtual consulting platform covering 4 areas of expertise: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. Each engagement combines senior consultant guidance with the power of our AI agents for quality deliverables, delivered faster.") },
+    { q: t(lang, "Comment fonctionnent les ateliers virtuels avec AI?", "How do virtual workshops with AI work?"), a: t(lang, "Nos ateliers sont co-facilit\u00e9s par un consultant senior et des agents AI. L\u2019AI synth\u00e9tise les contributions en temps r\u00e9el, g\u00e9n\u00e8re des cartographies de processus, analyse les donn\u00e9es partag\u00e9es et produit un rapport de s\u00e9ance imm\u00e9diatement apr\u00e8s chaque atelier. Le r\u00e9sultat : des ateliers 3x plus productifs.", "Our workshops are co-facilitated by a senior consultant and AI agents. The AI synthesizes contributions in real time, generates process maps, analyzes shared data, and produces a session report immediately after each workshop. The result: workshops that are 3x more productive.") },
+    { q: t(lang, "Est-ce que mes donn\u00e9es sont s\u00e9curis\u00e9es?", "Is my data secure?"), a: t(lang, "Absolument. Vos donn\u00e9es sont h\u00e9berg\u00e9es au Canada, chiffr\u00e9es au repos et en transit, et ne sont jamais utilis\u00e9es pour entra\u00eener nos mod\u00e8les. Nous sommes conformes \u00e0 la Loi 25 et au RGPD. Chaque organisation dispose d\u2019un environnement isol\u00e9.", "Absolutely. Your data is hosted in Canada, encrypted at rest and in transit, and never used to train our models. We are compliant with Bill 25 and GDPR. Each organization has an isolated environment.") },
+    { q: t(lang, "Quelle est la diff\u00e9rence entre un service virtuel et du consulting traditionnel?", "What\u2019s the difference between a virtual service and traditional consulting?"), a: t(lang, "Les services virtuels combinent l\u2019expertise humaine de consultants seniors avec l\u2019automatisation AI. Vous obtenez des livrables de qualit\u00e9 consulting plus rapidement et \u00e0 moindre co\u00fbt. Les ateliers sont virtuels mais interactifs, enrichis par des agents AI qui dynamisent l\u2019output. Pour des mandats complexes, nos consultants interviennent en compl\u00e9ment.", "Virtual services combine senior consultant human expertise with AI automation. You get consulting-quality deliverables faster and at lower cost. Workshops are virtual but interactive, enhanced by AI agents that boost output. For complex engagements, our consultants step in to complement the platform.") },
+    { q: t(lang, "Puis-je essayer avant de m\u2019engager?", "Can I try before committing?"), a: t(lang, "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat par mois, un diagnostic d\u2019affaires et l\u2019acc\u00e8s en lecture \u00e0 la marketplace. Vous pouvez aussi demander un essai gratuit de 14 jours du plan Professional.", "Yes! The Explorer plan is free and includes 10 chat messages per month, one business diagnostic, and read-only marketplace access. You can also request a free 14-day trial of the Professional plan.") },
+    { q: t(lang, "Combien de temps prend un mandat typique?", "How long does a typical engagement take?"), a: t(lang, "Cela d\u00e9pend du domaine. Un diagnostic de processus prend 3-4 semaines, une roadmap de modernisation 8-10 semaines, une Roadmap IA 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles imm\u00e9diatement.", "It depends on the domain. A process diagnostic takes 3-4 weeks, a modernization roadmap 8-10 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.") },
+  ];
+}
