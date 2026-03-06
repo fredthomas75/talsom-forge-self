@@ -184,7 +184,7 @@ export function ServicesSection() {
         <div ref={ref} className="reveal max-w-2xl mb-16">
           <Badge className="mb-4 border-0 rounded-full px-3 text-xs font-semibold" style={{ background: C.yellowLight, color: C.green }}>{t(lang, "Services virtuels", "Virtual services")}</Badge>
           <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
-            {lang === "fr" ? <>Du consulting virtuel,<br />propuls\u00e9 par l&apos;AI.</> : <>Virtual consulting,<br />powered by AI.</>}
+            {lang === "fr" ? <>Du consulting virtuel,<br />propulsé par l'AI.</> : <>Virtual consulting,<br />powered by AI.</>}
           </h2>
           <p className={`text-lg leading-relaxed ${dark ? "text-white/45" : "text-gray-500"}`}>
             {t(lang,
