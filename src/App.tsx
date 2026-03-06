@@ -1,10 +1,14 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
 import type { Lang } from "@/lib/constants";
 import { LangContext, ThemeContext } from "@/lib/contexts";
 import type { Theme } from "@/lib/contexts";
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { TrustBar } from "@/components/TrustBar";
+import { AdminLogin } from "@/admin/AdminLogin";
+import { ProtectedRoute } from "@/admin/ProtectedRoute";
+import { AdminLayout } from "@/admin/AdminLayout";
 
 const ServicesSection = lazy(() => import("@/components/ServicesSection").then(m => ({ default: m.ServicesSection })));
 const HowItWorks = lazy(() => import("@/components/HowItWorks").then(m => ({ default: m.HowItWorks })));
@@ -33,6 +37,30 @@ function MetaUpdater({ lang }: { lang: Lang }) {
   return null;
 }
 
+function MainSite() {
+  return (
+    <div className="min-h-screen">
+      <Nav />
+      <Hero />
+      <TrustBar />
+      <Suspense fallback={null}>
+        <ServicesSection />
+        <HowItWorks />
+        <MarketplaceSection />
+        <CaseStudies />
+        <Testimonials />
+        <ComparisonSection />
+        <AIChatSection />
+        <Pricing />
+        <FAQSection />
+        <ContactSection />
+        <CTABanner />
+        <Footer />
+      </Suspense>
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState<Lang>("fr");
   const [theme, setTheme] = useState<Theme>(() => {
@@ -55,25 +83,11 @@ export default function App() {
     <ThemeContext.Provider value={{ theme, toggle }}>
       <LangContext.Provider value={{ lang, setLang }}>
         <MetaUpdater lang={lang} />
-        <div className="min-h-screen">
-          <Nav />
-          <Hero />
-          <TrustBar />
-          <Suspense fallback={null}>
-            <ServicesSection />
-            <HowItWorks />
-            <MarketplaceSection />
-            <CaseStudies />
-            <Testimonials />
-            <ComparisonSection />
-            <AIChatSection />
-            <Pricing />
-            <FAQSection />
-            <ContactSection />
-            <CTABanner />
-            <Footer />
-          </Suspense>
-        </div>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/*" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>} />
+          <Route path="*" element={<MainSite />} />
+        </Routes>
       </LangContext.Provider>
     </ThemeContext.Provider>
   );
