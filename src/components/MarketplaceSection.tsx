@@ -5,10 +5,10 @@ import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowRight, ArrowUpRight, CheckCircle2, BarChart3, FileText, Layers, Shield } from "lucide-react";
-import { C, HDR_FONT, t } from "@/lib/constants";
-import { useLang, useTheme } from "@/lib/contexts";
+import { C, HDR_FONT } from "@/lib/constants";
+import { useTheme } from "@/lib/contexts";
 import { useReveal } from "@/hooks/useReveal";
-import { getMarketplace, getMarketplaceDetails } from "@/data/marketplace";
+import { useSection, useBi } from "@/hooks/useContent";
 
 function ProductMockup({ productId, dark }: { productId: string; dark: boolean }) {
   const mockups: Record<string, { icon: typeof BarChart3; lines: string[] }> = {
@@ -45,13 +45,12 @@ function ProductMockup({ productId, dark }: { productId: string; dark: boolean }
 }
 
 export function MarketplaceDetailContent({ productId, onClose }: { productId: string; onClose?: () => void }) {
-  const { lang } = useLang();
   const { theme } = useTheme();
   const dark = theme === "dark";
-  const products = getMarketplace(lang);
-  const allDetails = getMarketplaceDetails(lang);
-  const product = products.find((p) => p.id === productId);
-  const detail = allDetails[productId];
+  const mktData = useSection('marketplace');
+  const bi = useBi();
+  const product = mktData.items.find((p) => p.id === productId);
+  const detail = mktData.details[productId];
   if (!product || !detail) return null;
 
   return (
@@ -60,10 +59,10 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
         <SheetHeader className="pr-6 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <Badge className={`${product.badgeCls} border rounded-full text-[10px] px-2.5`}>{product.tier}</Badge>
-            <Badge className="rounded-full text-[10px] px-2.5 border" style={{ background: C.yellowLight, color: C.green, borderColor: C.yellowDark + "40" }}>{detail.availability}</Badge>
+            <Badge className="rounded-full text-[10px] px-2.5 border" style={{ background: C.yellowLight, color: C.green, borderColor: C.yellowDark + "40" }}>{bi(detail.availability)}</Badge>
           </div>
           <SheetTitle className="text-xl font-bold" style={{ ...HDR_FONT, color: dark ? "white" : C.green }}>{product.name}</SheetTitle>
-          <SheetDescription>{product.tagline}</SheetDescription>
+          <SheetDescription>{bi(product.tagline)}</SheetDescription>
         </SheetHeader>
 
         {/* Product mockup */}
@@ -71,14 +70,14 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
           <ProductMockup productId={productId} dark={dark} />
         </div>
 
-        <p className={`text-sm leading-relaxed mb-5 ${dark ? "text-white/50" : "text-gray-600"}`}>{detail.extendedDesc}</p>
+        <p className={`text-sm leading-relaxed mb-5 ${dark ? "text-white/50" : "text-gray-600"}`}>{bi(detail.extendedDesc)}</p>
         <Separator />
 
         {/* Features */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{t(lang, "Fonctionnalités", "Features")}</h4>
+          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{bi({ fr: "Fonctionnalités", en: "Features" })}</h4>
           <div className="space-y-2">
-            {product.features.map((f) => (
+            {bi(product.features).split(",").map((f) => (
               <div key={f} className={`flex items-center gap-2.5 text-sm ${dark ? "text-white/50" : "text-gray-600"}`}>
                 <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: C.yellow }} />
                 {f}
@@ -90,12 +89,12 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
 
         {/* Key benefits */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{t(lang, "Avantages clés", "Key benefits")}</h4>
+          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{bi({ fr: "Avantages clés", en: "Key benefits" })}</h4>
           <div className="space-y-4">
             {detail.keyBenefits.map((b, i) => (
               <div key={i}>
-                <p className={`text-sm font-medium ${dark ? "text-white" : "text-gray-900"}`}>{b.title}</p>
-                <p className={`text-xs leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>{b.desc}</p>
+                <p className={`text-sm font-medium ${dark ? "text-white" : "text-gray-900"}`}>{bi(b.title)}</p>
+                <p className={`text-xs leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>{bi(b.desc)}</p>
               </div>
             ))}
           </div>
@@ -104,7 +103,7 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
 
         {/* Integrations */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{t(lang, "Intégrations", "Integrations")}</h4>
+          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? "white" : C.green }}>{bi({ fr: "Intégrations", en: "Integrations" })}</h4>
           <div className="flex flex-wrap gap-2">
             {detail.integrations.map((intg) => (
               <Badge key={intg} variant="secondary" className={`rounded-full text-xs px-3 ${dark ? "bg-white/5 text-white/40" : "bg-gray-50 text-gray-600"}`}>{intg}</Badge>
@@ -117,11 +116,11 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
         <div className="pt-5 pb-2">
           <a href="#contact" onClick={onClose}>
             <Button className="w-full rounded-full font-semibold hover:opacity-90 border-0 mb-2 transition-opacity" style={{ background: C.green, color: C.yellow }}>
-              {t(lang, "Demander un accès", "Request access")} <ArrowRight className="w-4 h-4 ml-2" />
+              {bi({ fr: "Demander un accès", en: "Request access" })} <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </a>
           <Button variant="outline" className={`w-full rounded-full text-sm ${dark ? "border-white/10 text-white/50" : ""}`}>
-            {t(lang, "Voir la documentation", "View documentation")}
+            {bi({ fr: "Voir la documentation", en: "View documentation" })}
           </Button>
         </div>
       </div>
@@ -130,8 +129,8 @@ export function MarketplaceDetailContent({ productId, onClose }: { productId: st
 }
 
 export function MarketplaceSection() {
-  const { lang } = useLang();
-  const products = getMarketplace(lang);
+  const mktData = useSection('marketplace');
+  const bi = useBi();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const ref = useReveal();
   return (
@@ -139,21 +138,21 @@ export function MarketplaceSection() {
       <div className="absolute inset-0 chevron-pattern opacity-50" />
       <div className="relative max-w-7xl mx-auto px-6">
         <div ref={ref} className="reveal max-w-2xl mb-16">
-          <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">Marketplace</Badge>
+          <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">{bi(mktData.badge)}</Badge>
           <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>
             Talsom Forge <span style={{ color: C.yellow }}>Hub</span>
           </h2>
-          <p className="text-lg text-white/40 leading-relaxed">{t(lang, "Nos outils AI propriétaires, conçus par des consultants pour des consultants. Intégrez-les dans vos processus ou utilisez-les en autonomie.", "Our proprietary AI tools, designed by consultants for consultants. Integrate them into your processes or use them independently.")}</p>
+          <p className="text-lg text-white/40 leading-relaxed">{bi(mktData.subtitle)}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-5 reveal-stagger">
-          {products.map((p) => (
+          {mktData.items.map((p) => (
             <div key={p.id} className="reveal glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group hover:translate-y-[-2px]">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <Badge className={`${p.badgeCls} border rounded-full text-[10px] px-2.5 mb-3`}>{p.tier}</Badge>
                   <h3 className="text-xl font-semibold text-white mb-1">{p.name}</h3>
-                  <p className="text-sm text-white/35">{p.tagline}</p>
+                  <p className="text-sm text-white/35">{bi(p.tagline)}</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
               </div>
@@ -164,14 +163,14 @@ export function MarketplaceSection() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 mb-5">
-                {p.features.map((f) => (
+                {bi(p.features).split(",").map((f) => (
                   <div key={f} className="flex items-center gap-2 text-xs text-white/45">
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.yellow }} />
                     {f}
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{t(lang, "En savoir plus", "Learn more")}</Button>
+              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{bi({ fr: "En savoir plus", en: "Learn more" })}</Button>
             </div>
           ))}
         </div>
