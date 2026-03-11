@@ -122,6 +122,13 @@ export function ToolChatPage() {
     client_feedback?: string | null; modified_content?: string | null; modified_file_url?: string | null; original_file_url?: string | null;
   } | null>(null);
 
+  // Delivered reviews for this tool (cross-conversation banner)
+  const [deliveredForTool, setDeliveredForTool] = useState<{
+    id: string; conversation_id: string; status: string; consultant_name?: string | null;
+    modified_file_url?: string | null; original_file_url?: string | null; delivered_at?: string | null;
+  } | null>(null);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
   const { messages, isStreaming, error, conversationId, sendMessage, stop, reset, loadConversation } =
     useToolChat({ toolName: toolName ?? "", lang, accessToken: session.access_token });
 
@@ -341,6 +348,24 @@ export function ToolChatPage() {
     })();
   }, [conversationId, selectedId, hasHumanReview]);
 
+  // Fetch delivered reviews for this tool (cross-conversation — for the banner)
+  useEffect(() => {
+    if (!hasHumanReview || !toolName) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/client/reviews?tool=${toolName}&status=delivered`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const delivered = data.reviews?.[0] ?? null;
+          setDeliveredForTool(delivered);
+          setBannerDismissed(false);
+        }
+      } catch { /* ignore */ }
+    })();
+  }, [toolName, hasHumanReview]);
+
   // Check if conversation has any generated files (for review button)
   const hasGeneratedFiles = messages.some((m) => m.role === "assistant" && m.files && m.files.length > 0);
 
@@ -386,6 +411,66 @@ export function ToolChatPage() {
           </Button>
         </div>
       </div>
+
+      {/* ── Delivered review banner (cross-conversation) ── */}
+      {deliveredForTool && !bannerDismissed && (conversationId || selectedId) !== deliveredForTool.conversation_id && (
+        <div className={`px-4 py-3 border-b ${dark ? "border-emerald-500/20 bg-emerald-950/30" : "border-emerald-200 bg-emerald-50"}`}>
+          <div className="max-w-3xl mx-auto flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
+            >
+              <ShieldCheck className="w-5 h-5" style={{ color: C.green }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+                {bi({
+                  fr: `Livrable vérifié disponible${deliveredForTool.consultant_name ? ` — ${deliveredForTool.consultant_name}` : ""}`,
+                  en: `Verified deliverable available${deliveredForTool.consultant_name ? ` — ${deliveredForTool.consultant_name}` : ""}`,
+                })}
+              </p>
+              <p className={`text-xs ${dark ? "text-white/40" : "text-gray-500"}`}>
+                {bi({
+                  fr: "Un consultant Talsom a vérifié et certifié votre livrable précédent.",
+                  en: "A Talsom consultant has verified and certified your previous deliverable.",
+                })}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {(deliveredForTool.modified_file_url || deliveredForTool.original_file_url) && (
+                <a
+                  href={deliveredForTool.modified_file_url || deliveredForTool.original_file_url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-0 transition-opacity hover:opacity-90"
+                  style={{ background: C.green, color: C.yellow }}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {bi({ fr: "Télécharger", en: "Download" })}
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  handleSelectConvo(deliveredForTool.conversation_id);
+                  setBannerDismissed(true);
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  dark ? "border-white/10 text-white/70 hover:bg-white/10" : "border-gray-200 text-gray-700 hover:bg-white"
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                {bi({ fr: "Voir la conversation", en: "View conversation" })}
+              </button>
+              <button
+                onClick={() => setBannerDismissed(true)}
+                className={`p-1 rounded-full transition-colors ${dark ? "text-white/30 hover:text-white/60 hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"}`}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Export success banner ── */}
       {exportSuccess && (

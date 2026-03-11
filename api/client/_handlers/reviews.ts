@@ -97,6 +97,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     const conversationId = req.query.conversation as string | undefined;
+    const toolFilter = req.query.tool as string | undefined;
+    const statusFilter = req.query.status as string | undefined;
 
     let query = supabase
       .from("deliverable_reviews")
@@ -106,6 +108,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .order("requested_at", { ascending: false });
 
     if (conversationId) query = query.eq("conversation_id", conversationId);
+    if (toolFilter) query = query.eq("tool_name", toolFilter);
+    if (statusFilter) query = query.eq("status", statusFilter);
 
     const { data: reviews, error } = await query.limit(50);
     if (error) return res.status(500).json({ error: error.message });
