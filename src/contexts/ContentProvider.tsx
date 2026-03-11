@@ -17,6 +17,31 @@ const ContentContext = createContext<ContentCtx>({
   refreshContent: async () => {},
 });
 
+// Frontend section keys that the CMS can edit.
+// Keys prefixed with "kb_" are AI knowledge-base sections (used by /api/chat)
+// and must NOT be merged into the frontend SiteContent.
+const FRONTEND_KEYS = new Set<string>([
+  "hero", "stats", "nav", "trustbar", "howItWorks", "services",
+  "marketplace", "caseStudies", "testimonials", "comparison",
+  "aiChat", "pricing", "faq", "contact", "ctaBanner", "footer",
+]);
+
+/** Validate that Supabase data roughly matches the expected default shape */
+function isCompatible(_key: string, dbValue: unknown, defaultValue: unknown): boolean {
+  if (!dbValue || typeof dbValue !== "object") return false;
+  // If the default is an array, the DB value must also be an array
+  if (Array.isArray(defaultValue) && !Array.isArray(dbValue)) return false;
+  // If the default is an object with specific keys (e.g. badge, title, items),
+  // check that the DB value shares at least one of those keys
+  if (!Array.isArray(defaultValue)) {
+    const defKeys = Object.keys(defaultValue as Record<string, unknown>);
+    const dbKeys = Object.keys(dbValue as Record<string, unknown>);
+    const overlap = defKeys.filter((k) => dbKeys.includes(k));
+    if (overlap.length === 0) return false;
+  }
+  return true;
+}
+
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<SiteContent>(defaultContent);
   const [loading, setLoading] = useState(true);
@@ -31,7 +56,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         const merged: SiteContent = { ...defaultContent };
         for (const row of data) {
           const k = row.section_key as SectionKey;
-          if (k in defaultContent) {
+          // Only merge keys that belong to the frontend AND have a compatible shape
+          if (FRONTEND_KEYS.has(k) && k in defaultContent && isCompatible(k, row.content, defaultContent[k])) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (merged as any)[k] = row.content;
           }

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "name_for_model": "talsom_forge",
+  "name_for_human": "Talsom Forge Consulting",
+  "description_for_model": "Access Talsom Forge virtual consulting services, case studies, pricing, and expert knowledge in process design, IT modernization, AI strategy, and organizational performance.",
+  "description_for_human": "Virtual consulting platform powered by AI — process design, modernization, AI strategy, and organizational performance.",
+  "auth": {
+    "type": "api_key",
+    "authorization_type": "custom_header",
+    "custom_auth_header": "X-API-Key"
+  },
+  "api": {
+    "type": "mcp",
+    "url": "https://talsom-forge.vercel.app/api/mcp/content"
+  },
+  "logo_url": "https://talsom-forge.vercel.app/favicon.ico",
+  "contact_email": "support@talsom.com"
+}

@@ -9,6 +9,11 @@ import { TrustBar } from "@/components/TrustBar";
 import { AdminLogin } from "@/admin/AdminLogin";
 import { ProtectedRoute } from "@/admin/ProtectedRoute";
 import { AdminLayout } from "@/admin/AdminLayout";
+import { ClientLogin } from "@/client/ClientLogin";
+import { ClientSignup } from "@/client/ClientSignup";
+import { ClientProtectedRoute } from "@/client/ClientProtectedRoute";
+
+const ClientLayout = lazy(() => import("@/client/ClientLayout").then(m => ({ default: m.ClientLayout })));
 
 const ServicesSection = lazy(() => import("@/components/ServicesSection").then(m => ({ default: m.ServicesSection })));
 const HowItWorks = lazy(() => import("@/components/HowItWorks").then(m => ({ default: m.HowItWorks })));
@@ -67,8 +72,8 @@ export default function App() {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("talsom-theme");
       if (saved === "dark" || saved === "light") return saved;
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
+    // Default to light — don't auto-detect system preference
     return "light";
   });
 
@@ -77,7 +82,7 @@ export default function App() {
     localStorage.setItem("talsom-theme", theme);
   }, [theme]);
 
-  const toggle = useCallback(() => setTheme((t) => t === "dark" ? "light" : "dark"), []);
+  const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);
 
   return (
     <ThemeContext.Provider value={{ theme, toggle }}>
@@ -86,6 +91,9 @@ export default function App() {
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/*" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>} />
+          <Route path="/client/login" element={<ClientLogin />} />
+          <Route path="/client/signup" element={<ClientSignup />} />
+          <Route path="/client/*" element={<ClientProtectedRoute><Suspense fallback={null}><ClientLayout /></Suspense></ClientProtectedRoute>} />
           <Route path="*" element={<MainSite />} />
         </Routes>
       </LangContext.Provider>

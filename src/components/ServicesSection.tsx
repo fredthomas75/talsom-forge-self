@@ -14,6 +14,8 @@ import { useSection, useBi } from "@/hooks/useContent";
 import { getIcon } from "@/lib/iconMap";
 
 export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string; onClose?: () => void }) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   const svcData = useSection('services');
   const bi = useBi();
   const svc = svcData.items.find((s) => s.id === serviceId);
@@ -41,10 +43,10 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
         </SheetHeader>
 
         <div className="flex flex-wrap gap-1.5 mb-5">
-          {bi(svc.tags).split(",").map((tag) => <Badge key={tag} variant="secondary" className="text-[10px] rounded-full bg-gray-50 text-gray-500 border-0 px-2.5">{tag}</Badge>)}
+          {bi(svc.tags).split(",").map((tag) => <Badge key={tag} variant="secondary" className={`text-[10px] rounded-full border-0 px-2.5 ${dark ? "bg-white/5 text-white/40" : "bg-gray-50 text-gray-500"}`}>{tag}</Badge>)}
         </div>
 
-        <p className="text-sm text-gray-600 leading-relaxed mb-5">{bi(detail.extendedDesc)}</p>
+        <p className={`text-sm leading-relaxed mb-5 ${dark ? "text-white/60" : "text-gray-600"}`}>{bi(detail.extendedDesc)}</p>
 
         {/* Differentiator callout */}
         <div className="rounded-xl p-4 mb-5 flex gap-3" style={{ background: C.greenLight }}>
@@ -65,18 +67,18 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
             </h4>
             <Accordion type="single" collapsible className="space-y-2">
               {detail.subServices.map((sub, i) => (
-                <AccordionItem key={i} value={`sub-${i}`} className="border border-gray-100 rounded-xl px-4 data-[state=open]:border-gray-200 data-[state=open]:bg-gray-50/50">
-                  <AccordionTrigger className="text-sm font-semibold text-left py-3 hover:no-underline text-gray-900">
+                <AccordionItem key={i} value={`sub-${i}`} className={`border rounded-xl px-4 ${dark ? "border-white/10 data-[state=open]:border-white/20 data-[state=open]:bg-white/5" : "border-gray-100 data-[state=open]:border-gray-200 data-[state=open]:bg-gray-50/50"}`}>
+                  <AccordionTrigger className={`text-sm font-semibold text-left py-3 hover:no-underline ${dark ? "text-white" : "text-gray-900"}`}>
                     <div className="flex items-center gap-2 flex-1">
                       <span>{bi(sub.name)}</span>
                       <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 rounded-full ml-auto mr-2">{bi(sub.price)}</Badge>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="pb-4">
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3">{bi(sub.desc)}</p>
+                    <p className={`text-xs leading-relaxed mb-3 ${dark ? "text-white/50" : "text-gray-500"}`}>{bi(sub.desc)}</p>
                     <div className="space-y-1.5 mb-3">
                       {sub.deliverables.map((d, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                        <div key={idx} className={`flex items-center gap-2 text-xs ${dark ? "text-white/60" : "text-gray-600"}`}>
                           <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.greenMid }} />
                           {bi(d)}
                         </div>
@@ -106,10 +108,10 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5" style={{ background: C.yellow, color: C.green }}>{i + 1}</div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-semibold text-gray-900">{bi(phase.name)}</p>
+                    <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>{bi(phase.name)}</p>
                     <Badge variant="outline" className="text-[10px] px-2 py-0 h-5 rounded-full">{bi(phase.duration)}</Badge>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{bi(phase.desc)}</p>
+                  <p className={`text-xs leading-relaxed ${dark ? "text-white/50" : "text-gray-500"}`}>{bi(phase.desc)}</p>
                 </div>
               </div>
             ))}
@@ -125,7 +127,7 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
           </h4>
           <div className="space-y-2">
             {detail.deliverables.map((d, idx) => (
-              <div key={idx} className="flex items-start gap-2.5 text-sm text-gray-600">
+              <div key={idx} className={`flex items-start gap-2.5 text-sm ${dark ? "text-white/60" : "text-gray-600"}`}>
                 <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.greenMid }} />
                 {bi(d)}
               </div>
@@ -139,7 +141,7 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
           <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{bi({ fr: "Idéal pour", en: "Ideal for" })}</h4>
           <div className="flex flex-wrap gap-2">
             {detail.idealFor.map((p, idx) => (
-              <Badge key={idx} variant="secondary" className="rounded-full text-xs bg-gray-50 text-gray-600 px-3">{bi(p)}</Badge>
+              <Badge key={idx} variant="secondary" className={`rounded-full text-xs px-3 ${dark ? "bg-white/5 text-white/50" : "bg-gray-50 text-gray-600"}`}>{bi(p)}</Badge>
             ))}
           </div>
         </div>
@@ -149,7 +151,7 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
         <div className="pt-5 pb-2">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider">{bi({ fr: "À partir de", en: "Starting at" })}</p>
+              <p className={`text-[10px] uppercase tracking-wider ${dark ? "text-white/30" : "text-gray-400"}`}>{bi({ fr: "À partir de", en: "Starting at" })}</p>
               <p className="text-lg font-bold" style={{ ...HDR_FONT, color: C.green }}>{bi(svc.price)}</p>
             </div>
             <Badge variant="outline" className="text-xs rounded-full px-3 flex items-center gap-1.5">
@@ -232,7 +234,7 @@ export function ServicesSection() {
       </div>
 
       <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
-        <SheetContent side="right" className="w-full sm:max-w-xl p-0">
+        <SheetContent side="right" className={`w-full sm:max-w-xl p-0 ${dark ? "bg-gray-950 border-white/10" : ""}`}>
           {selectedId && <ServiceDetailContent serviceId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
