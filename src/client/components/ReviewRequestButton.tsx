@@ -1,6 +1,8 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { ShieldCheck, Loader2, Download, ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
 
@@ -38,11 +40,130 @@ export function ReviewRequestButton({
 }: ReviewRequestButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showContent, setShowContent] = useState(false);
   const bi = (fr: string, en: string) => (lang === "fr" ? fr : en);
 
   if (!conversationId) return null;
 
-  // Already has a review
+  // ── Delivered: show the verified deliverable ──
+  if (existingReview?.status === "delivered") {
+    const hasModifiedContent = !!existingReview.modified_content?.trim();
+    const hasModifiedFile = !!existingReview.modified_file_url;
+    const hasFeedback = !!existingReview.client_feedback?.trim();
+
+    return (
+      <div
+        className={`mt-4 rounded-2xl overflow-hidden border-2 ${
+          dark ? "border-emerald-500/30 bg-emerald-950/20" : "border-emerald-200 bg-emerald-50/50"
+        }`}
+      >
+        {/* ── Header: Verified badge + consultant name ── */}
+        <div
+          className={`px-5 py-4 flex items-start gap-3 ${
+            dark ? "bg-emerald-950/30" : "bg-emerald-50"
+          }`}
+        >
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
+          >
+            <ShieldCheck className="w-6 h-6" style={{ color: C.green }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <ReviewStatusBadge
+                status="delivered"
+                consultantName={existingReview.consultant_name}
+                lang={lang}
+              />
+            </div>
+            <p className={`text-xs mt-1.5 ${dark ? "text-white/40" : "text-gray-500"}`}>
+              {bi(
+                "Ce livrable a été vérifié, amélioré et certifié par un consultant Talsom.",
+                "This deliverable has been verified, improved and certified by a Talsom consultant."
+              )}
+            </p>
+          </div>
+        </div>
+
+        {/* ── Client feedback from consultant ── */}
+        {hasFeedback && (
+          <div className={`px-5 py-3 border-t ${dark ? "border-white/5" : "border-emerald-100"}`}>
+            <div className="flex items-start gap-2">
+              <MessageSquare className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${dark ? "text-white/30" : "text-gray-400"}`} />
+              <div>
+                <p className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${dark ? "text-white/30" : "text-gray-400"}`}>
+                  {bi("Commentaire du consultant", "Consultant feedback")}
+                </p>
+                <p className={`text-sm leading-relaxed ${dark ? "text-white/70" : "text-gray-700"}`}>
+                  {existingReview.client_feedback}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Actions: View content + Download file ── */}
+        <div className={`px-5 py-3 border-t flex items-center gap-2 flex-wrap ${dark ? "border-white/5" : "border-emerald-100"}`}>
+          {hasModifiedContent && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowContent(!showContent)}
+              className={`rounded-full text-xs gap-1.5 ${
+                dark
+                  ? "border-white/10 text-white/70 hover:bg-white/5"
+                  : "border-emerald-200 text-emerald-800 hover:bg-emerald-50"
+              }`}
+            >
+              {showContent ? (
+                <>
+                  <ChevronUp className="w-3.5 h-3.5" />
+                  {bi("Masquer le contenu", "Hide content")}
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                  {bi("Voir le livrable vérifié", "View verified deliverable")}
+                </>
+              )}
+            </Button>
+          )}
+
+          {hasModifiedFile && (
+            <a
+              href={existingReview.modified_file_url!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                dark
+                  ? "border-white/10 text-white/70 hover:bg-white/5"
+                  : "border-emerald-200 text-emerald-800 hover:bg-emerald-50"
+              }`}
+            >
+              <Download className="w-3.5 h-3.5" />
+              {bi("Télécharger le livrable vérifié", "Download verified deliverable")}
+            </a>
+          )}
+        </div>
+
+        {/* ── Modified content (markdown rendered) ── */}
+        {showContent && hasModifiedContent && (
+          <div className={`border-t ${dark ? "border-white/5" : "border-emerald-100"}`}>
+            <div className={`px-5 py-4 max-h-[600px] overflow-y-auto`}>
+              <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {existingReview.modified_content!}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Existing review (non-delivered) — show status ──
   if (existingReview) {
     return (
       <div className={`mt-4 rounded-xl p-4 border ${dark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"}`}>
@@ -61,23 +182,11 @@ export function ReviewRequestButton({
             {existingReview.client_feedback}
           </div>
         )}
-
-        {/* Show modified content link if delivered */}
-        {existingReview.status === "delivered" && existingReview.modified_file_url && (
-          <a
-            href={existingReview.modified_file_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium underline"
-            style={{ color: C.green }}
-          >
-            {bi("Télécharger le livrable vérifié", "Download verified deliverable")}
-          </a>
-        )}
       </div>
     );
   }
 
+  // ── No review yet — show request button ──
   const handleRequest = async () => {
     setLoading(true);
     setError(null);

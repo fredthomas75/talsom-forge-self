@@ -93,6 +93,11 @@ export const clientI18n = {
   reviewTurnaround: { fr: "Délai : 48h", en: "Turnaround: 48h" },
   consultantFeedback: { fr: "Commentaire du consultant", en: "Consultant feedback" },
   downloadVerified: { fr: "Télécharger le livrable vérifié", en: "Download verified deliverable" },
+  verifiedDeliverable: { fr: "Livrable vérifié par un consultant", en: "Consultant-verified deliverable" },
+  verifiedDeliverableDesc: { fr: "Ce livrable a été vérifié, amélioré et certifié par un consultant Talsom.", en: "This deliverable has been verified, improved and certified by a Talsom consultant." },
+  showVerifiedContent: { fr: "Voir le livrable vérifié", en: "View verified deliverable" },
+  hideVerifiedContent: { fr: "Masquer le contenu", en: "Hide content" },
+  deliverableModifiedBy: { fr: "Modifié et certifié par", en: "Modified and certified by" },
 } as const;
 
 export type ClientI18nKey = keyof typeof clientI18n;
