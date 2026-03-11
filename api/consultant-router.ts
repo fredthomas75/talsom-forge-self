@@ -9,6 +9,7 @@ import dashboardHandler from "./consultant/_handlers/dashboard.js";
 import queueHandler from "./consultant/_handlers/queue.js";
 import reviewHandler from "./consultant/_handlers/review.js";
 import reviewDeliverHandler from "./consultant/_handlers/review-deliver.js";
+import reviewUploadHandler from "./consultant/_handlers/review-upload.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const rawPath = (req.query._path as string) ?? "";
@@ -30,9 +31,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case "reviews":
       if (seg1) {
         req.query.id = seg1;
-        // Check for /reviews/:id/deliver
+        // Check for /reviews/:id/deliver or /reviews/:id/upload
         if (segments[2] === "deliver") {
           return reviewDeliverHandler(req, res);
+        }
+        if (segments[2] === "upload") {
+          return reviewUploadHandler(req, res);
         }
         return reviewHandler(req, res);
       }

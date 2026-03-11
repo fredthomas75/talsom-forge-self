@@ -60,6 +60,17 @@ export const consultantI18n = {
   editTab: { fr: "Éditer", en: "Edit" },
   originalFile: { fr: "Fichier original", en: "Original File" },
   downloadFile: { fr: "Télécharger", en: "Download" },
+
+  // Upload & reopen
+  uploadModifiedFile: { fr: "Envoyer un fichier modifié", en: "Upload modified file" },
+  uploadingFile: { fr: "Envoi en cours…", en: "Uploading…" },
+  modifiedFile: { fr: "Fichier modifié", en: "Modified file" },
+  replaceFile: { fr: "Remplacer", en: "Replace" },
+  reopen: { fr: "Réouvrir et modifier", en: "Reopen & edit" },
+  reopenDesc: { fr: "Permet de modifier le livrable et re-livrer.", en: "Allows editing the deliverable and re-delivering." },
+  deliverConfirm: { fr: "Sauvegarder et livrer au client ?", en: "Save and deliver to the client?" },
+  deliveredSuccess: { fr: "Livré avec succès !", en: "Delivered successfully!" },
+  savedSuccess: { fr: "Sauvegardé !", en: "Saved!" },
 } as const;
 
 export type ConsultantI18nKey = keyof typeof consultantI18n;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ArrowLeft, Loader2, UserPlus, CheckCircle2, AlertTriangle,
   Send, Save, FileText, PenLine, MessageSquare, Download, Eye,
+  Upload, File, RefreshCw, X,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -48,6 +49,21 @@ interface TenantInfo {
 
 type LeftTab = "deliverable" | "modified" | "conversation";
 
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
+
+function readFileAsBase64(file: globalThis.File): Promise<{ name: string; data: string; mime: string; size: number }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(",")[1] ?? "";
+      resolve({ name: file.name, data: base64, mime: file.type, size: file.size });
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export function ReviewDetailPage() {
   const { reviewId } = useParams<{ reviewId: string }>();
   const navigate = useNavigate();
@@ -63,6 +79,8 @@ export function ReviewDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [delivering, setDelivering] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Left panel tab
   const [leftTab, setLeftTab] = useState<LeftTab>("deliverable");
@@ -73,6 +91,16 @@ export function ReviewDetailPage() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [clientFeedback, setClientFeedback] = useState("");
   const [modifiedContent, setModifiedContent] = useState("");
+  const [modifiedFileUrl, setModifiedFileUrl] = useState<string | null>(null);
+  const [modifiedFileName, setModifiedFileName] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Show toast briefly
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     if (!reviewId) return;
@@ -89,6 +117,7 @@ export function ReviewDetailPage() {
           setReviewNotes(data.review.review_notes ?? "");
           setClientFeedback(data.review.client_feedback ?? "");
           setModifiedContent(data.review.modified_content ?? data.review.original_content ?? "");
+          setModifiedFileUrl(data.review.modified_file_url ?? null);
         }
       } catch { /* ignore */ }
       finally { setLoading(false); }
@@ -115,11 +144,12 @@ export function ReviewDetailPage() {
     if (!review) return;
     setSaving(true);
     try {
-      await fetch(`/api/consultant/reviews/${review.id}`, {
+      const res = await fetch(`/api/consultant/reviews/${review.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ review_notes: reviewNotes, client_feedback: clientFeedback, modified_content: modifiedContent }),
       });
+      if (res.ok) showToast(bi(consultantI18n.savedSuccess));
     } catch { /* ignore */ }
     finally { setSaving(false); }
   };
@@ -140,9 +170,12 @@ export function ReviewDetailPage() {
 
   const handleDeliver = async () => {
     if (!review) return;
+    // Confirm
+    if (!window.confirm(bi(consultantI18n.deliverConfirm))) return;
+
     setDelivering(true);
     try {
-      // Save first
+      // Save content first
       await fetch(`/api/consultant/reviews/${review.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
@@ -155,9 +188,62 @@ export function ReviewDetailPage() {
       });
       if (res.ok) {
         setReview((r) => r ? { ...r, status: "delivered", delivered_at: new Date().toISOString() } : r);
+        showToast(bi(consultantI18n.deliveredSuccess));
       }
     } catch { /* ignore */ }
     finally { setDelivering(false); }
+  };
+
+  const handleReopen = async () => {
+    if (!review) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/consultant/reviews/${review.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ status: "in_review" }),
+      });
+      if (res.ok) {
+        setReview((r) => r ? { ...r, status: "in_review" } : r);
+      }
+    } catch { /* ignore */ }
+    finally { setSaving(false); }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !review) return;
+    e.target.value = "";
+
+    if (file.size > MAX_UPLOAD_SIZE) {
+      alert(lang === "fr" ? "Fichier trop volumineux (max 10 MB)" : "File too large (max 10 MB)");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const { name, data, mime } = await readFileAsBase64(file);
+
+      const res = await fetch(`/api/consultant/reviews/${review.id}/upload`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ file_name: name, file_data: data, mime_type: mime }),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setModifiedFileUrl(result.file.url);
+        setModifiedFileName(result.file.name);
+        showToast(bi({ fr: "Fichier envoyé !", en: "File uploaded!" }));
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Upload failed");
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (loading) {
@@ -205,6 +291,16 @@ export function ReviewDetailPage() {
           {bi(consultantI18n[review.status as keyof typeof consultantI18n] ?? { fr: review.status, en: review.status })}
         </Badge>
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="absolute top-16 right-4 z-50 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
+            <CheckCircle2 className="w-4 h-4" />
+            {toast}
+          </div>
+        </div>
+      )}
 
       {/* Two-column layout */}
       <div className="flex-1 flex overflow-hidden">
@@ -270,7 +366,7 @@ export function ReviewDetailPage() {
               </div>
             )}
 
-            {/* ── Modified deliverable (editor + preview) ── */}
+            {/* ── Modified deliverable (editor + preview + file upload) ── */}
             {leftTab === "modified" && (
               <div className="flex flex-col h-full">
                 {/* Edit/Preview toggle */}
@@ -299,13 +395,86 @@ export function ReviewDetailPage() {
                   </button>
                 </div>
 
+                {/* File upload zone */}
+                <div className="px-4 pb-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx,.xls,.pdf,.docx,.pptx,.csv,.zip"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+
+                  {modifiedFileUrl ? (
+                    <div className={`flex items-center gap-3 p-3 rounded-lg border ${
+                      dark ? "bg-emerald-950/20 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"
+                    }`}>
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: C.greenLight }}>
+                        <File className="w-4 h-4" style={{ color: C.green }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs font-semibold ${dark ? "text-white/60" : "text-gray-600"}`}>
+                          {bi(consultantI18n.modifiedFile)}
+                        </p>
+                        <a href={modifiedFileUrl} target="_blank" rel="noopener noreferrer"
+                          className="text-xs underline truncate block" style={{ color: C.green }}>
+                          {modifiedFileName || bi(consultantI18n.downloadFile)}
+                        </a>
+                      </div>
+                      {canEdit && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploading}
+                            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border transition-colors ${
+                              dark ? "border-white/10 text-white/50 hover:bg-white/5" : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                            }`}
+                          >
+                            {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : bi(consultantI18n.replaceFile)}
+                          </button>
+                          <button
+                            onClick={() => { setModifiedFileUrl(null); setModifiedFileName(null); }}
+                            className={`p-1 rounded-lg transition-colors ${
+                              dark ? "text-white/20 hover:text-white/50" : "text-gray-300 hover:text-gray-500"
+                            }`}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : canEdit ? (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className={`w-full flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed text-sm font-medium transition-colors ${
+                        uploading
+                          ? dark ? "border-white/10 text-white/20" : "border-gray-200 text-gray-300"
+                          : dark ? "border-white/10 text-white/40 hover:border-white/20 hover:text-white/60" : "border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600"
+                      }`}
+                    >
+                      {uploading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          {bi(consultantI18n.uploadingFile)}
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          {bi(consultantI18n.uploadModifiedFile)}
+                        </>
+                      )}
+                    </button>
+                  ) : null}
+                </div>
+
                 <div className="flex-1 px-4 pb-4">
                   {editMode ? (
                     <textarea
                       value={modifiedContent}
                       onChange={(e) => setModifiedContent(e.target.value)}
                       disabled={!canEdit}
-                      className={`w-full h-[calc(100vh-14rem)] rounded-lg border text-sm p-4 resize-none font-mono leading-relaxed ${
+                      className={`w-full h-[calc(100vh-18rem)] rounded-lg border text-sm p-4 resize-none font-mono leading-relaxed ${
                         dark
                           ? "bg-white/5 border-white/10 text-white placeholder:text-white/20"
                           : "bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
@@ -315,7 +484,7 @@ export function ReviewDetailPage() {
                       )}
                     />
                   ) : (
-                    <div className={`rounded-lg border p-5 min-h-[calc(100vh-14rem)] ${
+                    <div className={`rounded-lg border p-5 min-h-[calc(100vh-18rem)] ${
                       dark ? "bg-white/5 border-white/10" : "bg-white border-gray-200"
                     }`}>
                       {modifiedContent ? (
@@ -423,7 +592,7 @@ export function ReviewDetailPage() {
                 />
               </div>
 
-              {/* Action buttons */}
+              {/* Action buttons — editable state */}
               {canEdit && (
                 <div className="space-y-2 pt-2">
                   <Button onClick={handleSave} disabled={saving} variant="outline" className="w-full rounded-full text-sm">
@@ -457,15 +626,35 @@ export function ReviewDetailPage() {
                 </div>
               )}
 
+              {/* Delivered state — show success + reopen */}
               {review.status === "delivered" && (
-                <div className="text-center py-4">
-                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2" style={{ color: C.green }} />
-                  <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
-                    {bi({ fr: "Livré", en: "Delivered" })}
-                  </p>
-                  <p className={`text-xs ${dark ? "text-white/40" : "text-gray-500"}`}>
-                    {review.delivered_at ? new Date(review.delivered_at).toLocaleString(lang === "fr" ? "fr-CA" : "en-CA") : ""}
-                  </p>
+                <div className="space-y-3">
+                  <div className={`text-center py-4 rounded-xl border ${
+                    dark ? "bg-emerald-950/20 border-emerald-500/20" : "bg-emerald-50 border-emerald-200"
+                  }`}>
+                    <CheckCircle2 className="w-8 h-8 mx-auto mb-2" style={{ color: C.green }} />
+                    <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
+                      {bi(consultantI18n.deliveredSuccess)}
+                    </p>
+                    <p className={`text-xs mt-1 ${dark ? "text-white/40" : "text-gray-500"}`}>
+                      {review.delivered_at ? new Date(review.delivered_at).toLocaleString(lang === "fr" ? "fr-CA" : "en-CA") : ""}
+                    </p>
+                  </div>
+
+                  {isAssigned && (
+                    <div>
+                      <Button onClick={handleReopen} disabled={saving} variant="outline"
+                        className={`w-full rounded-full text-sm ${
+                          dark ? "border-white/10 text-white/60 hover:bg-white/5" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}>
+                        {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+                        {bi(consultantI18n.reopen)}
+                      </Button>
+                      <p className={`text-[10px] text-center mt-1.5 ${dark ? "text-white/20" : "text-gray-400"}`}>
+                        {bi(consultantI18n.reopenDesc)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
