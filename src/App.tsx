@@ -12,8 +12,11 @@ import { AdminLayout } from "@/admin/AdminLayout";
 import { ClientLogin } from "@/client/ClientLogin";
 import { ClientSignup } from "@/client/ClientSignup";
 import { ClientProtectedRoute } from "@/client/ClientProtectedRoute";
+import { ConsultantLogin } from "@/consultant/ConsultantLogin";
+import { ConsultantProtectedRoute } from "@/consultant/ConsultantProtectedRoute";
 
 const ClientLayout = lazy(() => import("@/client/ClientLayout").then(m => ({ default: m.ClientLayout })));
+const ConsultantLayout = lazy(() => import("@/consultant/ConsultantLayout").then(m => ({ default: m.ConsultantLayout })));
 
 const ServicesSection = lazy(() => import("@/components/ServicesSection").then(m => ({ default: m.ServicesSection })));
 const HowItWorks = lazy(() => import("@/components/HowItWorks").then(m => ({ default: m.HowItWorks })));
@@ -94,6 +97,8 @@ export default function App() {
           <Route path="/client/login" element={<ClientLogin />} />
           <Route path="/client/signup" element={<ClientSignup />} />
           <Route path="/client/*" element={<ClientProtectedRoute><Suspense fallback={null}><ClientLayout /></Suspense></ClientProtectedRoute>} />
+          <Route path="/consultant/login" element={<ConsultantLogin />} />
+          <Route path="/consultant/*" element={<ConsultantProtectedRoute><Suspense fallback={null}><ConsultantLayout /></Suspense></ConsultantProtectedRoute>} />
           <Route path="*" element={<MainSite />} />
         </Routes>
       </LangContext.Provider>

@@ -79,6 +79,20 @@ export const clientI18n = {
   exportSuccess: { fr: "Fichier exporté avec succès !", en: "File exported successfully!" },
   importSuccess: { fr: "Fichier importé avec succès !", en: "File imported successfully!" },
   back: { fr: "Retour", en: "Back" },
+
+  // Human Review
+  reviewVerification: { fr: "Vérification par un consultant", en: "Consultant Verification" },
+  reviewDescription: { fr: "Un consultant Talsom vérifie, améliore et certifie votre livrable.", en: "A Talsom consultant verifies, improves and certifies your deliverable." },
+  reviewRequest: { fr: "Demander une vérification", en: "Request verification" },
+  reviewPending: { fr: "En attente de vérification", en: "Awaiting verification" },
+  reviewInProgress: { fr: "En cours de révision", en: "Under review" },
+  reviewApproved: { fr: "Approuvé", en: "Approved" },
+  reviewNeedsRevision: { fr: "Révision nécessaire", en: "Needs revision" },
+  reviewDelivered: { fr: "Vérifié par", en: "Verified by" },
+  reviewPrice: { fr: "149 $ / livrable", en: "$149 / deliverable" },
+  reviewTurnaround: { fr: "Délai : 48h", en: "Turnaround: 48h" },
+  consultantFeedback: { fr: "Commentaire du consultant", en: "Consultant feedback" },
+  downloadVerified: { fr: "Télécharger le livrable vérifié", en: "Download verified deliverable" },
 } as const;
 
 export type ClientI18nKey = keyof typeof clientI18n;

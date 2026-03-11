@@ -20,6 +20,7 @@ import { useClient } from "../contexts/ClientContext";
 import { useToolChat, type Attachment } from "../hooks/useToolChat";
 import { useCloudIntegrations, type CloudFile, type Provider } from "../hooks/useCloudIntegrations";
 import { CloudFilePicker } from "../components/CloudFilePicker";
+import { ReviewRequestButton } from "../components/ReviewRequestButton";
 
 // ─── Tool metadata — 18 plugin commands ──────────────
 const TOOL_META: Record<string, { icon: typeof Layers; label: { fr: string; en: string }; desc: { fr: string; en: string } }> = {
@@ -91,8 +92,9 @@ export function ToolChatPage() {
   const { lang } = useLang();
   const { theme } = useTheme();
   const dark = theme === "dark";
-  const { session } = useClient();
+  const { session, quotas } = useClient();
   const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
+  const hasHumanReview = quotas?.features?.human_review === true;
 
   const meta = TOOL_META[toolName ?? ""];
   const Icon = meta?.icon ?? Layers;
@@ -113,6 +115,12 @@ export function ToolChatPage() {
   const [exporting, setExporting] = useState<number | null>(null);
   const [exportSuccess, setExportSuccess] = useState<string | null>(null);
   const [showCloudMenu, setShowCloudMenu] = useState(false);
+
+  // Human review state
+  const [existingReview, setExistingReview] = useState<{
+    id: string; status: string; consultant_name?: string | null;
+    client_feedback?: string | null; modified_content?: string | null; modified_file_url?: string | null;
+  } | null>(null);
 
   const { messages, isStreaming, error, conversationId, sendMessage, stop, reset, loadConversation } =
     useToolChat({ toolName: toolName ?? "", lang, accessToken: session.access_token });
@@ -287,6 +295,26 @@ export function ToolChatPage() {
       setSelectedId(conversationId);
     }
   }, [conversationId]);
+
+  // Fetch existing review when conversation is loaded
+  useEffect(() => {
+    const cid = conversationId || selectedId;
+    if (!cid || !hasHumanReview) { setExistingReview(null); return; }
+    (async () => {
+      try {
+        const res = await fetch(`/api/client/reviews?conversation=${cid}`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setExistingReview(data.reviews?.[0] ?? null);
+        }
+      } catch { /* ignore */ }
+    })();
+  }, [conversationId, selectedId, hasHumanReview]);
+
+  // Check if conversation has any generated files (for review button)
+  const hasGeneratedFiles = messages.some((m) => m.role === "assistant" && m.files && m.files.length > 0);
 
   const showLoading = messages.length === 0 && !error;
   const hasGoogle = cloud.isConnected("google");
@@ -493,6 +521,20 @@ export function ToolChatPage() {
               <Badge variant="destructive" className="text-xs">{error}</Badge>
             </div>
           )}
+
+          {/* ── Human Review Request ── */}
+          {hasHumanReview && hasGeneratedFiles && !isStreaming && (conversationId || selectedId) && (
+            <ReviewRequestButton
+              conversationId={conversationId || selectedId}
+              toolName={toolName ?? ""}
+              accessToken={session.access_token}
+              lang={lang}
+              existingReview={existingReview}
+              dark={dark}
+              onReviewCreated={(review) => setExistingReview(review)}
+            />
+          )}
+
           <div ref={bottomRef} />
         </div>
       </ScrollArea>

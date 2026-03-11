@@ -29,6 +29,8 @@ import billingWebhookHandler from "./client/_handlers/billing-webhook.js";
 import tenantProfileHandler from "./client/_handlers/tenant-profile.js";
 import tenantAssetsHandler from "./client/_handlers/tenant-assets.js";
 import integrationsHandler from "./client/_handlers/integrations.js";
+import reviewsHandler from "./client/_handlers/reviews.js";
+import reviewsByIdHandler from "./client/_handlers/reviews-by-id.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Parse path from rewrite query param: /api/client/billing/checkout → _path="billing/checkout"
@@ -119,6 +121,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return tenantAssetsHandler(req, res);
       }
       break;
+
+    // ── Human Reviews ──
+    case "reviews":
+      if (seg1) {
+        req.query.id = seg1;
+        return reviewsByIdHandler(req, res);
+      }
+      return reviewsHandler(req, res);
 
     // ── Billing ──
     case "billing":

@@ -23,6 +23,7 @@
   ],
   "rewrites": [
     { "source": "/api/client/:path*", "destination": "/api/client-router?_path=:path*" },
+    { "source": "/api/consultant/:path*", "destination": "/api/consultant-router?_path=:path*" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

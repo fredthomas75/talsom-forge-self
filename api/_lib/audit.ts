@@ -85,4 +85,11 @@ export const ACTIONS = {
   INTEGRATION_DISCONNECT: "integration.disconnect",
   INTEGRATION_FILE_IMPORT: "integration.file_import",
   INTEGRATION_FILE_EXPORT: "integration.file_export",
+
+  // Human Review
+  REVIEW_REQUESTED: "review.requested",
+  REVIEW_ASSIGNED: "review.assigned",
+  REVIEW_APPROVED: "review.approved",
+  REVIEW_REJECTED: "review.rejected",
+  REVIEW_DELIVERED: "review.delivered",
 } as const;
