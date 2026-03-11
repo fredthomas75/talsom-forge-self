@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -124,6 +124,34 @@ export function ToolChatPage() {
 
   const { messages, isStreaming, error, conversationId, sendMessage, stop, reset, loadConversation } =
     useToolChat({ toolName: toolName ?? "", lang, accessToken: session.access_token });
+
+  // ── Streaming elapsed timer (for progress messages) ──
+  const [streamingElapsed, setStreamingElapsed] = useState(0);
+  const streamingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (isStreaming) {
+      setStreamingElapsed(0);
+      streamingTimerRef.current = setInterval(() => setStreamingElapsed((s) => s + 1), 1000);
+    } else {
+      if (streamingTimerRef.current) clearInterval(streamingTimerRef.current);
+      setStreamingElapsed(0);
+    }
+    return () => { if (streamingTimerRef.current) clearInterval(streamingTimerRef.current); };
+  }, [isStreaming]);
+
+  const streamingStatusText = useMemo(() => {
+    if (!isStreaming) return "";
+    // Check if assistant already has content (streaming text has started)
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.role === "assistant" && lastMsg.content) return ""; // text is flowing, no need for status
+
+    if (streamingElapsed < 5) return bi({ fr: "Analyse en cours…", en: "Analyzing…" });
+    if (streamingElapsed < 15) return bi({ fr: "Rédaction du livrable…", en: "Drafting deliverable…" });
+    if (streamingElapsed < 30) return bi({ fr: "Génération des contenus…", en: "Generating content…" });
+    if (streamingElapsed < 60) return bi({ fr: "Encore quelques instants…", en: "Almost there…" });
+    return bi({ fr: `Toujours en cours… (${streamingElapsed}s)`, en: `Still working… (${streamingElapsed}s)` });
+  }, [isStreaming, streamingElapsed, messages, lang]);
 
   // Auto-start discovery phase: send init message on new chat
   const autoStartedRef = useRef(false);
@@ -445,11 +473,27 @@ export function ToolChatPage() {
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                       </div>
                     ) : isStreaming && i === messages.length - 1 ? (
-                      <span className="inline-flex gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: C.green, animationDelay: "0ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: C.green, animationDelay: "150ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: C.green, animationDelay: "300ms" }} />
-                      </span>
+                      <div className="flex items-center gap-3 py-1">
+                        <div className="relative w-5 h-5 shrink-0">
+                          <Loader2 className="w-5 h-5 animate-spin" style={{ color: C.green }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium ${dark ? "text-white/70" : "text-gray-700"}`}>
+                            {streamingStatusText || bi({ fr: "Analyse en cours…", en: "Analyzing…" })}
+                          </p>
+                          {streamingElapsed >= 5 && (
+                            <div className="mt-1.5 w-full h-1 rounded-full overflow-hidden" style={{ background: dark ? "rgba(255,255,255,0.05)" : "#f3f4f6" }}>
+                              <div
+                                className="h-full rounded-full transition-all duration-1000 ease-out"
+                                style={{
+                                  background: `linear-gradient(90deg, ${C.green}, ${C.green}cc)`,
+                                  width: `${Math.min(95, streamingElapsed * 1.5)}%`,
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     ) : null
                   ) : (
                     m.content
