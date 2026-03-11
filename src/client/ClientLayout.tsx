@@ -13,13 +13,14 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Brain, LogOut, ArrowLeft, LayoutDashboard, MessageSquare,
   Bot, Key, BarChart3, Users, Settings, Shield, Palette,
-  Menu, Sun, Moon, Loader2,
+  Menu, Sun, Moon, Loader2, FileCheck,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "dashboard", path: "/client", icon: LayoutDashboard },
   { key: "chat", path: "/client/chat", icon: MessageSquare },
   { key: "tools", path: "/client/tools", icon: Bot },
+  { key: "deliverables", path: "/client/deliverables", icon: FileCheck, featureGate: "human_review" },
   { key: "apiKeys", path: "/client/keys", icon: Key },
   { key: "usage", path: "/client/usage", icon: BarChart3 },
   { key: "team", path: "/client/team", icon: Users },
@@ -39,14 +40,13 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { AuditLogPage } from "./pages/AuditLogPage";
 import { ToolChatPage } from "./pages/ToolChatPage";
 import { CustomizationPage } from "./pages/CustomizationPage";
-
-// All pages are now implemented
+import { DeliverablesPage } from "./pages/DeliverablesPage";
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { lang } = useLang();
   const { theme, toggle } = useTheme();
   const dark = theme === "dark";
-  const { tenant, user } = useClient();
+  const { tenant, user, quotas } = useClient();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -99,7 +99,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Nav items */}
       <ScrollArea className="flex-1 py-2">
         <nav className="space-y-0.5 px-2">
-          {NAV_ITEMS.map(({ key, path, icon: Icon }) => (
+          {NAV_ITEMS.filter((item) => {
+            if ("featureGate" in item && item.featureGate) {
+              return quotas?.features?.[item.featureGate] === true;
+            }
+            return true;
+          }).map(({ key, path, icon: Icon }) => (
             <button
               key={key}
               onClick={() => { navigate(path); onNavigate?.(); }}
@@ -232,6 +237,7 @@ export function ClientLayout() {
           <Route path="chat" element={<ChatPage />} />
           <Route path="tools" element={<ToolsPage />} />
           <Route path="tools/:toolName" element={<ToolChatPage />} />
+          <Route path="deliverables" element={<DeliverablesPage />} />
           <Route path="keys" element={<ApiKeysPage />} />
           <Route path="usage" element={<UsagePage />} />
           <Route path="team" element={<TeamPage />} />

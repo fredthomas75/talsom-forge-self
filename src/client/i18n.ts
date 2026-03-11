@@ -98,6 +98,18 @@ export const clientI18n = {
   showVerifiedContent: { fr: "Voir le livrable vérifié", en: "View verified deliverable" },
   hideVerifiedContent: { fr: "Masquer le contenu", en: "Hide content" },
   deliverableModifiedBy: { fr: "Modifié et certifié par", en: "Modified and certified by" },
+
+  // Deliverables page
+  deliverables: { fr: "Mes livrables", en: "My Deliverables" },
+  deliverablesDesc: { fr: "Retrouvez tous vos livrables vérifiés par un consultant", en: "Find all your consultant-verified deliverables" },
+  noDeliverables: { fr: "Aucun livrable soumis à vérification", en: "No deliverables submitted for verification" },
+  noDeliverablesDesc: { fr: "Utilisez un assistant IA puis demandez une vérification par un consultant.", en: "Use an AI assistant then request a consultant verification." },
+  requestedOn: { fr: "Demandé le", en: "Requested on" },
+  deliveredOn: { fr: "Livré le", en: "Delivered on" },
+  allStatuses: { fr: "Tous", en: "All" },
+  allTools: { fr: "Tous les outils", en: "All tools" },
+  goToTool: { fr: "Ouvrir l'outil", en: "Open tool" },
+  assignedTo: { fr: "Assigné à", en: "Assigned to" },
 } as const;
 
 export type ClientI18nKey = keyof typeof clientI18n;
