@@ -48,27 +48,8 @@ const TOOL_META: Record<string, { icon: typeof Layers; label: { fr: string; en: 
   "copilot-deployment":        { icon: Rocket,        label: { fr: "Déploiement Copilot 365",            en: "Copilot 365 Deployment" },            desc: { fr: "Plan 4 phases Copilot 365",                                       en: "4-phase Copilot 365 plan" } },
 };
 
-// Welcome messages per plugin command (loaded from TOOL_PROMPTS on backend, mirrored here for instant display)
-const WELCOME_MESSAGES: Record<string, { fr: string; en: string }> = {
-  "ai-maturity-assessment":     { fr: "Bonjour ! Je vais évaluer votre **maturité IA** sur 6 dimensions.\n\nDécrivez votre situation : stratégie IA, gouvernance, données, technologie, talent, culture.", en: "Hello! I'll assess your **AI maturity** across 6 dimensions.\n\nDescribe your situation: AI strategy, governance, data, technology, talent, culture." },
-  "data-readiness-assessment":  { fr: "Bonjour ! Évaluons la **maturité de vos données** sur 7 dimensions :\n\nGouvernance · Qualité · Architecture · Sécurité · Culture data · Analytique · Infrastructure", en: "Hello! Let's assess your **data maturity** across 7 dimensions:\n\nGovernance · Quality · Architecture · Security · Data Culture · Analytics · Infrastructure" },
-  "process-ai-diagnostic":      { fr: "Bonjour ! Diagnostiquons les **opportunités IA** dans vos processus.\n\nDécrivez un processus : nom, département, étapes principales, irritants.", en: "Hello! Let's diagnose **AI opportunities** in your processes.\n\nDescribe a process: name, department, main steps, pain points." },
-  "ai-governance-framework":    { fr: "Bonjour ! Concevons votre **cadre de gouvernance IA** :\n\n- Politiques d'utilisation responsable\n- Classification des risques\n- Processus d'approbation\n\nQuel est votre contexte réglementaire ?", en: "Hello! Let's design your **AI governance framework**:\n\n- Responsible use policies\n- Risk classification\n- Approval processes\n\nWhat's your regulatory context?" },
-  "ai-governance-committee":    { fr: "Bonjour ! Structurons votre **comité de gouvernance IA** :\n\n- Mandat et objectifs\n- Composition (membres, rôles)\n- Fréquence et processus décisionnel\n\nQuelle est votre structure actuelle ?", en: "Hello! Let's structure your **AI governance committee**:\n\n- Mandate and objectives\n- Composition (members, roles)\n- Frequency and decision process\n\nWhat's your current structure?" },
-  "ai-operating-model":         { fr: "Bonjour ! Concevons votre **modèle opérationnel IA** :\n\n- Hub & Spoke (CoE + unités d'affaires)\n- Rôles et responsabilités\n- Progression de maturité\n\nQuelle est votre structure organisationnelle ?", en: "Hello! Let's design your **AI operating model**:\n\n- Hub & Spoke (CoE + business units)\n- Roles and responsibilities\n- Maturity progression\n\nWhat's your organizational structure?" },
-  "ai-backlog":                 { fr: "Bonjour ! Construisons votre **backlog IA**.\n\nPour chaque cas d'usage, j'évalue : valeur business, faisabilité, risque.\n\nQuels processus ou départements cibler ?", en: "Hello! Let's build your **AI backlog**.\n\nFor each use case, I'll evaluate: business value, feasibility, risk.\n\nWhich processes or departments to target?" },
-  "ai-roadmap":                 { fr: "Bonjour ! Construisons votre **feuille de route IA** phasée.\n\n1. Quel horizon (6 mois, 1 an, 3 ans) ?\n2. Quels cas d'usage identifiés ?\n3. Quel niveau de maturité actuel ?", en: "Hello! Let's build your phased **AI roadmap**.\n\n1. What horizon (6 months, 1 year, 3 years)?\n2. What use cases identified?\n3. What current maturity level?" },
-  "ai-business-case":           { fr: "Bonjour ! Construisons votre **business case IA**.\n\n1. Quels cas d'usage à justifier ?\n2. Investissement envisagé ?\n3. Bénéfices attendus (productivité, revenus, coûts) ?", en: "Hello! Let's build your **AI business case**.\n\n1. What use cases to justify?\n2. Investment considered?\n3. Expected benefits (productivity, revenue, costs)?" },
-  "ai-raci":                    { fr: "Bonjour ! Créons votre **matrice RACI** pour les initiatives IA.\n\nQuels rôles existent dans votre organisation ? Quelles activités IA couvrir ?", en: "Hello! Let's create your **RACI matrix** for AI initiatives.\n\nWhat roles exist in your organization? What AI activities to cover?" },
-  "privacy-impact-assessment":  { fr: "Bonjour ! Produisons votre **EFVP** conforme Loi 25.\n\n1. Quel projet IA à évaluer ?\n2. Quels renseignements personnels concernés ?\n3. Volume de données traitées ?", en: "Hello! Let's produce your **PIA** compliant with Loi 25.\n\n1. What AI project to assess?\n2. What personal information involved?\n3. Volume of data processed?" },
-  "ai-vendor-assessment":       { fr: "Bonjour ! Évaluons vos **fournisseurs IA** avec une grille comparative.\n\n1. Quels fournisseurs comparer ?\n2. Critères prioritaires ?\n3. Cas d'usage à couvrir ?", en: "Hello! Let's evaluate your **AI vendors** with a comparison grid.\n\n1. Which vendors to compare?\n2. Priority criteria?\n3. Use case to cover?" },
-  "ai-talent-roadmap":          { fr: "Bonjour ! Planifions votre **roadmap talents IA**.\n\n1. Rôles IA actuels ?\n2. Compétences manquantes ?\n3. Recruter, former ou externaliser ?", en: "Hello! Let's plan your **AI talent roadmap**.\n\n1. Current AI roles?\n2. Missing skills?\n3. Recruit, train, or outsource?" },
-  "change-management-plan":     { fr: "Bonjour ! Bâtissons votre **plan de conduite du changement** IA.\n\nCadre ADKAR : Awareness → Desire → Knowledge → Ability → Reinforcement\n\n1. Quel changement ?\n2. Personnes impactées ?\n3. Niveau de résistance ?", en: "Hello! Let's build your AI **change management plan**.\n\nADKAR: Awareness → Desire → Knowledge → Ability → Reinforcement\n\n1. What change?\n2. People impacted?\n3. Resistance level?" },
-  "ai-training-plan":           { fr: "Bonjour ! Créons votre **plan de formation IA** par rôle.\n\n1. Profils à former ?\n2. Outils IA déployés ou prévus ?\n3. Budget formation ?", en: "Hello! Let's create your **AI training plan** by role.\n\n1. Profiles to train?\n2. AI tools deployed or planned?\n3. Training budget?" },
-  "copilot-deployment":         { fr: "Bonjour ! Planifions votre **déploiement Copilot 365** en 4 phases :\n\n1. Readiness\n2. Pilote\n3. Rollout\n4. Optimisation\n\nCombien d'utilisateurs et quels outils M365 ?", en: "Hello! Let's plan your **Copilot 365 deployment** in 4 phases:\n\n1. Readiness\n2. Pilot\n3. Rollout\n4. Optimization\n\nHow many users and what M365 tools?" },
-  "ai-impact-analysis":         { fr: "Bonjour ! Analysons l'**impact organisationnel** de votre déploiement IA.\n\n1. Quel déploiement IA ?\n2. Départements impactés ?\n3. Rôles les plus touchés ?", en: "Hello! Let's analyze the **organizational impact** of your AI deployment.\n\n1. What AI deployment?\n2. Departments impacted?\n3. Most affected roles?" },
-  "resistance-management-plan": { fr: "Bonjour ! Construisons votre **plan de gestion de la résistance**.\n\n1. Formes de résistance observées ?\n2. Groupes les plus résistants ?\n3. Tentatives déjà faites ?", en: "Hello! Let's build your **resistance management plan**.\n\n1. Forms of resistance observed?\n2. Most resistant groups?\n3. Attempts already made?" },
-};
+// Discovery questions are now auto-triggered via API call on mount.
+// Static welcome messages removed — Claude generates personalized questions.
 
 // ─── Helpers ──────────────────────────────────────────
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -115,7 +96,6 @@ export function ToolChatPage() {
 
   const meta = TOOL_META[toolName ?? ""];
   const Icon = meta?.icon ?? Layers;
-  const welcomeMsg = WELCOME_MESSAGES[toolName ?? ""];
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -136,6 +116,25 @@ export function ToolChatPage() {
 
   const { messages, isStreaming, error, conversationId, sendMessage, stop, reset, loadConversation } =
     useToolChat({ toolName: toolName ?? "", lang, accessToken: session.access_token });
+
+  // Auto-start discovery phase: send init message on new chat
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (
+      !autoStartedRef.current &&
+      !selectedId &&
+      !conversationId &&
+      messages.length === 0 &&
+      !isStreaming &&
+      meta
+    ) {
+      autoStartedRef.current = true;
+      const initPrompt = lang === "fr"
+        ? "Bonjour, je souhaite utiliser cet outil. Pose-moi les questions de découverte pour personnaliser le livrable."
+        : "Hello, I'd like to use this tool. Ask me the discovery questions to personalize the deliverable.";
+      sendMessage(initPrompt);
+    }
+  }, [selectedId, conversationId, messages.length, isStreaming, meta, lang, sendMessage]);
 
   // Load cloud connections on mount
   useEffect(() => { cloud.fetchConnections(); }, []);
@@ -196,6 +195,7 @@ export function ToolChatPage() {
     setSelectedId(null);
     setShowHistory(false);
     setAttachments([]);
+    autoStartedRef.current = false;
     reset();
   };
 
@@ -288,7 +288,7 @@ export function ToolChatPage() {
     }
   }, [conversationId]);
 
-  const showWelcome = messages.length === 0 && welcomeMsg;
+  const showLoading = messages.length === 0 && !error;
   const hasGoogle = cloud.isConnected("google");
   const hasMicrosoft = cloud.isConnected("microsoft");
   const hasAnyCloud = hasGoogle || hasMicrosoft;
@@ -375,11 +375,12 @@ export function ToolChatPage() {
       {/* ── Chat messages ── */}
       <ScrollArea className="flex-1 p-4">
         <div className="max-w-3xl mx-auto space-y-4">
-          {showWelcome && (
+          {showLoading && (
             <div className="flex justify-start">
               <div className={`max-w-[85%] rounded-2xl px-5 py-4 text-sm leading-relaxed ${dark ? "bg-white/5" : "bg-gray-50"}`}>
-                <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{bi(welcomeMsg)}</ReactMarkdown>
+                <div className={`flex items-center gap-3 ${dark ? "text-white/50" : "text-gray-500"}`}>
+                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: C.green }} />
+                  {bi({ fr: "Préparation des questions de découverte…", en: "Preparing discovery questions…" })}
                 </div>
               </div>
             </div>
