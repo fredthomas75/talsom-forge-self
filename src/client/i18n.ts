@@ -1,0 +1,84 @@
+// ─── CLIENT PORTAL i18n ─────────────────────────────
+// All FR/EN strings for the client portal
+
+export const clientI18n = {
+  // Sidebar
+  dashboard: { fr: "Tableau de bord", en: "Dashboard" },
+  chat: { fr: "Chat AI", en: "AI Chat" },
+  tools: { fr: "Outils IA", en: "AI Tools" },
+  apiKeys: { fr: "Clés API", en: "API Keys" },
+  usage: { fr: "Utilisation", en: "Usage" },
+  team: { fr: "Équipe", en: "Team" },
+  customization: { fr: "Personnalisation", en: "Customization" },
+  settings: { fr: "Paramètres", en: "Settings" },
+  auditLog: { fr: "Journal d'audit", en: "Audit Log" },
+
+  // Common
+  signOut: { fr: "Déconnexion", en: "Sign out" },
+  backToSite: { fr: "Retour au site", en: "Back to site" },
+  loading: { fr: "Chargement...", en: "Loading..." },
+  save: { fr: "Enregistrer", en: "Save" },
+  cancel: { fr: "Annuler", en: "Cancel" },
+  delete: { fr: "Supprimer", en: "Delete" },
+  confirm: { fr: "Confirmer", en: "Confirm" },
+  create: { fr: "Créer", en: "Create" },
+  copy: { fr: "Copier", en: "Copy" },
+  copied: { fr: "Copié !", en: "Copied!" },
+  search: { fr: "Rechercher...", en: "Search..." },
+  noResults: { fr: "Aucun résultat", en: "No results" },
+  actions: { fr: "Actions", en: "Actions" },
+  status: { fr: "Statut", en: "Status" },
+  date: { fr: "Date", en: "Date" },
+  name: { fr: "Nom", en: "Name" },
+  email: { fr: "Courriel", en: "Email" },
+  role: { fr: "Rôle", en: "Role" },
+
+  // Dashboard
+  welcomeBack: { fr: "Bon retour", en: "Welcome back" },
+  dashboardSubtitle: { fr: "Voici un aperçu de votre activité", en: "Here's an overview of your activity" },
+  apiCalls: { fr: "Appels API", en: "API Calls" },
+  tokensUsed: { fr: "Tokens utilisés", en: "Tokens Used" },
+  conversations: { fr: "Conversations", en: "Conversations" },
+  teamMembers: { fr: "Membres", en: "Members" },
+  thisMonth: { fr: "Ce mois", en: "This month" },
+  quickActions: { fr: "Actions rapides", en: "Quick actions" },
+  startChat: { fr: "Démarrer un chat", en: "Start a chat" },
+  browseTools: { fr: "Outils IA", en: "AI Tools" },
+  manageKeys: { fr: "Gérer les clés", en: "Manage keys" },
+  inviteMember: { fr: "Inviter un membre", en: "Invite a member" },
+  recentActivity: { fr: "Activité récente", en: "Recent activity" },
+  last7Days: { fr: "7 derniers jours", en: "Last 7 days" },
+  of: { fr: "de", en: "of" },
+  unlimited: { fr: "Illimité", en: "Unlimited" },
+  plan: { fr: "Plan", en: "Plan" },
+  upgrade: { fr: "Améliorer", en: "Upgrade" },
+
+  // Plans
+  free: { fr: "Gratuit", en: "Free" },
+  starter: { fr: "Starter", en: "Starter" },
+  pro: { fr: "Pro", en: "Pro" },
+  enterprise: { fr: "Entreprise", en: "Enterprise" },
+
+  // Cloud Integrations
+  integrations: { fr: "Intégrations", en: "Integrations" },
+  connectGoogle: { fr: "Connecter Google Workspace", en: "Connect Google Workspace" },
+  connectMicrosoft: { fr: "Connecter Microsoft 365", en: "Connect Microsoft 365" },
+  disconnect: { fr: "Déconnecter", en: "Disconnect" },
+  connected: { fr: "Connecté", en: "Connected" },
+  notConnected: { fr: "Non connecté", en: "Not connected" },
+  connectedAs: { fr: "Connecté en tant que", en: "Connected as" },
+  googleDriveDesc: { fr: "Importez des fichiers de Google Drive dans vos conversations IA", en: "Import files from Google Drive into your AI conversations" },
+  oneDriveDesc: { fr: "Importez des fichiers de OneDrive / SharePoint dans vos conversations IA", en: "Import files from OneDrive / SharePoint into your AI conversations" },
+  cloudImport: { fr: "Importer du cloud", en: "Import from cloud" },
+  cloudExport: { fr: "Exporter vers le cloud", en: "Export to cloud" },
+  browseFiles: { fr: "Parcourir les fichiers", en: "Browse files" },
+  selectFile: { fr: "Sélectionner", en: "Select" },
+  searchFiles: { fr: "Rechercher des fichiers...", en: "Search files..." },
+  noFilesFound: { fr: "Aucun fichier trouvé", en: "No files found" },
+  featureNotAvailable: { fr: "Cette fonctionnalité n'est pas disponible sur votre plan", en: "This feature is not available on your plan" },
+  exportSuccess: { fr: "Fichier exporté avec succès !", en: "File exported successfully!" },
+  importSuccess: { fr: "Fichier importé avec succès !", en: "File imported successfully!" },
+  back: { fr: "Retour", en: "Back" },
+} as const;
+
+export type ClientI18nKey = keyof typeof clientI18n;
