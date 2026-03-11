@@ -119,7 +119,7 @@ export function ToolChatPage() {
   // Human review state
   const [existingReview, setExistingReview] = useState<{
     id: string; status: string; consultant_name?: string | null;
-    client_feedback?: string | null; modified_content?: string | null; modified_file_url?: string | null;
+    client_feedback?: string | null; modified_content?: string | null; modified_file_url?: string | null; original_file_url?: string | null;
   } | null>(null);
 
   const { messages, isStreaming, error, conversationId, sendMessage, stop, reset, loadConversation } =

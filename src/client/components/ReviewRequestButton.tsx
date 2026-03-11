@@ -2,7 +2,10 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Loader2, Download, ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
+import {
+  ShieldCheck, Loader2, Download, ChevronDown, ChevronUp,
+  MessageSquare, FileSpreadsheet,
+} from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
 
@@ -13,6 +16,7 @@ interface ReviewData {
   client_feedback?: string | null;
   modified_content?: string | null;
   modified_file_url?: string | null;
+  original_file_url?: string | null;
 }
 
 interface ReviewRequestButtonProps {
@@ -51,6 +55,11 @@ export function ReviewRequestButton({
     const hasModifiedFile = !!existingReview.modified_file_url;
     const hasFeedback = !!existingReview.client_feedback?.trim();
 
+    // The file to download: modified if available, otherwise original (consultant approved it as-is)
+    const downloadUrl = existingReview.modified_file_url || existingReview.original_file_url;
+    const hasDownloadableFile = !!downloadUrl;
+    const isModifiedFile = hasModifiedFile;
+
     return (
       <div
         className={`mt-4 rounded-2xl overflow-hidden border-2 ${
@@ -86,6 +95,48 @@ export function ReviewRequestButton({
           </div>
         </div>
 
+        {/* ── PRIMARY ACTION: Download file ── */}
+        {hasDownloadableFile && (
+          <div className={`px-5 py-4 border-t ${dark ? "border-white/5" : "border-emerald-100"}`}>
+            <a
+              href={downloadUrl!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all hover:scale-[1.01] hover:shadow-md ${
+                dark
+                  ? "bg-emerald-950/30 border-emerald-500/30 hover:border-emerald-500/50"
+                  : "bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100"
+              }`}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
+              >
+                <FileSpreadsheet className="w-6 h-6" style={{ color: C.green }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+                  {isModifiedFile
+                    ? bi("Livrable modifié par le consultant", "Deliverable modified by consultant")
+                    : bi("Livrable validé par le consultant", "Deliverable validated by consultant")
+                  }
+                </p>
+                <p className={`text-xs mt-0.5 ${dark ? "text-white/40" : "text-gray-500"}`}>
+                  {bi("Cliquez pour télécharger le fichier", "Click to download the file")}
+                </p>
+              </div>
+              <div className="shrink-0">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ background: C.green }}
+                >
+                  <Download className="w-5 h-5" style={{ color: C.yellow }} />
+                </div>
+              </div>
+            </a>
+          </div>
+        )}
+
         {/* ── Client feedback from consultant ── */}
         {hasFeedback && (
           <div className={`px-5 py-3 border-t ${dark ? "border-white/5" : "border-emerald-100"}`}>
@@ -103,60 +154,31 @@ export function ReviewRequestButton({
           </div>
         )}
 
-        {/* ── Actions: View content + Download file ── */}
-        <div className={`px-5 py-3 border-t flex items-center gap-2 flex-wrap ${dark ? "border-white/5" : "border-emerald-100"}`}>
-          {hasModifiedContent && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowContent(!showContent)}
-              className={`rounded-full text-xs gap-1.5 ${
-                dark
-                  ? "border-white/10 text-white/70 hover:bg-white/5"
-                  : "border-emerald-200 text-emerald-800 hover:bg-emerald-50"
-              }`}
-            >
-              {showContent ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  {bi("Masquer le contenu", "Hide content")}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  {bi("Voir le livrable vérifié", "View verified deliverable")}
-                </>
-              )}
-            </Button>
-          )}
-
-          {hasModifiedFile && (
-            <a
-              href={existingReview.modified_file_url!}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                dark
-                  ? "border-white/10 text-white/70 hover:bg-white/5"
-                  : "border-emerald-200 text-emerald-800 hover:bg-emerald-50"
-              }`}
-            >
-              <Download className="w-3.5 h-3.5" />
-              {bi("Télécharger le livrable vérifié", "Download verified deliverable")}
-            </a>
-          )}
-        </div>
-
-        {/* ── Modified content (markdown rendered) ── */}
-        {showContent && hasModifiedContent && (
+        {/* ── View modified text content (expandable) ── */}
+        {hasModifiedContent && (
           <div className={`border-t ${dark ? "border-white/5" : "border-emerald-100"}`}>
-            <div className={`px-5 py-4 max-h-[600px] overflow-y-auto`}>
-              <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {existingReview.modified_content!}
-                </ReactMarkdown>
+            <button
+              onClick={() => setShowContent(!showContent)}
+              className={`w-full px-5 py-2.5 flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                dark ? "text-white/40 hover:text-white/60 hover:bg-white/5" : "text-gray-500 hover:text-gray-700 hover:bg-emerald-50/50"
+              }`}
+            >
+              {showContent ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              {showContent
+                ? bi("Masquer le contenu texte", "Hide text content")
+                : bi("Voir le contenu texte vérifié", "View verified text content")
+              }
+            </button>
+
+            {showContent && (
+              <div className={`px-5 py-4 border-t max-h-[600px] overflow-y-auto ${dark ? "border-white/5" : "border-emerald-100"}`}>
+                <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {existingReview.modified_content!}
+                  </ReactMarkdown>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>

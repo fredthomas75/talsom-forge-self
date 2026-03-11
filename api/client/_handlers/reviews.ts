@@ -100,7 +100,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let query = supabase
       .from("deliverable_reviews")
-      .select("id, conversation_id, tool_name, status, consultant_id, client_feedback, modified_content, modified_file_url, requested_at, delivered_at, price_cents, payment_status")
+      .select("id, conversation_id, tool_name, status, consultant_id, client_feedback, modified_content, modified_file_url, original_file_url, requested_at, delivered_at, price_cents, payment_status")
       .eq("tenant_id", ctx.tenantId)
       .eq("user_id", ctx.userId)
       .order("requested_at", { ascending: false });
