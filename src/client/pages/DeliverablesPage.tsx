@@ -66,7 +66,12 @@ export function DeliverablesPage() {
 
   // Derived data
   const filteredReviews = reviews.filter((r) => {
-    if (statusFilter !== "all" && r.status !== statusFilter) return false;
+    if (statusFilter === "in_review") {
+      // Group: in_review + approved + needs_revision (all "in progress" states)
+      if (r.status !== "in_review" && r.status !== "approved" && r.status !== "needs_revision") return false;
+    } else if (statusFilter !== "all" && r.status !== statusFilter) {
+      return false;
+    }
     if (toolFilter !== "all" && r.tool_name !== toolFilter) return false;
     return true;
   });
