@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ArrowLeft, Loader2, UserPlus, CheckCircle2, AlertTriangle,
-  Send, Save,
+  Send, Save, FileText, PenLine, MessageSquare, Download, Eye,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -24,6 +24,7 @@ interface ReviewData {
   consultant_id: string | null;
   consultant_name: string | null;
   original_content: string | null;
+  original_file_url: string | null;
   review_notes: string | null;
   client_feedback: string | null;
   modified_content: string | null;
@@ -45,6 +46,8 @@ interface TenantInfo {
   plan: string;
 }
 
+type LeftTab = "deliverable" | "modified" | "conversation";
+
 export function ReviewDetailPage() {
   const { reviewId } = useParams<{ reviewId: string }>();
   const navigate = useNavigate();
@@ -60,6 +63,11 @@ export function ReviewDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [delivering, setDelivering] = useState(false);
+
+  // Left panel tab
+  const [leftTab, setLeftTab] = useState<LeftTab>("deliverable");
+  // Modified content: edit vs preview
+  const [editMode, setEditMode] = useState(true);
 
   // Editable fields
   const [reviewNotes, setReviewNotes] = useState("");
@@ -171,6 +179,12 @@ export function ReviewDetailPage() {
   const isAssigned = review.consultant_id === user?.consultantId;
   const canEdit = isAssigned && !["delivered"].includes(review.status);
 
+  const LEFT_TABS: { key: LeftTab; icon: typeof FileText; label: { fr: string; en: string } }[] = [
+    { key: "deliverable", icon: FileText, label: consultantI18n.originalDeliverable },
+    { key: "modified", icon: PenLine, label: consultantI18n.modifiedDeliverable },
+    { key: "conversation", icon: MessageSquare, label: consultantI18n.conversation },
+  ];
+
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
@@ -194,34 +208,163 @@ export function ReviewDetailPage() {
 
       {/* Two-column layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left: Conversation history (60%) */}
-        <div className={`w-full md:w-3/5 border-r ${dark ? "border-white/5" : "border-gray-200"}`}>
-          <div className={`px-4 py-2 border-b text-xs font-semibold ${dark ? "border-white/5 text-white/40" : "border-gray-100 text-gray-500"}`}>
-            {bi(consultantI18n.conversationHistory)}
+        {/* ══════════ Left: Deliverable content (60%) ══════════ */}
+        <div className={`w-full md:w-3/5 flex flex-col border-r ${dark ? "border-white/5" : "border-gray-200"}`}>
+          {/* Left tabs */}
+          <div className={`flex items-center gap-0.5 px-3 pt-2 pb-0 border-b ${dark ? "border-white/5" : "border-gray-100"}`}>
+            {LEFT_TABS.map(({ key, icon: TabIcon, label }) => (
+              <button
+                key={key}
+                onClick={() => setLeftTab(key)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors border-b-2 ${
+                  leftTab === key
+                    ? dark
+                      ? "text-white border-white/60 bg-white/5"
+                      : "text-gray-900 border-gray-900 bg-gray-50"
+                    : dark
+                      ? "text-white/30 border-transparent hover:text-white/60"
+                      : "text-gray-400 border-transparent hover:text-gray-600"
+                }`}
+              >
+                <TabIcon className="w-3.5 h-3.5" />
+                {bi(label)}
+              </button>
+            ))}
           </div>
-          <ScrollArea className="h-[calc(100vh-8rem)]">
-            <div className="p-4 space-y-3">
-              {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                    m.role === "user"
-                      ? "text-white"
-                      : dark ? "bg-white/5 text-white/80" : "bg-gray-50 text-gray-800"
-                  }`}
-                  style={m.role === "user" ? { background: C.green } : undefined}>
-                    {m.role === "assistant" ? (
-                      <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
-                      </div>
-                    ) : m.content}
+
+          {/* Tab content */}
+          <ScrollArea className="flex-1">
+            {/* ── Original deliverable ── */}
+            {leftTab === "deliverable" && (
+              <div className="p-5">
+                {review.original_content ? (
+                  <>
+                    <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{review.original_content}</ReactMarkdown>
+                    </div>
+                    {review.original_file_url && (
+                      <a
+                        href={review.original_file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                          dark ? "border-white/10 text-white/70 hover:bg-white/5" : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        <Download className="w-4 h-4" />
+                        {bi(consultantI18n.downloadFile)}
+                      </a>
+                    )}
+                  </>
+                ) : (
+                  <div className={`text-center py-12 ${dark ? "text-white/20" : "text-gray-400"}`}>
+                    <FileText className="w-8 h-8 mx-auto mb-3 opacity-40" />
+                    <p className="text-sm">{bi(consultantI18n.noOriginalContent)}</p>
+                    <p className="text-xs mt-1">
+                      {bi(
+                        { fr: "Consultez l'onglet Conversation pour voir l'échange complet.", en: "Check the Conversation tab to see the full exchange." }
+                      )}
+                    </p>
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Modified deliverable (editor + preview) ── */}
+            {leftTab === "modified" && (
+              <div className="flex flex-col h-full">
+                {/* Edit/Preview toggle */}
+                <div className="flex items-center gap-1 px-4 pt-3 pb-2">
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      editMode
+                        ? dark ? "bg-white/10 text-white" : "bg-gray-200 text-gray-900"
+                        : dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-gray-600"
+                    }`}
+                  >
+                    <PenLine className="w-3 h-3" />
+                    {bi(consultantI18n.editTab)}
+                  </button>
+                  <button
+                    onClick={() => setEditMode(false)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      !editMode
+                        ? dark ? "bg-white/10 text-white" : "bg-gray-200 text-gray-900"
+                        : dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-gray-600"
+                    }`}
+                  >
+                    <Eye className="w-3 h-3" />
+                    {bi(consultantI18n.previewTab)}
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex-1 px-4 pb-4">
+                  {editMode ? (
+                    <textarea
+                      value={modifiedContent}
+                      onChange={(e) => setModifiedContent(e.target.value)}
+                      disabled={!canEdit}
+                      className={`w-full h-[calc(100vh-14rem)] rounded-lg border text-sm p-4 resize-none font-mono leading-relaxed ${
+                        dark
+                          ? "bg-white/5 border-white/10 text-white placeholder:text-white/20"
+                          : "bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+                      } ${!canEdit ? "opacity-50 cursor-not-allowed" : ""}`}
+                      placeholder={bi(
+                        { fr: "Modifiez le livrable ici (Markdown supporté)...", en: "Edit the deliverable here (Markdown supported)..." }
+                      )}
+                    />
+                  ) : (
+                    <div className={`rounded-lg border p-5 min-h-[calc(100vh-14rem)] ${
+                      dark ? "bg-white/5 border-white/10" : "bg-white border-gray-200"
+                    }`}>
+                      {modifiedContent ? (
+                        <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{modifiedContent}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className={`text-sm italic ${dark ? "text-white/20" : "text-gray-400"}`}>
+                          {bi({ fr: "Aucun contenu modifié", en: "No modified content" })}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ── Conversation history ── */}
+            {leftTab === "conversation" && (
+              <div className="p-4 space-y-3">
+                {messages.length === 0 ? (
+                  <div className={`text-center py-12 ${dark ? "text-white/20" : "text-gray-400"}`}>
+                    <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-40" />
+                    <p className="text-sm">{bi({ fr: "Aucun message", en: "No messages" })}</p>
+                  </div>
+                ) : (
+                  messages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        m.role === "user"
+                          ? "text-white"
+                          : dark ? "bg-white/5 text-white/80" : "bg-gray-50 text-gray-800"
+                      }`}
+                      style={m.role === "user" ? { background: C.green } : undefined}>
+                        {m.role === "assistant" ? (
+                          <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                          </div>
+                        ) : m.content}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </ScrollArea>
         </div>
 
-        {/* Right: Actions panel (40%) */}
+        {/* ══════════ Right: Actions panel (40%) ══════════ */}
         <div className="hidden md:flex md:w-2/5 flex-col">
           <div className={`px-4 py-2 border-b text-xs font-semibold ${dark ? "border-white/5 text-white/40" : "border-gray-100 text-gray-500"}`}>
             {bi(consultantI18n.reviewActions)}
@@ -238,6 +381,18 @@ export function ReviewDetailPage() {
                 </Button>
               )}
 
+              {/* Already assigned info */}
+              {review.consultant_id && (
+                <div className={`rounded-lg px-3 py-2 text-xs ${dark ? "bg-white/5 text-white/50" : "bg-gray-50 text-gray-500"}`}>
+                  <span className="font-semibold">{bi(consultantI18n.consultant)} :</span> {review.consultant_name ?? "—"}
+                  {review.assigned_at && (
+                    <span className="ml-2">
+                      · {new Date(review.assigned_at).toLocaleDateString(lang === "fr" ? "fr-CA" : "en-CA")}
+                    </span>
+                  )}
+                </div>
+              )}
+
               {/* Internal notes */}
               <div>
                 <label className={`text-xs font-semibold block mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>
@@ -248,7 +403,7 @@ export function ReviewDetailPage() {
                   rows={3} disabled={!canEdit}
                   className={`w-full rounded-lg border text-sm p-2.5 resize-none ${
                     dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : "border-gray-200"
-                  }`}
+                  } ${!canEdit ? "opacity-50 cursor-not-allowed" : ""}`}
                   placeholder={bi({ fr: "Notes internes (invisible au client)...", en: "Internal notes (not visible to client)..." })}
                 />
               </div>
@@ -263,23 +418,8 @@ export function ReviewDetailPage() {
                   rows={3} disabled={!canEdit}
                   className={`w-full rounded-lg border text-sm p-2.5 resize-none ${
                     dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : "border-gray-200"
-                  }`}
-                  placeholder={bi({ fr: "Commentaire pour le client...", en: "Feedback for the client..." })}
-                />
-              </div>
-
-              {/* Modified content */}
-              <div>
-                <label className={`text-xs font-semibold block mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>
-                  {bi(consultantI18n.modifiedContent)}
-                </label>
-                <textarea
-                  value={modifiedContent} onChange={(e) => setModifiedContent(e.target.value)}
-                  rows={10} disabled={!canEdit}
-                  className={`w-full rounded-lg border text-sm p-2.5 resize-none font-mono ${
-                    dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : "border-gray-200"
-                  }`}
-                  placeholder={bi({ fr: "Contenu modifié / amélioré...", en: "Modified / improved content..." })}
+                  } ${!canEdit ? "opacity-50 cursor-not-allowed" : ""}`}
+                  placeholder={bi({ fr: "Commentaire pour le client (visible)...", en: "Feedback for the client (visible)..." })}
                 />
               </div>
 
@@ -298,7 +438,11 @@ export function ReviewDetailPage() {
                       {bi(consultantI18n.approve)}
                     </Button>
                     <Button onClick={() => handleStatusChange("needs_revision")} disabled={saving}
-                      variant="outline" className="rounded-full text-sm text-orange-600 border-orange-200 hover:bg-orange-50">
+                      variant="outline" className={`rounded-full text-sm ${
+                        dark
+                          ? "text-orange-400 border-orange-400/30 hover:bg-orange-400/10"
+                          : "text-orange-600 border-orange-200 hover:bg-orange-50"
+                      }`}>
                       <AlertTriangle className="w-4 h-4 mr-1" />
                       {bi(consultantI18n.requestRevision)}
                     </Button>

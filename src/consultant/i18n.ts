@@ -50,6 +50,16 @@ export const consultantI18n = {
   reviewActions: { fr: "Actions", en: "Actions" },
   saveChanges: { fr: "Sauvegarder", en: "Save Changes" },
   unassigned: { fr: "Non assigné", en: "Unassigned" },
+
+  // Review detail tabs
+  originalDeliverable: { fr: "Livrable original", en: "Original Deliverable" },
+  modifiedDeliverable: { fr: "Livrable modifié", en: "Modified Deliverable" },
+  conversation: { fr: "Conversation", en: "Conversation" },
+  noOriginalContent: { fr: "Aucun contenu original enregistré", en: "No original content recorded" },
+  previewTab: { fr: "Aperçu", en: "Preview" },
+  editTab: { fr: "Éditer", en: "Edit" },
+  originalFile: { fr: "Fichier original", en: "Original File" },
+  downloadFile: { fr: "Télécharger", en: "Download" },
 } as const;
 
 export type ConsultantI18nKey = keyof typeof consultantI18n;

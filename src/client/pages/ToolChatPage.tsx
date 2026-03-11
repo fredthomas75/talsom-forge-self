@@ -316,6 +316,11 @@ export function ToolChatPage() {
   // Check if conversation has any generated files (for review button)
   const hasGeneratedFiles = messages.some((m) => m.role === "assistant" && m.files && m.files.length > 0);
 
+  // Capture the last assistant message as the deliverable content for review
+  const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
+  const deliverableContent = lastAssistantMsg?.content ?? "";
+  const deliverableFileUrl = lastAssistantMsg?.files?.[0]?.url ?? undefined;
+
   const showLoading = messages.length === 0 && !error;
   const hasGoogle = cloud.isConnected("google");
   const hasMicrosoft = cloud.isConnected("microsoft");
@@ -527,6 +532,8 @@ export function ToolChatPage() {
             <ReviewRequestButton
               conversationId={conversationId || selectedId}
               toolName={toolName ?? ""}
+              originalContent={deliverableContent}
+              originalFileUrl={deliverableFileUrl}
               accessToken={session.access_token}
               lang={lang}
               existingReview={existingReview}
