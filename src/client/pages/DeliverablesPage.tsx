@@ -13,6 +13,7 @@ import { useClient } from "../contexts/ClientContext";
 import { clientI18n } from "../i18n";
 import { TOOL_META } from "../lib/tool-meta";
 import { ReviewStatusBadge } from "../components/ReviewStatusBadge";
+import { ReviewRequestButton } from "../components/ReviewRequestButton";
 
 interface ReviewItem {
   id: string;
@@ -289,14 +290,18 @@ export function DeliverablesPage() {
                           {bi(clientI18n.downloadVerified)}
                         </a>
                       )}
-                      {isDelivered && (hasModifiedContent || hasFeedback) && (
+                      {/* Expand button: for delivered (feedback/content) OR non-delivered (progress tracker) */}
+                      {(isDelivered ? (hasModifiedContent || hasFeedback) : true) && (
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : review.id)}
-                          className={`p-1.5 rounded-lg transition-colors ${
-                            dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                          className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                            isExpanded
+                              ? dark ? "bg-white/10 text-white/70" : "bg-gray-100 text-gray-700"
+                              : dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                           }`}
                         >
-                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          {!isDelivered && !isExpanded && bi(clientI18n.viewProgress)}
                         </button>
                       )}
                       <button
@@ -311,7 +316,21 @@ export function DeliverablesPage() {
                     </div>
                   </div>
 
-                  {/* Expanded content */}
+                  {/* Expanded content: non-delivered → progress tracker */}
+                  {isExpanded && !isDelivered && (
+                    <div className={`border-t px-4 py-3 ${dark ? "border-white/5" : "border-gray-100"}`}>
+                      <ReviewRequestButton
+                        conversationId={review.conversation_id}
+                        toolName={review.tool_name}
+                        accessToken={session.access_token}
+                        lang={lang}
+                        existingReview={review}
+                        dark={dark}
+                      />
+                    </div>
+                  )}
+
+                  {/* Expanded content: delivered */}
                   {isExpanded && isDelivered && (
                     <div className={`border-t ${dark ? "border-white/5" : "border-gray-100"}`}>
                       {/* Feedback */}

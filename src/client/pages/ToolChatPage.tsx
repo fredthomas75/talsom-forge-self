@@ -10,7 +10,7 @@ import {
   Send, StopCircle, Plus, ArrowLeft, MessageSquare, Trash2, Loader2,
   Layers, Paperclip, X, Image, File,
   Cloud, Download, ExternalLink, CheckCircle2, FileSpreadsheet,
-  ShieldCheck, ChevronDown, ChevronUp,
+  ShieldCheck, ChevronDown, ChevronUp, Clock,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -19,6 +19,7 @@ import { useToolChat, type Attachment } from "../hooks/useToolChat";
 import { useCloudIntegrations, type CloudFile, type Provider } from "../hooks/useCloudIntegrations";
 import { CloudFilePicker } from "../components/CloudFilePicker";
 import { ReviewRequestButton } from "../components/ReviewRequestButton";
+import { ReviewStatusBadge } from "../components/ReviewStatusBadge";
 import { TOOL_META } from "../lib/tool-meta";
 
 // Discovery questions are now auto-triggered via API call on mount.
@@ -94,8 +95,8 @@ export function ToolChatPage() {
     client_feedback?: string | null; modified_content?: string | null; modified_file_url?: string | null; original_file_url?: string | null;
   } | null>(null);
 
-  // Delivered reviews for this tool (cross-conversation banner)
-  const [deliveredForTool, setDeliveredForTool] = useState<{
+  // Cross-conversation review banner (delivered OR active reviews for this tool)
+  const [crossReview, setCrossReview] = useState<{
     id: string; conversation_id: string; status: string; consultant_name?: string | null;
     client_feedback?: string | null; modified_content?: string | null;
     modified_file_url?: string | null; original_file_url?: string | null; delivered_at?: string | null;
@@ -322,18 +323,24 @@ export function ToolChatPage() {
     })();
   }, [conversationId, selectedId, hasHumanReview]);
 
-  // Fetch delivered reviews for this tool (cross-conversation — for the banner)
+  // Fetch ALL reviews for this tool (cross-conversation — for the banner)
+  // Priority: active review (pending/in_review/needs_revision/approved) > delivered
   useEffect(() => {
     if (!hasHumanReview || !toolName) return;
     (async () => {
       try {
-        const res = await fetch(`/api/client/reviews?tool=${toolName}&status=delivered`, {
+        const res = await fetch(`/api/client/reviews?tool=${toolName}`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         });
         if (res.ok) {
           const data = await res.json();
-          const delivered = data.reviews?.[0] ?? null;
-          setDeliveredForTool(delivered);
+          const allReviews = data.reviews ?? [];
+          // Prioritize active reviews (pending, in_review, etc.) over delivered
+          const active = allReviews.find((r: { status: string }) =>
+            ["pending", "in_review", "approved", "needs_revision"].includes(r.status)
+          );
+          const delivered = allReviews.find((r: { status: string }) => r.status === "delivered");
+          setCrossReview(active ?? delivered ?? null);
           setBannerDismissed(false);
         }
       } catch { /* ignore */ }
@@ -386,70 +393,104 @@ export function ToolChatPage() {
         </div>
       </div>
 
-      {/* ── Delivered review banner (cross-conversation) ── */}
-      {deliveredForTool && !bannerDismissed && (conversationId || selectedId) !== deliveredForTool.conversation_id && (
-        <div className={`border-b ${dark ? "border-emerald-500/20" : "border-emerald-200"}`}>
-          {/* Compact bar */}
-          <div className={`px-4 py-3 ${dark ? "bg-emerald-950/30" : "bg-emerald-50"}`}>
-            <div className="max-w-3xl mx-auto flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
-              >
-                <ShieldCheck className="w-5 h-5" style={{ color: C.green }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
-                  {bi({
-                    fr: `Livrable vérifié disponible${deliveredForTool.consultant_name ? ` — ${deliveredForTool.consultant_name}` : ""}`,
-                    en: `Verified deliverable available${deliveredForTool.consultant_name ? ` — ${deliveredForTool.consultant_name}` : ""}`,
-                  })}
-                </p>
-                <p className={`text-xs ${dark ? "text-white/40" : "text-gray-500"}`}>
-                  {bi({
-                    fr: "Un consultant Talsom a vérifié et certifié votre livrable précédent.",
-                    en: "A Talsom consultant has verified and certified your previous deliverable.",
-                  })}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setBannerExpanded(!bannerExpanded)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-0 transition-opacity hover:opacity-90"
-                  style={{ background: C.green, color: C.yellow }}
-                >
-                  {bannerExpanded
-                    ? <><ChevronUp className="w-3.5 h-3.5" />{bi({ fr: "Masquer", en: "Hide" })}</>
-                    : <><ChevronDown className="w-3.5 h-3.5" />{bi({ fr: "Voir le livrable", en: "View deliverable" })}</>
-                  }
-                </button>
-                <button
-                  onClick={() => { setBannerDismissed(true); setBannerExpanded(false); }}
-                  className={`p-1 rounded-full transition-colors ${dark ? "text-white/30 hover:text-white/60 hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
+      {/* ── Cross-conversation review banner (active OR delivered) ── */}
+      {crossReview && !bannerDismissed && (conversationId || selectedId) !== crossReview.conversation_id && (() => {
+        const isDelivered = crossReview.status === "delivered";
+        const isActive = ["pending", "in_review", "approved", "needs_revision"].includes(crossReview.status);
+        const bannerBorder = isDelivered
+          ? dark ? "border-emerald-500/20" : "border-emerald-200"
+          : dark ? "border-amber-500/20" : "border-amber-200";
+        const bannerBg = isDelivered
+          ? dark ? "bg-emerald-950/30" : "bg-emerald-50"
+          : dark ? "bg-amber-950/30" : "bg-amber-50";
+        const bannerTitle = isDelivered
+          ? bi({
+              fr: `Livrable vérifié disponible${crossReview.consultant_name ? ` — ${crossReview.consultant_name}` : ""}`,
+              en: `Verified deliverable available${crossReview.consultant_name ? ` — ${crossReview.consultant_name}` : ""}`,
+            })
+          : bi({
+              fr: "Vérification en cours pour cet outil",
+              en: "Verification in progress for this tool",
+            });
+        const bannerDesc = isDelivered
+          ? bi({
+              fr: "Un consultant Talsom a vérifié et certifié votre livrable précédent.",
+              en: "A Talsom consultant has verified and certified your previous deliverable.",
+            })
+          : bi({
+              fr: "Vous avez une demande de vérification active. Consultez le suivi de progression ci-dessous.",
+              en: "You have an active verification request. Check the progress tracker below.",
+            });
+        const expandLabel = isDelivered
+          ? bi({ fr: "Voir le livrable", en: "View deliverable" })
+          : bi({ fr: "Voir le suivi", en: "View progress" });
 
-          {/* Expanded: full deliverable card */}
-          {bannerExpanded && (
-            <div className={`px-4 pb-4 ${dark ? "bg-emerald-950/20" : "bg-emerald-50/50"}`}>
-              <div className="max-w-3xl mx-auto">
-                <ReviewRequestButton
-                  conversationId={deliveredForTool.conversation_id}
-                  toolName={toolName ?? ""}
-                  accessToken={session.access_token}
-                  lang={lang}
-                  existingReview={deliveredForTool}
-                  dark={dark}
-                />
+        return (
+          <div className={`border-b ${bannerBorder}`}>
+            {/* Compact bar */}
+            <div className={`px-4 py-3 ${bannerBg}`}>
+              <div className="max-w-3xl mx-auto flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
+                >
+                  {isActive
+                    ? <Clock className="w-5 h-5" style={{ color: C.green }} />
+                    : <ShieldCheck className="w-5 h-5" style={{ color: C.green }} />
+                  }
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+                      {bannerTitle}
+                    </p>
+                    {isActive && (
+                      <ReviewStatusBadge status={crossReview.status} consultantName={crossReview.consultant_name} lang={lang} />
+                    )}
+                  </div>
+                  <p className={`text-xs ${dark ? "text-white/40" : "text-gray-500"}`}>
+                    {bannerDesc}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => setBannerExpanded(!bannerExpanded)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-0 transition-opacity hover:opacity-90"
+                    style={{ background: C.green, color: C.yellow }}
+                  >
+                    {bannerExpanded
+                      ? <><ChevronUp className="w-3.5 h-3.5" />{bi({ fr: "Masquer", en: "Hide" })}</>
+                      : <><ChevronDown className="w-3.5 h-3.5" />{expandLabel}</>
+                    }
+                  </button>
+                  <button
+                    onClick={() => { setBannerDismissed(true); setBannerExpanded(false); }}
+                    className={`p-1 rounded-full transition-colors ${dark ? "text-white/30 hover:text-white/60 hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"}`}
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Expanded: full review card (delivered OR waiting) */}
+            {bannerExpanded && (
+              <div className={`px-4 pb-4 ${isDelivered ? (dark ? "bg-emerald-950/20" : "bg-emerald-50/50") : (dark ? "bg-amber-950/20" : "bg-amber-50/50")}`}>
+                <div className="max-w-3xl mx-auto">
+                  <ReviewRequestButton
+                    conversationId={crossReview.conversation_id}
+                    toolName={toolName ?? ""}
+                    accessToken={session.access_token}
+                    lang={lang}
+                    existingReview={crossReview}
+                    dark={dark}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── Export success banner ── */}
       {exportSuccess && (

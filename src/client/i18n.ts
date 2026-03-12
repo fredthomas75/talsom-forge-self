@@ -109,6 +109,7 @@ export const clientI18n = {
   allStatuses: { fr: "Tous", en: "All" },
   allTools: { fr: "Tous les outils", en: "All tools" },
   goToTool: { fr: "Ouvrir l'outil", en: "Open tool" },
+  viewProgress: { fr: "Voir le suivi", en: "View progress" },
   assignedTo: { fr: "Assigné à", en: "Assigned to" },
 } as const;
 
