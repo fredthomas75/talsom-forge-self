@@ -7,8 +7,8 @@ export const defaultContent: SiteContent = {
     title: { fr: "Le consulting,", en: "Consulting," },
     titleAccent: { fr: "r\u00e9invent\u00e9.", en: "reinvented." },
     subtitle: {
-      fr: "Acc\u00e9dez \u00e0 l\u2019expertise de consultants seniors, amplifi\u00e9e par l\u2019AI. Processus, modernisation, intelligence artificielle et performance organisationnelle \u2014 le tout sur une plateforme unique.",
-      en: "Access senior consultant expertise, amplified by AI. Process design, modernization, artificial intelligence, and organizational performance \u2014 all on a single platform.",
+      fr: "Acc\u00e9dez \u00e0 l\u2019expertise de consultants seniors, amplifi\u00e9e par l\u2019AI. Diagnostics, livrables personnalis\u00e9s (Excel, Word, PowerPoint) \u00e0 vos couleurs, et revue par des experts \u2014 le tout sur une plateforme unique.",
+      en: "Access senior consultant expertise, amplified by AI. Diagnostics, branded deliverables (Excel, Word, PowerPoint), and expert review \u2014 all on a single platform.",
     },
     ctaPrimary: { fr: "Explorer les services", en: "Explore services" },
     ctaSecondary: { fr: "Essayer le chat AI", en: "Try AI chat" },
@@ -59,9 +59,9 @@ export const defaultContent: SiteContent = {
     },
     steps: [
       { iconName: "Target", title: { fr: "Choisissez", en: "Choose" }, desc: { fr: "S\u00e9lectionnez un domaine d\u2019expertise parmi nos 4 cat\u00e9gories de services.", en: "Select an area of expertise from our 4 service categories." } },
-      { iconName: "MessageSquare", title: { fr: "\u00c9changez", en: "Discuss" }, desc: { fr: "Affinez votre besoin avec nos consultants seniors et notre chat AI expert.", en: "Refine your needs with our senior consultants and expert AI chat." } },
-      { iconName: "Zap", title: { fr: "Recevez", en: "Receive" }, desc: { fr: "Obtenez vos livrables co-produits par nos consultants et agents AI.", en: "Get your deliverables co-produced by our consultants and AI agents." } },
-      { iconName: "TrendingUp", title: { fr: "It\u00e9rez", en: "Iterate" }, desc: { fr: "Am\u00e9liorez continuellement avec le suivi et les recommandations.", en: "Continuously improve with tracking and recommendations." } },
+      { iconName: "MessageSquare", title: { fr: "\u00c9changez", en: "Discuss" }, desc: { fr: "Affinez votre besoin via notre chat AI multimodal (images, PDF, fichiers) et nos consultants seniors.", en: "Refine your needs via our multimodal AI chat (images, PDF, files) and senior consultants." } },
+      { iconName: "Zap", title: { fr: "Recevez", en: "Receive" }, desc: { fr: "Obtenez vos livrables personnalis\u00e9s \u00e0 vos couleurs en Excel, Word ou PowerPoint, co-produits par nos consultants et agents AI.", en: "Get branded deliverables in Excel, Word, or PowerPoint, co-produced by our consultants and AI agents." } },
+      { iconName: "TrendingUp", title: { fr: "It\u00e9rez", en: "Iterate" }, desc: { fr: "Demandez une revue consultant, recevez des am\u00e9liorations et suivez vos livrables dans votre portail.", en: "Request a consultant review, receive improvements, and track your deliverables in your portal." } },
     ],
   },
 
@@ -422,8 +422,8 @@ export const defaultContent: SiteContent = {
         id: "hub",
         name: "Talsom Forge Hub",
         tagline: { fr: "Plateforme de consulting virtuel", en: "Virtual consulting platform" },
-        desc: { fr: "Suite compl\u00e8te d\u2019outils AI pour le consulting : diagnostics automatis\u00e9s, g\u00e9n\u00e9ration de livrables, chat sp\u00e9cialis\u00e9 et tableaux de bord.", en: "Complete AI tool suite for consulting: automated diagnostics, deliverable generation, specialized chat, and dashboards." },
-        features: { fr: "Diagnostics AI,G\u00e9n\u00e9ration de rapports,Chat expert,Tableaux de bord", en: "AI Diagnostics,Report Generation,Expert Chat,Dashboards" },
+        desc: { fr: "Suite compl\u00e8te de 20+ outils AI : chat multimodal, livrables personnalis\u00e9s en Excel/Word/PPTX \u00e0 vos couleurs, revue consultant et portail client.", en: "Complete suite of 20+ AI tools: multimodal chat, branded deliverables in Excel/Word/PPTX, consultant review, and client portal." },
+        features: { fr: "20+ outils AI,Livrables multi-formats,Chat multimodal,Revue consultant", en: "20+ AI Tools,Multi-format Deliverables,Multimodal Chat,Consultant Review" },
         tier: "Platform",
         badgeCls: "bg-[#FDF100]/15 text-[#FDF100] border-[#FDF100]/25",
       },
@@ -458,15 +458,15 @@ export const defaultContent: SiteContent = {
     details: {
       hub: {
         extendedDesc: {
-          fr: "Talsom Forge Hub est la plateforme centrale qui int\u00e8gre tous nos outils AI. Elle offre un espace de travail unifi\u00e9 pour piloter vos initiatives de transformation AI : diagnostics automatis\u00e9s, g\u00e9n\u00e9ration de livrables personnalis\u00e9s, chat expert et tableaux de bord de suivi en temps r\u00e9el.",
-          en: "Talsom Forge Hub is the central platform integrating all our AI tools. It offers a unified workspace to manage your AI transformation initiatives: automated diagnostics, personalized deliverable generation, expert chat, and real-time tracking dashboards.",
+          fr: "Talsom Forge Hub est la plateforme centrale qui int\u00e8gre 20+ outils AI sp\u00e9cialis\u00e9s. Chat multimodal (images, PDF, fichiers), g\u00e9n\u00e9ration de livrables en Excel, Word et PowerPoint personnalis\u00e9s \u00e0 vos couleurs et logo, circuit de revue par des consultants seniors, et portail client avec suivi en temps r\u00e9el.",
+          en: "Talsom Forge Hub is the central platform integrating 20+ specialized AI tools. Multimodal chat (images, PDF, files), deliverable generation in Excel, Word, and PowerPoint customized with your brand colors and logo, consultant review workflow, and client portal with real-time tracking.",
         },
         keyBenefits: [
-          { title: { fr: "Espace de travail unifi\u00e9", en: "Unified workspace" }, desc: { fr: "Tous vos projets AI sur une seule plateforme, avec vue d\u2019ensemble et suivi.", en: "All your AI projects on one platform, with overview and tracking." } },
-          { title: { fr: "Livrables g\u00e9n\u00e9r\u00e9s par AI", en: "AI-generated deliverables" }, desc: { fr: "Rapports, pr\u00e9sentations et documents g\u00e9n\u00e9r\u00e9s automatiquement et personnalis\u00e9s.", en: "Reports, presentations, and documents generated automatically and customized." } },
-          { title: { fr: "Collaboration en temps r\u00e9el", en: "Real-time collaboration" }, desc: { fr: "Partagez et collaborez avec vos \u00e9quipes et consultants Talsom.", en: "Share and collaborate with your teams and Talsom consultants." } },
+          { title: { fr: "Livrables multi-formats personnalis\u00e9s", en: "Branded multi-format deliverables" }, desc: { fr: "Documents Excel, Word et PowerPoint g\u00e9n\u00e9r\u00e9s automatiquement \u00e0 vos couleurs et logo.", en: "Excel, Word, and PowerPoint documents auto-generated with your brand colors and logo." } },
+          { title: { fr: "Chat multimodal avec 20+ outils AI", en: "Multimodal chat with 20+ AI tools" }, desc: { fr: "Joignez images, PDF et fichiers. Acc\u00e9dez \u00e0 des outils sp\u00e9cialis\u00e9s : RACI, gouvernance, maturit\u00e9, backlog et plus.", en: "Attach images, PDF, and files. Access specialized tools: RACI, governance, maturity, backlog, and more." } },
+          { title: { fr: "Revue par des consultants seniors", en: "Senior consultant review" }, desc: { fr: "Demandez une revue d\u2019expert pour bonifier vos livrables. Suivi int\u00e9gr\u00e9 dans votre portail.", en: "Request expert review to enhance your deliverables. Tracking built into your portal." } },
         ],
-        integrations: ["Microsoft 365", "SharePoint", "Teams", "Power BI", "Slack", "Jira"],
+        integrations: ["Microsoft 365", "Google Drive", "OneDrive", "SharePoint", "Teams", "Power BI"],
         availability: { fr: "Beta priv\u00e9e", en: "Private beta" },
       },
       backlog: {
@@ -623,6 +623,10 @@ export const defaultContent: SiteContent = {
       { label: { fr: "Cartographies g\u00e9n\u00e9r\u00e9es par AI", en: "AI-generated process maps" }, traditional: false, forge: true },
       { label: { fr: "Rapports de s\u00e9ance instantan\u00e9s", en: "Instant session reports" }, traditional: false, forge: true },
       { label: { fr: "Suivi d'adoption en temps r\u00e9el", en: "Real-time adoption tracking" }, traditional: false, forge: true },
+      { label: { fr: "Livrables multi-formats (Excel, Word, PPTX)", en: "Multi-format deliverables (Excel, Word, PPTX)" }, traditional: false, forge: true },
+      { label: { fr: "Documents \u00e0 l'image de votre marque", en: "Brand-customized documents" }, traditional: false, forge: true },
+      { label: { fr: "Revue et bonification par un consultant", en: "Consultant review & enhancement" }, traditional: { fr: "Optionnel, factur\u00e9", en: "Optional, billed" }, forge: { fr: "Int\u00e9gr\u00e9 \u00e0 la plateforme", en: "Built into the platform" } },
+      { label: { fr: "Chat multimodal (images, PDF, fichiers)", en: "Multimodal chat (images, PDF, files)" }, traditional: false, forge: true },
     ],
   },
 
@@ -631,12 +635,14 @@ export const defaultContent: SiteContent = {
     badge: "AI Chat Expert",
     title: { fr: "Votre consultant virtuel,\ndisponible 24/7.", en: "Your virtual consultant,\navailable 24/7." },
     subtitle: {
-      fr: "Notre chat AI est entra\u00een\u00e9 sur des milliers de mandats de consulting : processus, modernisation, AI et performance organisationnelle. Il pose les bonnes questions et g\u00e9n\u00e8re des livrables pr\u00eats \u00e0 l\u2019emploi.",
-      en: "Our AI chat is trained on thousands of consulting engagements: process, modernization, AI, and organizational performance. It asks the right questions and generates ready-to-use deliverables.",
+      fr: "Notre chat AI est entra\u00een\u00e9 sur des milliers de mandats de consulting. Il analyse vos documents (images, PDF, fichiers), g\u00e9n\u00e8re des livrables personnalis\u00e9s en Excel, Word ou PowerPoint, et propose une revue par nos consultants.",
+      en: "Our AI chat is trained on thousands of consulting engagements. It analyzes your documents (images, PDF, files), generates branded deliverables in Excel, Word, or PowerPoint, and offers consultant review.",
     },
     features: [
-      { iconName: "Brain", text: { fr: "Expertise processus, modernisation, AI et performance", en: "Process, modernization, AI, and performance expertise" } },
-      { iconName: "BookOpen", text: { fr: "G\u00e9n\u00e9ration de diagnostics, roadmaps et analyses", en: "Diagnostic, roadmap, and analysis generation" } },
+      { iconName: "Brain", text: { fr: "20+ outils AI sp\u00e9cialis\u00e9s : RACI, gouvernance, maturit\u00e9, backlog, PIA et plus", en: "20+ specialized AI tools: RACI, governance, maturity, backlog, PIA, and more" } },
+      { iconName: "FileText", text: { fr: "Livrables multi-formats (Excel, Word, PowerPoint) \u00e0 vos couleurs et logo", en: "Multi-format deliverables (Excel, Word, PowerPoint) with your brand colors and logo" } },
+      { iconName: "Paperclip", text: { fr: "Chat multimodal : joignez images, PDF et fichiers pour analyse", en: "Multimodal chat: attach images, PDF, and files for analysis" } },
+      { iconName: "UserCheck", text: { fr: "Revue et bonification des livrables par un consultant senior", en: "Deliverable review and enhancement by a senior consultant" } },
       { iconName: "Lock", text: { fr: "Conformit\u00e9 Loi 25, EU AI Act, RGPD", en: "Bill 25, EU AI Act, GDPR compliance" } },
       { iconName: "Globe", text: { fr: "Bilingue fran\u00e7ais / anglais", en: "Bilingual French / English" } },
     ],
@@ -754,12 +760,13 @@ export const defaultContent: SiteContent = {
         price: { fr: "990$/mois", en: "$990/month" },
         sub: { fr: "Pour les \u00e9quipes", en: "For teams" },
         features: [
-          { fr: "Chat AI illimit\u00e9", en: "Unlimited AI Chat" },
-          { fr: "Diagnostics processus et maturit\u00e9", en: "Process and maturity diagnostics" },
-          { fr: "G\u00e9n\u00e9ration de livrables", en: "Deliverable generation" },
+          { fr: "Chat AI illimit\u00e9 et multimodal", en: "Unlimited multimodal AI Chat" },
+          { fr: "20+ outils AI sp\u00e9cialis\u00e9s", en: "20+ specialized AI tools" },
+          { fr: "Livrables multi-formats (Excel, Word, PPTX)", en: "Multi-format deliverables (Excel, Word, PPTX)" },
+          { fr: "Documents personnalis\u00e9s \u00e0 vos couleurs et logo", en: "Brand-customized documents with your colors & logo" },
+          { fr: "Revue par un consultant senior", en: "Senior consultant review" },
           { fr: "5 services virtuels/mois", en: "5 virtual services/month" },
           { fr: "Support prioritaire", en: "Priority support" },
-          { fr: "Ateliers virtuels co-facilit\u00e9s AI", en: "AI co-facilitated virtual workshops" },
         ],
         cta: { fr: "Essai gratuit 14 jours", en: "Free 14-day trial" },
         highlight: true,
@@ -771,7 +778,7 @@ export const defaultContent: SiteContent = {
         features: [
           { fr: "Tout Professional +", en: "Everything in Professional +" },
           { fr: "Consultants seniors d\u00e9di\u00e9s", en: "Dedicated senior consultants" },
-          { fr: "Personnalisation compl\u00e8te", en: "Full customization" },
+          { fr: "Personnalisation compl\u00e8te (portail, marque, outils)", en: "Full customization (portal, brand, tools)" },
           { fr: "SLA garanti", en: "Guaranteed SLA" },
           { fr: "Ateliers et formations sur mesure", en: "Custom workshops and training" },
           { fr: "API & integrations", en: "API & integrations" },
@@ -791,8 +798,8 @@ export const defaultContent: SiteContent = {
       {
         q: { fr: "Qu\u2019est-ce que Talsom Forge exactement?", en: "What is Talsom Forge exactly?" },
         a: {
-          fr: "Talsom Forge est une plateforme de consulting virtuel qui couvre 4 domaines d\u2019expertise : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. Chaque mandat combine l\u2019accompagnement de consultants seniors avec la puissance de nos agents AI pour des livrables de qualit\u00e9, livr\u00e9s plus rapidement.",
-          en: "Talsom Forge is a virtual consulting platform covering 4 areas of expertise: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. Each engagement combines senior consultant guidance with the power of our AI agents for quality deliverables, delivered faster.",
+          fr: "Talsom Forge est une plateforme de consulting virtuel qui couvre 4 domaines d\u2019expertise : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. La plateforme int\u00e8gre 20+ outils AI sp\u00e9cialis\u00e9s, un chat multimodal (images, PDF, fichiers), la g\u00e9n\u00e9ration de livrables en Excel, Word et PowerPoint personnalis\u00e9s \u00e0 vos couleurs, et un circuit de revue par des consultants seniors.",
+          en: "Talsom Forge is a virtual consulting platform covering 4 areas of expertise: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. The platform includes 20+ specialized AI tools, a multimodal chat (images, PDF, files), deliverable generation in Excel, Word, and PowerPoint customized to your brand, and a consultant review workflow.",
         },
       },
       {
@@ -830,6 +837,13 @@ export const defaultContent: SiteContent = {
           en: "It depends on the domain. A process diagnostic takes 3-4 weeks, a modernization roadmap 8-10 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.",
         },
       },
+      {
+        q: { fr: "Dans quels formats sont livr\u00e9s les livrables?", en: "In what formats are deliverables provided?" },
+        a: {
+          fr: "La plateforme g\u00e9n\u00e8re automatiquement vos livrables dans le format le plus adapt\u00e9 : Excel pour les matrices et grilles (RACI, backlog, scoring), Word pour les documents narratifs (cadre de gouvernance, plan de changement, dossier d\u2019affaires) et PowerPoint pour les pr\u00e9sentations ex\u00e9cutives (maturit\u00e9, roadmap, mod\u00e8le op\u00e9rationnel). Chaque document est automatiquement personnalis\u00e9 avec vos couleurs et votre logo. Vous pouvez aussi demander une revue par un consultant senior pour bonifier le contenu.",
+          en: "The platform automatically generates deliverables in the most appropriate format: Excel for matrices and grids (RACI, backlog, scoring), Word for narrative documents (governance framework, change plan, business case), and PowerPoint for executive presentations (maturity, roadmap, operating model). Each document is automatically branded with your colors and logo. You can also request a senior consultant review to enhance the content.",
+        },
+      },
     ],
   },
 
@@ -865,8 +879,8 @@ export const defaultContent: SiteContent = {
   ctaBanner: {
     title: { fr: "Pr\u00eat \u00e0 transformer votre organisation?", en: "Ready to transform your organization?" },
     subtitle: {
-      fr: "Rejoignez la beta et acc\u00e9dez \u00e0 l\u2019expertise de Talsom Forge \u2014 consultants seniors et AI, disponibles en quelques clics.",
-      en: "Join the beta and access Talsom Forge expertise \u2014 senior consultants and AI, available in just a few clicks.",
+      fr: "Rejoignez la beta et acc\u00e9dez \u00e0 l\u2019expertise de Talsom Forge \u2014 20+ outils AI, livrables personnalis\u00e9s \u00e0 vos couleurs et revue par des experts, en quelques clics.",
+      en: "Join the beta and access Talsom Forge expertise \u2014 20+ AI tools, branded deliverables, and expert review, in just a few clicks.",
     },
     ctaPrimary: { fr: "Demander un acc\u00e8s beta", en: "Request beta access" },
     ctaSecondary: { fr: "Planifier une d\u00e9mo", en: "Schedule a demo" },
