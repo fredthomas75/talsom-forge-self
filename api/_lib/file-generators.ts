@@ -3,19 +3,33 @@ import ExcelJS from "exceljs";
 import {
   Document, Packer, Paragraph, TextRun, HeadingLevel,
   Table, TableRow, TableCell, WidthType, AlignmentType,
-  BorderStyle, ShadingType, Footer, PageNumber,
+  BorderStyle, ShadingType, Footer, PageNumber, ImageRun, Header,
 } from "docx";
 import PptxGenJS from "pptxgenjs";
 
-// ── Branding constants ──
-const GREEN = "003533";
-const YELLOW = "FDF100";
-const LIGHT_GRAY = "F5F5F5";
+// ── Default branding constants (Talsom Forge defaults) ──
+const DEFAULT_PRIMARY = "003533";
+const DEFAULT_SECONDARY = "FDF100";
+const DEFAULT_LIGHT = "F5F5F5";
 
 /** Tenant branding context — passed from tool-chat handler */
 export interface BrandContext {
   companyName?: string;
   industry?: string;
+  primaryColor?: string;   // hex without # (e.g. "003533")
+  secondaryColor?: string; // hex without #
+  accentColor?: string;    // hex without #
+  logoBuffer?: Buffer;     // logo image bytes (PNG/JPG)
+  logoMime?: string;       // "image/png" | "image/jpeg" etc.
+}
+
+/** Resolve brand colors with fallbacks */
+function bc(brand?: BrandContext) {
+  return {
+    primary: brand?.primaryColor || DEFAULT_PRIMARY,
+    secondary: brand?.secondaryColor || DEFAULT_SECONDARY,
+    light: DEFAULT_LIGHT,
+  };
 }
 
 // ══════════════════════════════════════════════════════════
@@ -225,6 +239,7 @@ export interface GenerateExcelInput {
 }
 
 export async function generateExcel(input: GenerateExcelInput, brand?: BrandContext): Promise<Buffer> {
+  const colors = bc(brand);
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Talsom Forge";
   workbook.company = brand?.companyName ?? "";
@@ -240,7 +255,7 @@ export async function generateExcel(input: GenerateExcelInput, brand?: BrandCont
     headerRow.fill = {
       type: "pattern",
       pattern: "solid",
-      fgColor: { argb: `FF${GREEN}` },
+      fgColor: { argb: `FF${colors.primary}` },
     };
     headerRow.font = { bold: true, size: 11, color: { argb: "FFFFFFFF" } };
     headerRow.alignment = { vertical: "middle", horizontal: "center" };
@@ -274,7 +289,7 @@ export async function generateExcel(input: GenerateExcelInput, brand?: BrandCont
         ws.getRow(r).fill = {
           type: "pattern",
           pattern: "solid",
-          fgColor: { argb: `FF${LIGHT_GRAY}` },
+          fgColor: { argb: `FF${colors.light}` },
         };
       }
     }
@@ -313,7 +328,7 @@ function headingLevelFromNumber(n?: number): (typeof HeadingLevel)[keyof typeof 
   return HeadingLevel.HEADING_1;
 }
 
-function buildWordTable(columns: string[], rows: (string | number | boolean | null)[][]): Table {
+function buildWordTable(columns: string[], rows: (string | number | boolean | null)[][], colors: ReturnType<typeof bc>): Table {
   const borderStyle = {
     style: BorderStyle.SINGLE,
     size: 1,
@@ -331,7 +346,7 @@ function buildWordTable(columns: string[], rows: (string | number | boolean | nu
             alignment: AlignmentType.CENTER,
           }),
         ],
-        shading: { type: ShadingType.SOLID, color: GREEN },
+        shading: { type: ShadingType.SOLID, color: colors.primary },
         borders,
         width: { size: Math.floor(9000 / columns.length), type: WidthType.DXA },
       })
@@ -349,7 +364,7 @@ function buildWordTable(columns: string[], rows: (string | number | boolean | nu
                   children: [new TextRun({ text: String(cell ?? ""), size: 20, font: "Calibri" })],
                 }),
               ],
-              shading: ri % 2 === 1 ? { type: ShadingType.SOLID, color: LIGHT_GRAY } : undefined,
+              shading: ri % 2 === 1 ? { type: ShadingType.SOLID, color: colors.light } : undefined,
               borders,
             })
         ),
@@ -363,8 +378,25 @@ function buildWordTable(columns: string[], rows: (string | number | boolean | nu
 }
 
 export async function generateWord(input: GenerateWordInput, brand?: BrandContext): Promise<Buffer> {
+  const colors = bc(brand);
   const children: (Paragraph | Table)[] = [];
   const companyLabel = brand?.companyName ?? "";
+
+  // Logo (if available)
+  if (brand?.logoBuffer) {
+    children.push(
+      new Paragraph({
+        children: [
+          new ImageRun({
+            data: brand.logoBuffer,
+            transformation: { width: 140, height: 50 },
+            type: brand.logoMime === "image/png" ? "png" : "jpg",
+          }),
+        ],
+        spacing: { after: 200 },
+      })
+    );
+  }
 
   // Title
   children.push(
@@ -374,7 +406,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
           text: input.file_name.replace(/_/g, " "),
           bold: true,
           size: 48,
-          color: GREEN,
+          color: colors.primary,
           font: "Calibri",
         }),
       ],
@@ -390,7 +422,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
           new TextRun({
             text: `Préparé pour / Prepared for: ${companyLabel}`,
             size: 22,
-            color: GREEN,
+            color: colors.primary,
             font: "Calibri",
           }),
           ...(brand?.industry
@@ -472,7 +504,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
 
         case "table":
           if (block.columns && block.rows) {
-            children.push(buildWordTable(block.columns, block.rows));
+            children.push(buildWordTable(block.columns, block.rows, colors));
             children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
           }
           break;
@@ -484,6 +516,25 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
     ? `Talsom Forge — ${companyLabel} — Confidentiel / Confidential  •  Page `
     : "Talsom Forge — Confidentiel / Confidential  •  Page ";
 
+  // Build header (with logo on every page if available)
+  const headerChildren: Paragraph[] = [];
+  if (brand?.logoBuffer) {
+    headerChildren.push(
+      new Paragraph({
+        children: [
+          new ImageRun({
+            data: brand.logoBuffer,
+            transformation: { width: 80, height: 28 },
+            type: brand.logoMime === "image/png" ? "png" : "jpg",
+          }),
+          new TextRun({ text: "    ", size: 14 }),
+          new TextRun({ text: companyLabel || "Talsom Forge", size: 16, color: colors.primary, font: "Calibri" }),
+        ],
+        alignment: AlignmentType.LEFT,
+      })
+    );
+  }
+
   const doc = new Document({
     creator: "Talsom Forge",
     title: input.file_name.replace(/_/g, " "),
@@ -491,6 +542,9 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
     sections: [
       {
         children,
+        headers: headerChildren.length > 0
+          ? { default: new Header({ children: headerChildren }) }
+          : undefined,
         footers: {
           default: new Footer({
             children: [
@@ -537,6 +591,7 @@ export interface GeneratePptxInput {
 }
 
 export async function generatePptx(input: GeneratePptxInput, brand?: BrandContext): Promise<Buffer> {
+  const colors = bc(brand);
   const pres = new PptxGenJS();
   pres.author = "Talsom Forge";
   pres.company = brand?.companyName ?? "";
@@ -547,30 +602,45 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
     ? `Talsom Forge — ${brand.companyName}`
     : "Talsom Forge";
 
-  // Define master slide
+  // Convert logo buffer to base64 data URI for pptxgenjs
+  const logoDataUri = brand?.logoBuffer
+    ? `data:${brand.logoMime || "image/png"};base64,${brand.logoBuffer.toString("base64")}`
+    : null;
+
+  // Define master slide with brand colors
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const masterObjects: any[] = [
+    // Top accent bar
+    { rect: { x: 0, y: 0, w: "100%", h: 0.06, fill: { color: colors.primary } } },
+    // Footer bar
+    { rect: { x: 0, y: 7.1, w: "100%", h: 0.4, fill: { color: colors.primary } } },
+    // Footer text
+    {
+      text: {
+        text: footerText,
+        options: { x: 0.5, y: 7.15, w: 6, h: 0.3, fontSize: 9, color: colors.secondary, fontFace: "Calibri" },
+      },
+    },
+    // Slide number
+    {
+      text: {
+        text: "Slide ",
+        options: { x: 11.5, y: 7.15, w: 1.5, h: 0.3, fontSize: 9, color: "FFFFFF", fontFace: "Calibri", align: "right" },
+      },
+    },
+  ];
+
+  // Add logo in bottom-right of footer bar (if available)
+  if (logoDataUri) {
+    masterObjects.push({
+      image: { x: 12, y: 7.12, w: 0.7, h: 0.35, data: logoDataUri },
+    });
+  }
+
   pres.defineSlideMaster({
     title: "TALSOM",
     background: { color: "FFFFFF" },
-    objects: [
-      // Top accent bar
-      { rect: { x: 0, y: 0, w: "100%", h: 0.06, fill: { color: GREEN } } },
-      // Footer bar
-      { rect: { x: 0, y: 7.1, w: "100%", h: 0.4, fill: { color: GREEN } } },
-      // Footer text
-      {
-        text: {
-          text: footerText,
-          options: { x: 0.5, y: 7.15, w: 6, h: 0.3, fontSize: 9, color: YELLOW, fontFace: "Calibri" },
-        },
-      },
-      // Slide number
-      {
-        text: {
-          text: "Slide ",
-          options: { x: 11.5, y: 7.15, w: 1.5, h: 0.3, fontSize: 9, color: "FFFFFF", fontFace: "Calibri", align: "right" },
-        },
-      },
-    ],
+    objects: masterObjects,
     slideNumber: { x: 12.6, y: 7.15, w: 0.5, h: 0.3, fontSize: 9, color: "FFFFFF", fontFace: "Calibri" },
   });
 
@@ -583,10 +653,15 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
     }
 
     if (layout === "title") {
+      // Logo on title slide (larger, centered)
+      if (logoDataUri) {
+        slide.addImage({ data: logoDataUri, x: 5.4, y: 0.5, w: 2.5, h: 1.0 });
+      }
+
       // Title slide
       slide.addText(slideData.title, {
-        x: 1, y: 1.8, w: 11.33, h: 1.5,
-        fontSize: 36, bold: true, color: GREEN,
+        x: 1, y: logoDataUri ? 1.8 : 1.8, w: 11.33, h: 1.5,
+        fontSize: 36, bold: true, color: colors.primary,
         fontFace: "Calibri", align: "center", valign: "bottom",
       });
       if (slideData.subtitle) {
@@ -609,12 +684,12 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
       // Title + bullets
       slide.addText(slideData.title, {
         x: 0.7, y: 0.3, w: 12, h: 0.8,
-        fontSize: 24, bold: true, color: GREEN,
+        fontSize: 24, bold: true, color: colors.primary,
         fontFace: "Calibri", valign: "bottom",
       });
       // Accent line under title
       slide.addShape(pres.ShapeType.rect, {
-        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: YELLOW },
+        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: colors.secondary },
       });
       if (slideData.bullets && slideData.bullets.length > 0) {
         const bulletObjs = slideData.bullets.map((b) => ({
@@ -630,11 +705,11 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
       // Title + two columns
       slide.addText(slideData.title, {
         x: 0.7, y: 0.3, w: 12, h: 0.8,
-        fontSize: 24, bold: true, color: GREEN,
+        fontSize: 24, bold: true, color: colors.primary,
         fontFace: "Calibri", valign: "bottom",
       });
       slide.addShape(pres.ShapeType.rect, {
-        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: YELLOW },
+        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: colors.secondary },
       });
 
       // Left column
@@ -669,11 +744,11 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
       // Title + table
       slide.addText(slideData.title, {
         x: 0.7, y: 0.3, w: 12, h: 0.8,
-        fontSize: 24, bold: true, color: GREEN,
+        fontSize: 24, bold: true, color: colors.primary,
         fontFace: "Calibri", valign: "bottom",
       });
       slide.addShape(pres.ShapeType.rect, {
-        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: YELLOW },
+        x: 0.7, y: 1.15, w: 2, h: 0.04, fill: { color: colors.secondary },
       });
 
       const tableRows: PptxGenJS.TableRow[] = [];
@@ -684,7 +759,7 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
           text: col,
           options: {
             bold: true, fontSize: 11, color: "FFFFFF", fontFace: "Calibri",
-            fill: { color: GREEN }, align: "center" as const, valign: "middle" as const,
+            fill: { color: colors.primary }, align: "center" as const, valign: "middle" as const,
           },
         }))
       );
@@ -696,7 +771,7 @@ export async function generatePptx(input: GeneratePptxInput, brand?: BrandContex
             text: String(cell ?? ""),
             options: {
               fontSize: 10, color: "333333", fontFace: "Calibri",
-              fill: { color: ri % 2 === 1 ? LIGHT_GRAY : "FFFFFF" },
+              fill: { color: ri % 2 === 1 ? colors.light : "FFFFFF" },
               valign: "middle" as const,
             },
           }))

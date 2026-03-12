@@ -205,6 +205,67 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       tenantContext = parts.join("\n");
     }
 
+    // 2b. Build brand context for file generation (colors, logo)
+    let logoBuffer: Buffer | undefined;
+    let logoMime: string | undefined;
+    const brandColors = (profile?.brand_colors ?? {}) as { primary?: string; secondary?: string; accent?: string };
+
+    // Fetch logo from tenant_assets if one has been uploaded
+    const { data: logoAsset } = await supabase
+      .from("tenant_assets")
+      .select("file_url, mime_type")
+      .eq("tenant_id", ctx.tenantId)
+      .eq("asset_type", "logo")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (logoAsset?.file_url) {
+      try {
+        const logoResp = await fetch(logoAsset.file_url);
+        if (logoResp.ok) {
+          logoBuffer = Buffer.from(await logoResp.arrayBuffer());
+          logoMime = logoAsset.mime_type || "image/png";
+        }
+      } catch (e) {
+        console.warn("[tool-chat] failed to fetch logo:", e);
+      }
+    }
+
+    // Also try tenants.logo_url as fallback
+    if (!logoBuffer) {
+      const { data: tenant } = await supabase
+        .from("tenants")
+        .select("logo_url")
+        .eq("id", ctx.tenantId)
+        .single();
+
+      if (tenant?.logo_url) {
+        try {
+          const logoResp = await fetch(tenant.logo_url);
+          if (logoResp.ok) {
+            logoBuffer = Buffer.from(await logoResp.arrayBuffer());
+            logoMime = "image/png";
+          }
+        } catch (e) {
+          console.warn("[tool-chat] failed to fetch tenant logo_url:", e);
+        }
+      }
+    }
+
+    // Strip # from color values if present
+    const cleanColor = (c?: string) => c?.replace(/^#/, "") || undefined;
+
+    const brandCtx: BrandContext = {
+      companyName: ctx.tenantName || undefined,
+      industry: profile?.industry || undefined,
+      primaryColor: cleanColor(brandColors.primary),
+      secondaryColor: cleanColor(brandColors.secondary),
+      accentColor: cleanColor(brandColors.accent),
+      logoBuffer,
+      logoMime,
+    };
+
     // 3. Build the full system prompt
     const systemPrompt = buildToolSystemPrompt(toolConfig, kbData, lang as "fr" | "en", tenantContext || undefined);
 
@@ -281,12 +342,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const toolResults: any[] = [];
-
-      // Brand context for file branding (company name, industry from tenant profile)
-      const brandCtx: BrandContext = {
-        companyName: ctx.tenantName || profile?.company_name || undefined,
-        industry: profile?.industry || undefined,
-      };
 
       for (const block of toolUseBlocks) {
         if (block.name === "generate_excel") {
