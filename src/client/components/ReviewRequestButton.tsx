@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import {
   ShieldCheck, Loader2, Download, ChevronDown, ChevronUp,
-  MessageSquare, FileSpreadsheet, Sparkles,
+  MessageSquare, FileSpreadsheet, Sparkles, Clock,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
@@ -223,23 +223,159 @@ export function ReviewRequestButton({
     );
   }
 
-  // ── Existing review (non-delivered) — show status ──
+  // ── Existing review (non-delivered) — show informative waiting card ──
   if (existingReview) {
-    return (
-      <div className={`mt-4 rounded-xl p-4 border ${dark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"}`}>
-        <ReviewStatusBadge
-          status={existingReview.status}
-          consultantName={existingReview.consultant_name}
-          lang={lang}
-        />
+    const status = existingReview.status;
 
-        {/* Show client feedback if available */}
-        {existingReview.client_feedback && (
-          <div className={`mt-3 text-sm rounded-lg p-3 ${dark ? "bg-white/5 text-white/70" : "bg-white text-gray-700"}`}>
-            <p className={`text-xs font-semibold mb-1 ${dark ? "text-white/40" : "text-gray-500"}`}>
-              {bi("Commentaire du consultant", "Consultant feedback")}
+    // Status-specific messaging
+    const statusMessages: Record<string, { title: [string, string]; desc: [string, string]; steps: [string, string][] }> = {
+      pending: {
+        title: ["Votre demande a été soumise", "Your request has been submitted"],
+        desc: [
+          "Un consultant Talsom sera assigné sous peu pour vérifier votre livrable.",
+          "A Talsom consultant will be assigned shortly to review your deliverable.",
+        ],
+        steps: [
+          ["✓ Demande soumise", "✓ Request submitted"],
+          ["⏳ Attribution d'un consultant", "⏳ Assigning consultant"],
+          ["○ Révision en cours", "○ Review in progress"],
+          ["○ Livraison", "○ Delivery"],
+        ],
+      },
+      in_review: {
+        title: ["Votre livrable est en cours de révision", "Your deliverable is being reviewed"],
+        desc: [
+          `${existingReview.consultant_name ?? "Un consultant"} examine et améliore actuellement votre livrable. Vous serez notifié dès que c'est prêt.`,
+          `${existingReview.consultant_name ?? "A consultant"} is currently reviewing and improving your deliverable. You'll be notified when it's ready.`,
+        ],
+        steps: [
+          ["✓ Demande soumise", "✓ Request submitted"],
+          ["✓ Consultant assigné", "✓ Consultant assigned"],
+          ["⏳ Révision en cours", "⏳ Review in progress"],
+          ["○ Livraison", "○ Delivery"],
+        ],
+      },
+      approved: {
+        title: ["Votre livrable a été approuvé", "Your deliverable has been approved"],
+        desc: [
+          `${existingReview.consultant_name ?? "Le consultant"} a validé votre livrable. La livraison est en cours de préparation.`,
+          `${existingReview.consultant_name ?? "The consultant"} has validated your deliverable. Delivery is being prepared.`,
+        ],
+        steps: [
+          ["✓ Demande soumise", "✓ Request submitted"],
+          ["✓ Consultant assigné", "✓ Consultant assigned"],
+          ["✓ Révision terminée", "✓ Review complete"],
+          ["⏳ Livraison en cours", "⏳ Delivery in progress"],
+        ],
+      },
+      needs_revision: {
+        title: ["Révision en cours par le consultant", "Consultant is revising your deliverable"],
+        desc: [
+          `${existingReview.consultant_name ?? "Le consultant"} apporte des modifications à votre livrable pour l'améliorer avant livraison.`,
+          `${existingReview.consultant_name ?? "The consultant"} is making improvements to your deliverable before delivery.`,
+        ],
+        steps: [
+          ["✓ Demande soumise", "✓ Request submitted"],
+          ["✓ Consultant assigné", "✓ Consultant assigned"],
+          ["⏳ Modifications en cours", "⏳ Modifications in progress"],
+          ["○ Livraison", "○ Delivery"],
+        ],
+      },
+    };
+
+    const msg = statusMessages[status] ?? statusMessages.pending;
+
+    return (
+      <div className={`mt-4 rounded-2xl overflow-hidden border-2 ${
+        dark ? "border-white/10 bg-white/[0.03]" : "border-gray-200 bg-white"
+      }`}>
+        {/* Header */}
+        <div className={`px-5 py-4 flex items-start gap-3 ${
+          dark ? "bg-white/5" : "bg-gray-50"
+        }`}>
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: dark ? "rgba(0,53,51,0.3)" : C.greenLight }}
+          >
+            <ShieldCheck className="w-6 h-6" style={{ color: C.green }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <p className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+                {bi(msg.title[0], msg.title[1])}
+              </p>
+              <ReviewStatusBadge
+                status={status}
+                consultantName={existingReview.consultant_name}
+                lang={lang}
+              />
+            </div>
+            <p className={`text-xs leading-relaxed ${dark ? "text-white/50" : "text-gray-500"}`}>
+              {bi(msg.desc[0], msg.desc[1])}
             </p>
-            {existingReview.client_feedback}
+          </div>
+        </div>
+
+        {/* Progress steps */}
+        <div className={`px-5 py-3 border-t ${dark ? "border-white/5" : "border-gray-100"}`}>
+          <div className="flex items-center gap-1">
+            {msg.steps.map((step, i) => {
+              const label = bi(step[0], step[1]);
+              const isDone = label.startsWith("✓");
+              const isCurrent = label.startsWith("⏳");
+              return (
+                <div key={i} className="flex items-center gap-1 flex-1">
+                  {i > 0 && (
+                    <div className={`flex-1 h-px ${
+                      isDone || isCurrent
+                        ? dark ? "bg-emerald-500/40" : "bg-emerald-300"
+                        : dark ? "bg-white/10" : "bg-gray-200"
+                    }`} />
+                  )}
+                  <div className={`text-center ${i > 0 ? "flex-1" : "flex-1"}`}>
+                    <div className={`text-[10px] leading-tight font-medium whitespace-nowrap ${
+                      isDone
+                        ? dark ? "text-emerald-400" : "text-emerald-600"
+                        : isCurrent
+                          ? dark ? "text-amber-400" : "text-amber-600"
+                          : dark ? "text-white/25" : "text-gray-300"
+                    }`}>
+                      {label}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* SLA info */}
+        <div className={`px-5 py-2.5 border-t flex items-center gap-2 ${
+          dark ? "border-white/5 bg-white/[0.02]" : "border-gray-100 bg-gray-50/50"
+        }`}>
+          <Clock className={`w-3.5 h-3.5 shrink-0 ${dark ? "text-white/30" : "text-gray-400"}`} />
+          <p className={`text-[11px] ${dark ? "text-white/40" : "text-gray-400"}`}>
+            {bi(
+              "Délai de traitement habituel : 48h ouvrables",
+              "Typical processing time: 48 business hours"
+            )}
+          </p>
+        </div>
+
+        {/* Consultant feedback if available */}
+        {existingReview.client_feedback && (
+          <div className={`px-5 py-3 border-t ${dark ? "border-white/5" : "border-gray-100"}`}>
+            <div className="flex items-start gap-2">
+              <MessageSquare className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${dark ? "text-white/30" : "text-gray-400"}`} />
+              <div>
+                <p className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${dark ? "text-white/30" : "text-gray-400"}`}>
+                  {bi("Commentaire du consultant", "Consultant feedback")}
+                </p>
+                <p className={`text-sm leading-relaxed ${dark ? "text-white/70" : "text-gray-700"}`}>
+                  {existingReview.client_feedback}
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </div>
