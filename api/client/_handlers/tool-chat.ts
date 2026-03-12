@@ -6,7 +6,10 @@ import { TOOL_TO_SECTION } from "../../_lib/mcp-tools.js";
 import { TOOL_PROMPTS, buildToolSystemPrompt } from "../../_lib/tool-prompts.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
-import { FILE_GENERATION_TOOLS, generateExcel } from "../../_lib/file-generators.js";
+import {
+  FILE_GENERATION_TOOLS, generateExcel, generateWord, generatePptx,
+  type GenerateWordInput, type GeneratePptxInput, type BrandContext,
+} from "../../_lib/file-generators.js";
 import { uploadGeneratedFile } from "../../_lib/file-storage.js";
 import { handleCors } from "../../_lib/cors.js";
 import { checkRateLimit } from "../../_lib/rate-limit.js";
@@ -279,11 +282,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const toolResults: any[] = [];
 
+      // Brand context for file branding (company name, industry from tenant profile)
+      const brandCtx: BrandContext = {
+        companyName: ctx.tenantName || profile?.company_name || undefined,
+        industry: profile?.industry || undefined,
+      };
+
       for (const block of toolUseBlocks) {
         if (block.name === "generate_excel") {
           try {
             const input = block.input as { file_name: string; sheets: { name: string; columns: string[]; rows: (string | number | boolean | null)[][] }[] };
-            const buffer = await generateExcel(input);
+            const buffer = await generateExcel(input, brandCtx);
             const file = await uploadGeneratedFile(
               ctx.tenantId,
               `${input.file_name}.xlsx`,
@@ -291,7 +300,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             );
 
-            // Send file event to frontend
             res.write(`data: ${JSON.stringify({
               file: { name: file.name, url: file.url, size: file.size, type: file.type },
             })}\n\n`);
@@ -302,7 +310,65 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               content: `File "${file.name}" generated successfully (${(file.size / 1024).toFixed(1)} KB). The download link has been delivered to the user.`,
             });
           } catch (err) {
-            console.error("[tool-chat] file generation error:", err);
+            console.error("[tool-chat] excel generation error:", err);
+            toolResults.push({
+              type: "tool_result",
+              tool_use_id: block.id,
+              content: `Error generating file: ${err instanceof Error ? err.message : "Unknown error"}`,
+              is_error: true,
+            });
+          }
+        } else if (block.name === "generate_word") {
+          try {
+            const input = block.input as GenerateWordInput;
+            const buffer = await generateWord(input, brandCtx);
+            const file = await uploadGeneratedFile(
+              ctx.tenantId,
+              `${input.file_name}.docx`,
+              buffer,
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            );
+
+            res.write(`data: ${JSON.stringify({
+              file: { name: file.name, url: file.url, size: file.size, type: file.type },
+            })}\n\n`);
+
+            toolResults.push({
+              type: "tool_result",
+              tool_use_id: block.id,
+              content: `File "${file.name}" generated successfully (${(file.size / 1024).toFixed(1)} KB). The download link has been delivered to the user.`,
+            });
+          } catch (err) {
+            console.error("[tool-chat] word generation error:", err);
+            toolResults.push({
+              type: "tool_result",
+              tool_use_id: block.id,
+              content: `Error generating file: ${err instanceof Error ? err.message : "Unknown error"}`,
+              is_error: true,
+            });
+          }
+        } else if (block.name === "generate_pptx") {
+          try {
+            const input = block.input as GeneratePptxInput;
+            const buffer = await generatePptx(input, brandCtx);
+            const file = await uploadGeneratedFile(
+              ctx.tenantId,
+              `${input.file_name}.pptx`,
+              buffer,
+              "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            );
+
+            res.write(`data: ${JSON.stringify({
+              file: { name: file.name, url: file.url, size: file.size, type: file.type },
+            })}\n\n`);
+
+            toolResults.push({
+              type: "tool_result",
+              tool_use_id: block.id,
+              content: `File "${file.name}" generated successfully (${(file.size / 1024).toFixed(1)} KB). The download link has been delivered to the user.`,
+            });
+          } catch (err) {
+            console.error("[tool-chat] pptx generation error:", err);
             toolResults.push({
               type: "tool_result",
               tool_use_id: block.id,

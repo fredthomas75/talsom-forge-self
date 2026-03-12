@@ -4,10 +4,18 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import {
   ShieldCheck, Loader2, Download, ChevronDown, ChevronUp,
-  MessageSquare, FileSpreadsheet, Sparkles, Clock,
+  MessageSquare, FileSpreadsheet, Sparkles, Clock, FileText, Presentation, File,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
+
+function getFileIcon(url?: string | null) {
+  if (!url) return FileSpreadsheet;
+  if (url.includes(".docx")) return FileText;
+  if (url.includes(".pptx")) return Presentation;
+  if (url.includes(".xlsx")) return FileSpreadsheet;
+  return File;
+}
 
 interface ReviewData {
   id: string;
@@ -146,12 +154,17 @@ export function ReviewRequestButton({
                   : "bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100"
               }`}
             >
+              {(() => {
+                const FIcon = getFileIcon(downloadUrl);
+                return (
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                 style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
               >
-                <FileSpreadsheet className="w-6 h-6" style={{ color: C.green }} />
+                <FIcon className="w-6 h-6" style={{ color: C.green }} />
               </div>
+                );
+              })()}
               <div className="flex-1 min-w-0">
                 <p className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
                   {isModifiedFile

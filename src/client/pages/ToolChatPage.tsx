@@ -10,7 +10,7 @@ import {
   Send, StopCircle, Plus, ArrowLeft, MessageSquare, Trash2, Loader2,
   Layers, Paperclip, X, Image, File,
   Cloud, Download, ExternalLink, CheckCircle2, FileSpreadsheet,
-  ShieldCheck, ChevronDown, ChevronUp, Clock,
+  ShieldCheck, ChevronDown, ChevronUp, Clock, FileText, Presentation,
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { C, HDR_FONT } from "@/lib/constants";
@@ -52,6 +52,16 @@ function readFileAsBase64(file: globalThis.File): Promise<Attachment> {
     reader.onerror = () => reject(new Error("Failed to read file"));
     reader.readAsDataURL(file);
   });
+}
+
+function getFileDisplay(f: { name?: string; type?: string }) {
+  if (f.type?.includes("spreadsheet") || f.name?.endsWith(".xlsx"))
+    return { Icon: FileSpreadsheet, label: "Excel (.xlsx)", color: "text-green-600" };
+  if (f.type?.includes("wordprocessing") || f.name?.endsWith(".docx"))
+    return { Icon: FileText, label: "Word (.docx)", color: "text-blue-600" };
+  if (f.type?.includes("presentation") || f.name?.endsWith(".pptx"))
+    return { Icon: Presentation, label: "PowerPoint (.pptx)", color: "text-orange-500" };
+  return { Icon: File, label: f.type ?? "File", color: "text-gray-500" };
 }
 
 interface Conversation {
@@ -667,6 +677,9 @@ export function ToolChatPage() {
                   {m.files && m.files.length > 0 && (
                     <div className="mt-3 space-y-2">
                       {m.files.map((f, fi) => (
+                        (() => {
+                          const fd = getFileDisplay(f);
+                          return (
                         <a
                           key={fi}
                           href={f.url}
@@ -682,7 +695,7 @@ export function ToolChatPage() {
                             className="w-10 h-10 rounded-lg flex items-center justify-center"
                             style={{ background: dark ? "rgba(0,53,51,0.3)" : C.greenLight }}
                           >
-                            <FileSpreadsheet className="w-5 h-5" style={{ color: C.green }} />
+                            <fd.Icon className="w-5 h-5" style={{ color: C.green }} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm font-medium truncate ${dark ? "text-white" : "text-gray-900"}`}>
@@ -690,11 +703,13 @@ export function ToolChatPage() {
                             </p>
                             <p className={`text-xs ${dark ? "text-white/40" : "text-gray-500"}`}>
                               {f.size < 1024 ? `${f.size} B` : `${(f.size / 1024).toFixed(1)} KB`}
-                              {" · "}Excel (.xlsx)
+                              {" · "}{fd.label}
                             </p>
                           </div>
                           <Download className={`w-4 h-4 ${dark ? "text-white/40" : "text-gray-400"}`} />
                         </a>
+                          );
+                        })()
                       ))}
                     </div>
                   )}

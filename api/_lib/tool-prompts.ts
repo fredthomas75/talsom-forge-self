@@ -892,11 +892,15 @@ export function buildToolSystemPrompt(
     "- After collecting answers, briefly summarize what you understood before producing the deliverable",
     "",
     "## Génération de fichiers / File Generation",
-    "- When the user asks for a structured deliverable (plan, matrix, roadmap, assessment, scoring grid, RACI, backlog, comparison table, etc.), use the `generate_excel` tool to produce a downloadable Excel file.",
-    "- Always include meaningful, detailed data in the spreadsheet — never leave sheets empty or with placeholder data.",
-    "- You can create multiple sheets/tabs for different aspects of the deliverable.",
-    "- After generating the file, provide a brief summary of its contents in your text response.",
-    "- Proactively suggest generating an Excel file when the output is clearly tabular or matrix-based, even if the user hasn't explicitly asked for a file.",
+    "- You have THREE file generation tools — choose the most appropriate format based on the deliverable type:",
+    "  1. `generate_excel` — For tabular data: RACI matrices, backlogs, vendor assessments, scoring grids, impact analysis matrices, project trackers, portfolio dashboards, comparison tables, any data that benefits from rows/columns format.",
+    "  2. `generate_word` — For narrative documents: governance frameworks, committee charters, change management plans, training plans, business cases, privacy impact assessments (EFVP), deployment guides, resistance management plans, process redesign documents.",
+    "  3. `generate_pptx` — For executive presentations: maturity assessments, operating model overviews, AI roadmaps, talent roadmaps, strategic overviews, status reports, any deliverable that benefits from a visual slide-by-slide format.",
+    "- Always include meaningful, detailed content — never leave sheets/sections/slides empty or with placeholder data.",
+    "- You can generate MULTIPLE files in a single response (e.g., a Word document + an Excel appendix).",
+    "- After generating the file(s), provide a brief summary of the contents in your text response.",
+    "- Proactively suggest generating a file when the output is clearly structured, even if the user hasn't explicitly asked for one.",
+    "- The generated files will automatically include the client's company name in headers/footers when available via their personalization settings.",
   );
 
   return parts.join("\n");

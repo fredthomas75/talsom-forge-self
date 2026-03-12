@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 import {
   Loader2, Download, FileSpreadsheet, Layers, ArrowRight,
   MessageSquare, ChevronDown, ChevronUp, ShieldCheck, Bot,
-  Clock, PackageCheck,
+  Clock, PackageCheck, FileText, Presentation, File,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -32,6 +32,14 @@ interface ReviewItem {
 }
 
 const STATUS_TABS = ["all", "pending", "in_review", "delivered"] as const;
+
+function getFileIcon(url?: string | null) {
+  if (!url) return { Icon: FileSpreadsheet, label: "Excel" };
+  if (url.includes(".docx")) return { Icon: FileText, label: "Word" };
+  if (url.includes(".pptx")) return { Icon: Presentation, label: "PowerPoint" };
+  if (url.includes(".xlsx")) return { Icon: FileSpreadsheet, label: "Excel" };
+  return { Icon: File, label: "File" };
+}
 
 export function DeliverablesPage() {
   const { lang } = useLang();
@@ -377,12 +385,17 @@ export function DeliverablesPage() {
                                 : "bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100"
                             }`}
                           >
+                            {(() => {
+                              const fi = getFileIcon(downloadUrl);
+                              return (
                             <div
                               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                               style={{ background: dark ? "rgba(0,53,51,0.5)" : C.greenLight }}
                             >
-                              <FileSpreadsheet className="w-5 h-5" style={{ color: C.green }} />
+                              <fi.Icon className="w-5 h-5" style={{ color: C.green }} />
                             </div>
+                              );
+                            })()}
                             <div className="flex-1 min-w-0">
                               <p className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
                                 {review.modified_file_url
