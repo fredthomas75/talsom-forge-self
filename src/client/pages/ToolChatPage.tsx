@@ -545,30 +545,72 @@ export function ToolChatPage() {
 
                   {m.role === "assistant" ? (
                     m.content ? (
-                      <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
-                      </div>
-                    ) : isStreaming && i === messages.length - 1 ? (
-                      <div className="flex items-center gap-3 py-1">
-                        <div className="relative w-5 h-5 shrink-0">
-                          <Loader2 className="w-5 h-5 animate-spin" style={{ color: C.green }} />
+                      <>
+                        <div className={`prose prose-sm max-w-none ${dark ? "prose-invert" : ""}`}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${dark ? "text-white/70" : "text-gray-700"}`}>
-                            {streamingStatusText || bi({ fr: "Analyse en cours…", en: "Analyzing…" })}
-                          </p>
-                          {streamingElapsed >= 5 && (
-                            <div className="mt-1.5 w-full h-1 rounded-full overflow-hidden" style={{ background: dark ? "rgba(255,255,255,0.05)" : "#f3f4f6" }}>
-                              <div
-                                className="h-full rounded-full transition-all duration-1000 ease-out"
-                                style={{
-                                  background: `linear-gradient(90deg, ${C.green}, ${C.green}cc)`,
-                                  width: `${Math.min(95, streamingElapsed * 1.5)}%`,
-                                }}
-                              />
+                        {/* Streaming tail indicator — while text is still flowing */}
+                        {isStreaming && i === messages.length - 1 && (
+                          <div className={`mt-3 pt-3 border-t flex items-center gap-2 ${
+                            dark ? "border-white/5" : "border-gray-200/50"
+                          }`}>
+                            <div className="flex gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.green, animationDelay: "0ms" }} />
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.green, animationDelay: "300ms" }} />
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: C.green, animationDelay: "600ms" }} />
                             </div>
-                          )}
+                            <p className={`text-xs ${dark ? "text-white/30" : "text-gray-400"}`}>
+                              {bi({ fr: "Rédaction en cours…", en: "Writing…" })}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    ) : isStreaming && i === messages.length - 1 ? (
+                      <div className="py-2">
+                        {/* Phase indicator */}
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="relative w-8 h-8 shrink-0 flex items-center justify-center">
+                            <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: C.green }} />
+                            <Loader2 className="w-5 h-5 animate-spin relative" style={{ color: C.green }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+                              {streamingStatusText || bi({ fr: "Analyse en cours…", en: "Analyzing…" })}
+                            </p>
+                            <p className={`text-xs mt-0.5 ${dark ? "text-white/30" : "text-gray-400"}`}>
+                              {bi({ fr: "Votre livrable est en préparation", en: "Your deliverable is being prepared" })}
+                            </p>
+                          </div>
                         </div>
+
+                        {/* Progress bar */}
+                        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: dark ? "rgba(255,255,255,0.05)" : "#f3f4f6" }}>
+                          <div
+                            className="h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{
+                              background: `linear-gradient(90deg, ${C.green}, ${C.green}99)`,
+                              width: `${Math.min(95, 5 + streamingElapsed * 1.5)}%`,
+                            }}
+                          />
+                        </div>
+
+                        {/* Steps */}
+                        {streamingElapsed >= 3 && (
+                          <div className={`mt-3 flex gap-4 text-[10px] font-medium ${dark ? "text-white/25" : "text-gray-300"}`}>
+                            <span className={streamingElapsed >= 0 ? (dark ? "text-emerald-400" : "text-emerald-600") : ""}>
+                              ✓ {bi({ fr: "Analyse", en: "Analysis" })}
+                            </span>
+                            <span className={streamingElapsed >= 10 ? (dark ? "text-emerald-400" : "text-emerald-600") : streamingElapsed >= 5 ? (dark ? "text-amber-400" : "text-amber-600") : ""}>
+                              {streamingElapsed >= 10 ? "✓" : streamingElapsed >= 5 ? "⏳" : "○"} {bi({ fr: "Rédaction", en: "Drafting" })}
+                            </span>
+                            <span className={streamingElapsed >= 25 ? (dark ? "text-emerald-400" : "text-emerald-600") : streamingElapsed >= 15 ? (dark ? "text-amber-400" : "text-amber-600") : ""}>
+                              {streamingElapsed >= 25 ? "✓" : streamingElapsed >= 15 ? "⏳" : "○"} {bi({ fr: "Mise en forme", en: "Formatting" })}
+                            </span>
+                            <span className={streamingElapsed >= 30 ? (dark ? "text-amber-400" : "text-amber-600") : ""}>
+                              {streamingElapsed >= 30 ? "⏳" : "○"} {bi({ fr: "Finalisation", en: "Finalizing" })}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     ) : null
                   ) : (
