@@ -1,15 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
+import { handleCors } from "../../_lib/cors.js";
 
 // POST /api/client/accept-invite
 // Validates an invitation token and creates a tenant_member.
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "POST, OPTIONS")) return;
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   // 1. Verify JWT

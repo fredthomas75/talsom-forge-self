@@ -5,6 +5,7 @@ import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useClient } from "./contexts/ClientContext";
 import { clientI18n } from "./i18n";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -232,20 +233,22 @@ export function ClientLayout() {
 
       {/* Main content */}
       <main className={`flex-1 overflow-y-auto md:pt-0 pt-14 ${dark ? "bg-gray-950" : "bg-gray-50"}`}>
-        <Routes>
-          <Route index element={<DashboardPage />} />
-          <Route path="chat" element={<ChatPage />} />
-          <Route path="tools" element={<ToolsPage />} />
-          <Route path="tools/:toolName" element={<ToolChatPage />} />
-          <Route path="deliverables" element={<DeliverablesPage />} />
-          <Route path="keys" element={<ApiKeysPage />} />
-          <Route path="usage" element={<UsagePage />} />
-          <Route path="team" element={<TeamPage />} />
-          <Route path="customization" element={<CustomizationPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="audit" element={<AuditLogPage />} />
-          <Route path="*" element={<Navigate to="/client" replace />} />
-        </Routes>
+        <ErrorBoundary dark={dark}>
+          <Routes>
+            <Route index element={<DashboardPage />} />
+            <Route path="chat" element={<ChatPage />} />
+            <Route path="tools" element={<ToolsPage />} />
+            <Route path="tools/:toolName" element={<ToolChatPage />} />
+            <Route path="deliverables" element={<DeliverablesPage />} />
+            <Route path="keys" element={<ApiKeysPage />} />
+            <Route path="usage" element={<UsagePage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="customization" element={<CustomizationPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="audit" element={<AuditLogPage />} />
+            <Route path="*" element={<Navigate to="/client" replace />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   );

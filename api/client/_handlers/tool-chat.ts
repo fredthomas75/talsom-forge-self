@@ -8,6 +8,8 @@ import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
 import { FILE_GENERATION_TOOLS, generateExcel } from "../../_lib/file-generators.js";
 import { uploadGeneratedFile } from "../../_lib/file-storage.js";
+import { handleCors } from "../../_lib/cors.js";
+import { checkRateLimit } from "../../_lib/rate-limit.js";
 
 // POST /api/client/tools/chat
 // Conversational tool chat with SSE streaming.
@@ -90,11 +92,13 @@ function buildUserContentBlocks(
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "POST, OPTIONS")) return;
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  // Rate limit: 20 tool-chat messages per minute per IP
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || "unknown";
+  const { allowed } = checkRateLimit(`tool-chat:${ip}`, 20, 60_000);
+  if (!allowed) return res.status(429).json({ error: "Rate limit exceeded" });
 
   const ctx = await authenticateClient(req);
   if (!ctx) return res.status(401).json({ error: "Unauthorized" });

@@ -4,16 +4,20 @@ import { getAnthropicClient, MODELS } from "../../_lib/anthropic.js";
 import { getSiteContent, buildSystemPrompt } from "../../_lib/content-loader.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
+import { handleCors } from "../../_lib/cors.js";
+import { checkRateLimit } from "../../_lib/rate-limit.js";
 
 // POST /api/client/chat
 // Authenticated SSE streaming chat with conversation persistence
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "POST, OPTIONS")) return;
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  // Rate limit: 30 messages per minute per IP
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || "unknown";
+  const { allowed } = checkRateLimit(`chat:${ip}`, 30, 60_000);
+  if (!allowed) return res.status(429).json({ error: "Rate limit exceeded" });
 
   const ctx = await authenticateClient(req);
   if (!ctx) return res.status(401).json({ error: "Unauthorized" });
@@ -82,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const stream = client.messages.stream({
       model: MODELS.DEFAULT,
-      max_tokens: 1024,
+      max_tokens: 4096,
       system: systemPrompt,
       messages: recentMessages.map((m: { role: string; content: string }) => ({
         role: m.role as "user" | "assistant",

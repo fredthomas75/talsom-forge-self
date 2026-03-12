@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   Key, Plus, Trash2, Copy, Check, Eye, EyeOff, Loader2, AlertCircle,
 } from "lucide-react";
@@ -79,12 +80,16 @@ export function ApiKeysPage() {
     }
   };
 
-  const handleRevoke = async (id: string) => {
-    await fetch(`/api/client/keys/${id}`, {
+  const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
+
+  const confirmRevoke = async () => {
+    if (!revokeTarget) return;
+    await fetch(`/api/client/keys/${revokeTarget}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
-    setKeys((prev) => prev.filter((k) => k.id !== id));
+    setKeys((prev) => prev.filter((k) => k.id !== revokeTarget));
+    setRevokeTarget(null);
   };
 
   const handleCopy = (text: string) => {
@@ -150,7 +155,7 @@ export function ApiKeysPage() {
                     )}
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => handleRevoke(k.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                <Button variant="ghost" size="sm" onClick={() => setRevokeTarget(k.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg">
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </CardContent>
@@ -158,6 +163,19 @@ export function ApiKeysPage() {
           ))}
         </div>
       )}
+
+      {/* Revoke confirmation */}
+      <ConfirmDialog
+        open={!!revokeTarget}
+        onOpenChange={(open) => { if (!open) setRevokeTarget(null); }}
+        title={bi({ fr: "Révoquer cette clé API ?", en: "Revoke this API key?" })}
+        description={bi({ fr: "Les applications utilisant cette clé ne pourront plus accéder à l'API.", en: "Applications using this key will no longer be able to access the API." })}
+        confirmLabel={bi({ fr: "Révoquer", en: "Revoke" })}
+        cancelLabel={bi({ fr: "Annuler", en: "Cancel" })}
+        destructive
+        onConfirm={confirmRevoke}
+        dark={dark}
+      />
 
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

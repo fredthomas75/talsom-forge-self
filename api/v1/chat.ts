@@ -3,6 +3,7 @@ import { getAnthropicClient, MODELS } from "../_lib/anthropic.js";
 import { getSiteContent, buildSystemPrompt } from "../_lib/content-loader.js";
 import { authenticateTenant } from "../_lib/auth.js";
 import { checkRateLimit } from "../_lib/rate-limit.js";
+import { handleCors } from "../_lib/cors.js";
 
 interface ChatRequestBody {
   messages: Array<{ role: "user" | "assistant"; content: string }>;
@@ -13,11 +14,7 @@ interface ChatRequestBody {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-API-Key");
-
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "POST, OPTIONS")) return;
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   // Authenticate tenant

@@ -2,15 +2,14 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { authenticateClient } from "../../_lib/client-auth.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
+import { handleCors } from "../../_lib/cors.js";
 
 // GET    /api/client/conversations/[id] — get messages
+// PUT    /api/client/conversations/[id] — rename conversation
 // DELETE /api/client/conversations/[id] — delete conversation
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "GET, PUT, DELETE, OPTIONS")) return;
 
   const ctx = await authenticateClient(req);
   if (!ctx) return res.status(401).json({ error: "Unauthorized" });
@@ -40,6 +39,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json({ messages: messages ?? [] });
+  }
+
+  if (req.method === "PUT") {
+    const { title } = req.body ?? {};
+    if (!title || typeof title !== "string" || !title.trim()) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    const { error: updateErr } = await supabase
+      .from("chat_conversations")
+      .update({ title: title.trim() })
+      .eq("id", id);
+    if (updateErr) return res.status(500).json({ error: updateErr.message });
+    return res.status(200).json({ updated: true });
   }
 
   if (req.method === "DELETE") {

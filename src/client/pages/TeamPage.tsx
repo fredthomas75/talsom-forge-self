@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   Users, UserPlus, Trash2, Copy, Check, Loader2, AlertCircle, Crown, ShieldCheck,
 } from "lucide-react";
@@ -88,11 +89,15 @@ export function TeamPage() {
     }
   };
 
-  const handleRemove = async (memberId: string) => {
-    await fetch(`/api/client/team/${memberId}`, {
+  const [removeTarget, setRemoveTarget] = useState<string | null>(null);
+
+  const confirmRemove = async () => {
+    if (!removeTarget) return;
+    await fetch(`/api/client/team/${removeTarget}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
+    setRemoveTarget(null);
     fetchTeam();
   };
 
@@ -153,7 +158,7 @@ export function TeamPage() {
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 rounded-full mt-0.5">{m.role}</Badge>
                   </div>
                   {isOwner && m.role !== "owner" && (
-                    <Button variant="ghost" size="sm" onClick={() => handleRemove(m.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                    <Button variant="ghost" size="sm" onClick={() => setRemoveTarget(m.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   )}
@@ -183,6 +188,19 @@ export function TeamPage() {
           )}
         </>
       )}
+
+      {/* Remove member confirmation */}
+      <ConfirmDialog
+        open={!!removeTarget}
+        onOpenChange={(open) => { if (!open) setRemoveTarget(null); }}
+        title={bi({ fr: "Retirer ce membre ?", en: "Remove this member?" })}
+        description={bi({ fr: "Ce membre n'aura plus accès au portail client.", en: "This member will no longer have access to the client portal." })}
+        confirmLabel={bi({ fr: "Retirer", en: "Remove" })}
+        cancelLabel={bi({ fr: "Annuler", en: "Cancel" })}
+        destructive
+        onConfirm={confirmRemove}
+        dark={dark}
+      />
 
       {/* Invite dialog */}
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>

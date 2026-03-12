@@ -13,6 +13,7 @@ import {
   ShieldCheck, LogOut, ArrowLeft, LayoutDashboard, ListChecks,
   Menu, Sun, Moon, Loader2,
 } from "lucide-react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Page imports
 import { DashboardPage } from "./pages/DashboardPage";
@@ -189,12 +190,14 @@ export function ConsultantLayout() {
 
       {/* Main content */}
       <main className={`flex-1 overflow-y-auto md:pt-0 pt-14 ${dark ? "bg-gray-950" : "bg-gray-50"}`}>
-        <Routes>
-          <Route index element={<DashboardPage />} />
-          <Route path="queue" element={<QueuePage />} />
-          <Route path="reviews/:reviewId" element={<ReviewDetailPage />} />
-          <Route path="*" element={<Navigate to="/consultant" replace />} />
-        </Routes>
+        <ErrorBoundary dark={dark}>
+          <Routes>
+            <Route index element={<DashboardPage />} />
+            <Route path="queue" element={<QueuePage />} />
+            <Route path="reviews/:reviewId" element={<ReviewDetailPage />} />
+            <Route path="*" element={<Navigate to="/consultant" replace />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   );

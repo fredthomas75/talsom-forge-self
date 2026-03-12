@@ -2,15 +2,13 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { authenticateClient } from "../../_lib/client-auth.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
+import { handleCors } from "../../_lib/cors.js";
 
 // GET  /api/client/customization/profile — get tenant profile
 // PATCH /api/client/customization/profile — upsert tenant profile
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "GET, PATCH, OPTIONS")) return;
 
   const ctx = await authenticateClient(req);
   if (!ctx) return res.status(401).json({ error: "Unauthorized" });

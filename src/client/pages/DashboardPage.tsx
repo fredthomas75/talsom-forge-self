@@ -8,6 +8,7 @@ import {
   ArrowRight, Bot, Key, UserPlus,
   TrendingUp,
 } from "lucide-react";
+import { ErrorRetry } from "@/components/ErrorRetry";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useClient } from "../contexts/ClientContext";
@@ -29,26 +30,30 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/client/dashboard", {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        });
-        if (res.ok) {
-          setStats(await res.json());
-        }
-      } catch {
-        // Fallback to zeros
-      } finally {
-        setLoading(false);
+  const fetchStats = async () => {
+    setFetchError(false);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/client/dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (res.ok) {
+        setStats(await res.json());
+      } else {
+        setFetchError(true);
       }
-    };
-    fetchStats();
-  }, [session.access_token]);
+    } catch {
+      setFetchError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchStats(); }, [session.access_token]);
 
   const formatNum = (n: number) => {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -128,6 +133,18 @@ export function DashboardPage() {
               {bi(clientI18n.upgrade)} <ArrowRight className="w-3 h-3 ml-1" />
             </Button>
           )}
+        </div>
+      )}
+
+      {/* Error state */}
+      {fetchError && (
+        <div className="mb-6">
+          <ErrorRetry
+            message={bi({ fr: "Impossible de charger les statistiques", en: "Failed to load statistics" })}
+            onRetry={fetchStats}
+            retryLabel={bi({ fr: "Réessayer", en: "Retry" })}
+            dark={dark}
+          />
         </div>
       )}
 

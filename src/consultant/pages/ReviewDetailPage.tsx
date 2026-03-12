@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   ArrowLeft, Loader2, UserPlus, CheckCircle2, AlertTriangle,
   Send, Save, FileText, PenLine, MessageSquare, Download, Eye,
@@ -96,6 +97,25 @@ export function ReviewDetailPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Track unsaved changes for beforeunload
+  const [savedNotes, setSavedNotes] = useState("");
+  const [savedFeedback, setSavedFeedback] = useState("");
+  const [savedContent, setSavedContent] = useState("");
+
+  const isDirty = reviewNotes !== savedNotes || clientFeedback !== savedFeedback || modifiedContent !== savedContent;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // Deliver confirmation state
+  const [deliverConfirmOpen, setDeliverConfirmOpen] = useState(false);
+
   // Show toast briefly
   const showToast = (msg: string) => {
     setToast(msg);
@@ -114,9 +134,15 @@ export function ReviewDetailPage() {
           setReview(data.review);
           setMessages(data.messages ?? []);
           setTenant(data.tenant ?? null);
-          setReviewNotes(data.review.review_notes ?? "");
-          setClientFeedback(data.review.client_feedback ?? "");
-          setModifiedContent(data.review.modified_content ?? data.review.original_content ?? "");
+          const notes = data.review.review_notes ?? "";
+          const feedback = data.review.client_feedback ?? "";
+          const content = data.review.modified_content ?? data.review.original_content ?? "";
+          setReviewNotes(notes);
+          setClientFeedback(feedback);
+          setModifiedContent(content);
+          setSavedNotes(notes);
+          setSavedFeedback(feedback);
+          setSavedContent(content);
           setModifiedFileUrl(data.review.modified_file_url ?? null);
         }
       } catch { /* ignore */ }
@@ -149,7 +175,12 @@ export function ReviewDetailPage() {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ review_notes: reviewNotes, client_feedback: clientFeedback, modified_content: modifiedContent }),
       });
-      if (res.ok) showToast(bi(consultantI18n.savedSuccess));
+      if (res.ok) {
+        setSavedNotes(reviewNotes);
+        setSavedFeedback(clientFeedback);
+        setSavedContent(modifiedContent);
+        showToast(bi(consultantI18n.savedSuccess));
+      }
     } catch { /* ignore */ }
     finally { setSaving(false); }
   };
@@ -170,9 +201,6 @@ export function ReviewDetailPage() {
 
   const handleDeliver = async () => {
     if (!review) return;
-    // Confirm
-    if (!window.confirm(bi(consultantI18n.deliverConfirm))) return;
-
     setDelivering(true);
     try {
       // Save content first
@@ -617,7 +645,7 @@ export function ReviewDetailPage() {
                     </Button>
                   </div>
 
-                  <Button onClick={handleDeliver} disabled={delivering}
+                  <Button onClick={() => setDeliverConfirmOpen(true)} disabled={delivering}
                     className="w-full rounded-full font-bold text-sm border-0"
                     style={{ background: C.green, color: C.yellow }}>
                     {delivering ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
@@ -661,6 +689,18 @@ export function ReviewDetailPage() {
           </ScrollArea>
         </div>
       </div>
+
+      {/* Deliver confirmation dialog */}
+      <ConfirmDialog
+        open={deliverConfirmOpen}
+        onOpenChange={setDeliverConfirmOpen}
+        title={bi({ fr: "Livrer au client ?", en: "Deliver to client?" })}
+        description={bi({ fr: "Le livrable modifié sera envoyé au client. Cette action est définitive.", en: "The modified deliverable will be sent to the client. This action is final." })}
+        confirmLabel={bi({ fr: "Livrer", en: "Deliver" })}
+        cancelLabel={bi({ fr: "Annuler", en: "Cancel" })}
+        onConfirm={handleDeliver}
+        dark={dark}
+      />
     </div>
   );
 }

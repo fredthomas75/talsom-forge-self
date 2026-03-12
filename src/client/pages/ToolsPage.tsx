@@ -1,11 +1,14 @@
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Search, Activity, Database,
   ShieldCheck, Users, GitBranch, ClipboardList, Map, Briefcase,
   Table2, Lock, Building2, GraduationCap, ArrowLeftRight, BookOpen,
-  Rocket, BarChart3, Shield, Layers,
+  Rocket, BarChart3, Shield, Layers, X,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -75,11 +78,32 @@ export function ToolsPage() {
   const navigate = useNavigate();
   const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
 
-  const groups = groupByPhase(COMMANDS);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [phaseFilter, setPhaseFilter] = useState<string | null>(null);
+
+  // Filter commands by search and phase
+  const filteredCommands = useMemo(() => {
+    let cmds = COMMANDS;
+    if (phaseFilter) {
+      cmds = cmds.filter((c) => c.phase === phaseFilter);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      cmds = cmds.filter((c) =>
+        bi(c.label).toLowerCase().includes(q) ||
+        bi(c.output).toLowerCase().includes(q) ||
+        c.command.includes(q)
+      );
+    }
+    return cmds;
+  }, [searchQuery, phaseFilter, lang]);
+
+  const groups = groupByPhase(filteredCommands);
+  const phaseKeys = Object.keys(PHASES);
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1
           className={`text-2xl font-bold tracking-tight ${dark ? "text-white" : ""}`}
           style={{ ...HDR_FONT, color: dark ? undefined : C.green }}
@@ -94,52 +118,111 @@ export function ToolsPage() {
         </p>
       </div>
 
-      <div className="space-y-8">
-        {groups.map((group) => (
-          <div key={group.key}>
-            <div className="flex items-center gap-2 mb-3">
-              <h2 className={`text-xs font-semibold uppercase tracking-wider ${dark ? "text-white/30" : "text-gray-400"}`}>
-                {bi(group.label)}
-              </h2>
-              <div className={`flex-1 h-px ${dark ? "bg-white/5" : "bg-gray-100"}`} />
-              <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 rounded-full ${dark ? "border-white/10 text-white/30" : ""}`}>
-                {group.commands.length}
-              </Badge>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {group.commands.map((cmd) => (
-                <Card
-                  key={`${group.key}-${cmd.command}`}
-                  className={`cursor-pointer transition-all hover:shadow-md hover:scale-[1.01] rounded-xl border group ${
-                    dark ? "bg-gray-900 border-white/5 hover:border-white/10" : "border-gray-100 hover:border-gray-200"
-                  }`}
-                  onClick={() => navigate(`/client/tools/${cmd.command}`)}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${dark ? "bg-white/5 group-hover:bg-white/10" : "bg-gray-50 group-hover:bg-gray-100"}`}>
-                        <cmd.icon className="w-4.5 h-4.5" style={{ color: C.green }} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
-                          {bi(cmd.label)}
-                        </CardTitle>
-                      </div>
-                      <ArrowRight className={`w-4 h-4 opacity-0 group-hover:opacity-50 transition-all group-hover:translate-x-0.5 ${dark ? "text-white" : "text-gray-400"}`} />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={`text-xs leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>
-                      {bi(cmd.output)}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        ))}
+      {/* Search + Phase filter */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${dark ? "text-white/30" : "text-gray-400"}`} />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={bi({ fr: "Rechercher un outil...", en: "Search tools..." })}
+            className={`pl-9 rounded-xl ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/20" : ""}`}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 ${dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+        <div className="flex gap-1 flex-wrap">
+          <Button
+            variant="ghost" size="sm"
+            onClick={() => setPhaseFilter(null)}
+            className={`rounded-full text-xs ${!phaseFilter
+              ? dark ? "bg-white/10 text-white" : "bg-gray-200 text-gray-900"
+              : dark ? "text-white/40" : "text-gray-500"
+            }`}
+          >
+            {bi({ fr: "Toutes", en: "All" })}
+          </Button>
+          {phaseKeys.map((key) => (
+            <Button
+              key={key}
+              variant="ghost" size="sm"
+              onClick={() => setPhaseFilter(phaseFilter === key ? null : key)}
+              className={`rounded-full text-xs ${phaseFilter === key
+                ? dark ? "bg-white/10 text-white" : "bg-gray-200 text-gray-900"
+                : dark ? "text-white/40" : "text-gray-500"
+              }`}
+            >
+              {bi(PHASES[key])}
+            </Button>
+          ))}
+        </div>
       </div>
+
+      {/* Results */}
+      {filteredCommands.length === 0 ? (
+        <div className={`text-center py-16 rounded-xl border ${dark ? "border-white/5 bg-gray-900" : "border-gray-100 bg-white"}`}>
+          <Search className={`w-8 h-8 mx-auto mb-3 ${dark ? "text-white/20" : "text-gray-300"}`} />
+          <p className={`text-sm ${dark ? "text-white/30" : "text-gray-400"}`}>
+            {bi({ fr: "Aucun outil trouvé", en: "No tools found" })}
+          </p>
+          <Button variant="ghost" size="sm" onClick={() => { setSearchQuery(""); setPhaseFilter(null); }} className="mt-2 text-xs" style={{ color: C.green }}>
+            {bi({ fr: "Réinitialiser les filtres", en: "Reset filters" })}
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {groups.map((group) => (
+            <div key={group.key}>
+              <div className="flex items-center gap-2 mb-3">
+                <h2 className={`text-xs font-semibold uppercase tracking-wider ${dark ? "text-white/30" : "text-gray-400"}`}>
+                  {bi(group.label)}
+                </h2>
+                <div className={`flex-1 h-px ${dark ? "bg-white/5" : "bg-gray-100"}`} />
+                <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 rounded-full ${dark ? "border-white/10 text-white/30" : ""}`}>
+                  {group.commands.length}
+                </Badge>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {group.commands.map((cmd) => (
+                  <Card
+                    key={`${group.key}-${cmd.command}`}
+                    className={`cursor-pointer transition-all hover:shadow-md hover:scale-[1.01] rounded-xl border group ${
+                      dark ? "bg-gray-900 border-white/5 hover:border-white/10" : "border-gray-100 hover:border-gray-200"
+                    }`}
+                    onClick={() => navigate(`/client/tools/${cmd.command}`)}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${dark ? "bg-white/5 group-hover:bg-white/10" : "bg-gray-50 group-hover:bg-gray-100"}`}>
+                          <cmd.icon className="w-4.5 h-4.5" style={{ color: C.green }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
+                            {bi(cmd.label)}
+                          </CardTitle>
+                        </div>
+                        <ArrowRight className={`w-4 h-4 opacity-0 group-hover:opacity-50 transition-all group-hover:translate-x-0.5 ${dark ? "text-white" : "text-gray-400"}`} />
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className={`text-xs leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>
+                        {bi(cmd.output)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { authenticateTenant } from "../_lib/auth.js";
 import { getSiteContent } from "../_lib/content-loader.js";
 import { TOOLS, executeTool } from "../_lib/mcp-tools.js";
+import { handleCors } from "../_lib/cors.js";
 
 export default async function handler(
   req: VercelRequest,
@@ -13,11 +14,7 @@ export default async function handler(
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 
   // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-API-Key, Authorization");
-
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "GET, POST, OPTIONS")) return;
 
   // Authenticate
   const tenant = await authenticateTenant(req);

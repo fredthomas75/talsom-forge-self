@@ -12,6 +12,7 @@ import {
   Cloud, Download, ExternalLink, CheckCircle2, FileSpreadsheet,
   ShieldCheck, ChevronDown, ChevronUp, Clock,
 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useClient } from "../contexts/ClientContext";
@@ -289,14 +290,18 @@ export function ToolChatPage() {
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await fetch(`/api/client/conversations/${id}`, {
+  // Delete conversation (with confirmation)
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    await fetch(`/api/client/conversations/${deleteTarget}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
-    setConversations((prev) => prev.filter((c) => c.id !== id));
-    if (selectedId === id) handleNew();
+    setConversations((prev) => prev.filter((c) => c.id !== deleteTarget));
+    if (selectedId === deleteTarget) handleNew();
+    setDeleteTarget(null);
   };
 
   useEffect(() => {
@@ -528,8 +533,8 @@ export function ToolChatPage() {
                     }`}>
                     <MessageSquare className="w-3.5 h-3.5 shrink-0" />
                     <span className="truncate flex-1">{c.title}</span>
-                    <Trash2 className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity"
-                      onClick={(e) => handleDelete(c.id, e)} />
+                    <Trash2 className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity text-red-500"
+                      onClick={(e) => { e.stopPropagation(); setDeleteTarget(c.id); }} />
                   </button>
                 ))}
               </div>
@@ -855,6 +860,19 @@ export function ToolChatPage() {
           )}
         </div>
       </div>
+
+      {/* ── Delete confirmation dialog ── */}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title={bi({ fr: "Supprimer la conversation ?", en: "Delete conversation?" })}
+        description={bi({ fr: "Cette action est irréversible. Tous les messages seront perdus.", en: "This action cannot be undone. All messages will be lost." })}
+        confirmLabel={bi({ fr: "Supprimer", en: "Delete" })}
+        cancelLabel={bi({ fr: "Annuler", en: "Cancel" })}
+        destructive
+        onConfirm={confirmDelete}
+        dark={dark}
+      />
 
       {/* ── Cloud File Picker Modal ── */}
       {showCloudPicker && (

@@ -2,14 +2,12 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { authenticateClient } from "../../_lib/client-auth.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";
+import { handleCors } from "../../_lib/cors.js";
 
 // POST /api/client/billing/checkout — creates Stripe Checkout Session
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "POST, OPTIONS")) return;
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const ctx = await authenticateClient(req);

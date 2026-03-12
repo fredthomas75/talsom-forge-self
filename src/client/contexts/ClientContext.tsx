@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
 // ─── CLIENT PORTAL CONTEXT ──────────────────────────
 // Fetches tenant context from /api/client/me on mount
@@ -89,6 +90,42 @@ export function ClientProvider({ session, children }: { session: Session; childr
   useEffect(() => {
     fetchMe();
   }, [session.access_token]);
+
+  // ── Session expiration check ──
+  // Check if the JWT is close to expiry and redirect to login if expired
+  useEffect(() => {
+    const checkExpiry = () => {
+      if (!session.expires_at) return;
+      const expiresAt = session.expires_at * 1000; // convert to ms
+      const now = Date.now();
+      const remaining = expiresAt - now;
+
+      if (remaining <= 0) {
+        // Session expired — sign out and redirect
+        supabase?.auth.signOut().then(() => {
+          window.location.href = "/client/login";
+        });
+      }
+    };
+
+    // Check immediately and then every 60 seconds
+    checkExpiry();
+    const interval = setInterval(checkExpiry, 60_000);
+    return () => clearInterval(interval);
+  }, [session.expires_at]);
+
+  // Listen for auth state changes (e.g., token refresh failures)
+  useEffect(() => {
+    if (!supabase) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
+        if (event === "SIGNED_OUT") {
+          window.location.href = "/client/login";
+        }
+      }
+    });
+    return () => { subscription.unsubscribe(); };
+  }, []);
 
   return (
     <ClientCtx.Provider value={{ user, tenant, quotas, session, loading, error, refresh: fetchMe }}>

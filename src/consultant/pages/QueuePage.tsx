@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Clock, Eye, CheckCircle2, AlertTriangle, Package } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ErrorRetry } from "@/components/ErrorRetry";
+import {
+  Loader2, Clock, Eye, CheckCircle2, AlertTriangle, Package,
+  Search, X, ArrowUpDown,
+} from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useConsultant } from "../contexts/ConsultantContext";
@@ -48,9 +53,14 @@ export function QueuePage() {
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<"date" | "sla">("date");
+  const [sortAsc, setSortAsc] = useState(false);
 
   const fetchQueue = async () => {
+    setFetchError(false);
     try {
       const url = statusFilter
         ? `/api/consultant/queue?status=${statusFilter}`
@@ -61,12 +71,43 @@ export function QueuePage() {
       if (res.ok) {
         const data = await res.json();
         setReviews(data.reviews ?? []);
+      } else {
+        setFetchError(true);
       }
-    } catch { /* ignore */ }
+    } catch { setFetchError(true); }
     finally { setLoading(false); }
   };
 
   useEffect(() => { setLoading(true); fetchQueue(); }, [statusFilter]);
+
+  const filteredReviews = useMemo(() => {
+    let list = reviews;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (r) =>
+          r.tenant_name.toLowerCase().includes(q) ||
+          r.tool_name.toLowerCase().includes(q) ||
+          (r.consultant_name ?? "").toLowerCase().includes(q)
+      );
+    }
+    list = [...list].sort((a, b) => {
+      if (sortKey === "sla") {
+        const slaA = Date.now() - new Date(a.requested_at).getTime();
+        const slaB = Date.now() - new Date(b.requested_at).getTime();
+        return sortAsc ? slaA - slaB : slaB - slaA;
+      }
+      const da = new Date(a.requested_at).getTime();
+      const db = new Date(b.requested_at).getTime();
+      return sortAsc ? da - db : db - da;
+    });
+    return list;
+  }, [reviews, search, sortKey, sortAsc]);
+
+  const toggleSort = (key: "date" | "sla") => {
+    if (sortKey === key) { setSortAsc(!sortAsc); }
+    else { setSortKey(key); setSortAsc(false); }
+  };
 
   const getSlaRemaining = (requestedAt: string) => {
     const target = 48 * 60 * 60 * 1000; // 48h in ms
@@ -89,8 +130,36 @@ export function QueuePage() {
           </p>
         </div>
 
-        {/* Status filter */}
+        {/* Sort controls */}
         <div className="flex gap-1">
+          {(["date", "sla"] as const).map((k) => (
+            <Button key={k} variant="ghost" size="sm" onClick={() => toggleSort(k)}
+              className={`rounded-full text-xs gap-1 ${sortKey === k ? dark ? "bg-white/10 text-white" : "bg-gray-200 text-gray-900" : dark ? "text-white/40" : "text-gray-500"}`}>
+              <ArrowUpDown className="w-3 h-3" />
+              {k === "date" ? bi({ fr: "Date", en: "Date" }) : bi({ fr: "SLA", en: "SLA" })}
+              {sortKey === k && (sortAsc ? "↑" : "↓")}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Search + status filter */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+        <div className="relative flex-1 w-full sm:max-w-sm">
+          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${dark ? "text-white/30" : "text-gray-400"}`} />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={bi({ fr: "Rechercher client, outil...", en: "Search client, tool..." })}
+            className={`pl-9 pr-8 rounded-full ${dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/30" : ""}`}
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className={`absolute right-3 top-1/2 -translate-y-1/2 ${dark ? "text-white/30 hover:text-white" : "text-gray-400 hover:text-gray-600"}`}>
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <div className="flex gap-1 flex-wrap">
           {STATUSES.map((s) => (
             <Button
               key={s || "all"} variant="ghost" size="sm"
@@ -106,17 +175,36 @@ export function QueuePage() {
         </div>
       </div>
 
+      {/* Error state */}
+      {fetchError && (
+        <div className="mb-6">
+          <ErrorRetry
+            message={bi({ fr: "Impossible de charger la file d'attente", en: "Failed to load review queue" })}
+            onRetry={fetchQueue}
+            retryLabel={bi({ fr: "Réessayer", en: "Retry" })}
+            dark={dark}
+          />
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className={`w-5 h-5 animate-spin ${dark ? "text-white/30" : "text-gray-400"}`} />
         </div>
-      ) : reviews.length === 0 ? (
+      ) : filteredReviews.length === 0 ? (
         <div className={`text-center py-12 text-sm ${dark ? "text-white/30" : "text-gray-400"}`}>
-          {bi(consultantI18n.noReviews)}
+          {search ? bi({ fr: "Aucun résultat", en: "No results" }) : bi(consultantI18n.noReviews)}
+          {search && (
+            <div className="mt-2">
+              <Button variant="ghost" size="sm" onClick={() => setSearch("")} className="rounded-full text-xs" style={{ color: C.green }}>
+                {bi({ fr: "Réinitialiser la recherche", en: "Reset search" })}
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
-          {reviews.map((r) => {
+          {filteredReviews.map((r) => {
             const Icon = STATUS_ICON[r.status] ?? Clock;
             const sla = getSlaRemaining(r.requested_at);
             return (

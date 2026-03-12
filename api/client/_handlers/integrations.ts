@@ -8,6 +8,7 @@ import {
   type Provider,
 } from "../../_lib/oauth-tokens.js";
 import {
+import { handleCors } from "../../_lib/cors.js";
   listFiles, downloadFile, uploadFile, getUserEmail,
 } from "../../_lib/cloud-providers.js";
 
@@ -34,10 +35,7 @@ function verifyState(encoded: string): string | null {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (handleCors(req, res, "GET, POST, DELETE, OPTIONS")) return;
 
   const seg1 = (req.query._seg1 as string) ?? "";
   const seg2 = (req.query._seg2 as string) ?? "";
