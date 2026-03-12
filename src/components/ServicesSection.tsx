@@ -29,11 +29,11 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
       <div className="p-6">
         <SheetHeader className="pr-6 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: C.greenLight }}>
-              <SvcIcon className="w-6 h-6" style={{ color: C.green }} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: dark ? "rgba(0,53,51,0.4)" : C.greenLight }}>
+              <SvcIcon className="w-6 h-6" style={{ color: dark ? C.yellow : C.green }} />
             </div>
             <div className="flex-1">
-              <SheetTitle className="text-xl font-bold" style={{ ...HDR_FONT, color: C.green }}>{bi(svc.title)}</SheetTitle>
+              <SheetTitle className="text-xl font-bold" style={{ ...HDR_FONT, color: dark ? "#fff" : C.green }}>{bi(svc.title)}</SheetTitle>
               <SheetDescription className="text-xs">{bi(svc.subtitle)}</SheetDescription>
             </div>
           </div>
@@ -49,19 +49,19 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
         <p className={`text-sm leading-relaxed mb-5 ${dark ? "text-white/60" : "text-gray-600"}`}>{bi(detail.extendedDesc)}</p>
 
         {/* Differentiator callout */}
-        <div className="rounded-xl p-4 mb-5 flex gap-3" style={{ background: C.greenLight }}>
-          <Sparkles className="w-5 h-5 shrink-0 mt-0.5" style={{ color: C.green }} />
+        <div className="rounded-xl p-4 mb-5 flex gap-3" style={{ background: dark ? "rgba(0,53,51,0.35)" : C.greenLight }}>
+          <Sparkles className="w-5 h-5 shrink-0 mt-0.5" style={{ color: dark ? C.yellow : C.green }} />
           <div>
-            <p className="text-xs font-semibold mb-1" style={{ color: C.green }}>{bi({ fr: "Humain + AI : notre différenciateur", en: "Human + AI: our differentiator" })}</p>
-            <p className="text-xs leading-relaxed" style={{ color: C.greenMid }}>{bi(detail.differentiator)}</p>
+            <p className={`text-xs font-semibold mb-1`} style={{ color: dark ? C.yellow : C.green }}>{bi({ fr: "Humain + AI : notre différenciateur", en: "Human + AI: our differentiator" })}</p>
+            <p className={`text-xs leading-relaxed ${dark ? "text-white/70" : ""}`} style={dark ? undefined : { color: C.greenMid }}>{bi(detail.differentiator)}</p>
           </div>
         </div>
-        <Separator />
+        <Separator className={dark ? "bg-white/10" : ""} />
 
         {/* Sub-services accordion */}
         {detail.subServices.length > 0 && (
           <div className="py-5">
-            <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: C.green }}>
+            <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: dark ? C.yellow : C.green }}>
               <Briefcase className="w-4 h-4" />
               {bi({ fr: "Sous-services disponibles", en: "Available sub-services" })}
             </h4>
@@ -79,7 +79,7 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
                     <div className="space-y-1.5 mb-3">
                       {sub.deliverables.map((d, idx) => (
                         <div key={idx} className={`flex items-center gap-2 text-xs ${dark ? "text-white/60" : "text-gray-600"}`}>
-                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.greenMid }} />
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: dark ? C.yellow : C.greenMid }} />
                           {bi(d)}
                         </div>
                       ))}
@@ -94,11 +94,11 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
             </Accordion>
           </div>
         )}
-        <Separator />
+        <Separator className={dark ? "bg-white/10" : ""} />
 
         {/* Phases */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: C.green }}>
+          <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: dark ? C.yellow : C.green }}>
             <Layers className="w-4 h-4" />
             {bi({ fr: "Notre approche", en: "Our approach" })}
           </h4>
@@ -117,42 +117,42 @@ export function ServiceDetailContent({ serviceId, onClose }: { serviceId: string
             ))}
           </div>
         </div>
-        <Separator />
+        <Separator className={dark ? "bg-white/10" : ""} />
 
         {/* Deliverables */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: C.green }}>
+          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: dark ? C.yellow : C.green }}>
             <CheckCircle2 className="w-4 h-4" />
             {bi({ fr: "Livrables", en: "Deliverables" })}
           </h4>
           <div className="space-y-2">
             {detail.deliverables.map((d, idx) => (
               <div key={idx} className={`flex items-start gap-2.5 text-sm ${dark ? "text-white/60" : "text-gray-600"}`}>
-                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: C.greenMid }} />
+                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: dark ? C.yellow : C.greenMid }} />
                 {bi(d)}
               </div>
             ))}
           </div>
         </div>
-        <Separator />
+        <Separator className={dark ? "bg-white/10" : ""} />
 
         {/* Ideal for */}
         <div className="py-5">
-          <h4 className="text-sm font-semibold mb-3" style={{ color: C.green }}>{bi({ fr: "Idéal pour", en: "Ideal for" })}</h4>
+          <h4 className="text-sm font-semibold mb-3" style={{ color: dark ? C.yellow : C.green }}>{bi({ fr: "Idéal pour", en: "Ideal for" })}</h4>
           <div className="flex flex-wrap gap-2">
             {detail.idealFor.map((p, idx) => (
               <Badge key={idx} variant="secondary" className={`rounded-full text-xs px-3 ${dark ? "bg-white/5 text-white/50" : "bg-gray-50 text-gray-600"}`}>{bi(p)}</Badge>
             ))}
           </div>
         </div>
-        <Separator />
+        <Separator className={dark ? "bg-white/10" : ""} />
 
         {/* Footer CTA */}
         <div className="pt-5 pb-2">
           <div className="flex items-center justify-between mb-5">
             <div>
               <p className={`text-[10px] uppercase tracking-wider ${dark ? "text-white/30" : "text-gray-400"}`}>{bi({ fr: "À partir de", en: "Starting at" })}</p>
-              <p className="text-lg font-bold" style={{ ...HDR_FONT, color: C.green }}>{bi(svc.price)}</p>
+              <p className="text-lg font-bold" style={{ ...HDR_FONT, color: dark ? "#fff" : C.green }}>{bi(svc.price)}</p>
             </div>
             <Badge variant="outline" className="text-xs rounded-full px-3 flex items-center gap-1.5">
               <Clock className="w-3 h-3" />
