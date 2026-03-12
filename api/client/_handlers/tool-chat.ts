@@ -229,6 +229,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let currentMessages: any[] = [...anthropicMessages];
     const MAX_TOOL_ROUNDS = 3;
+    let totalInputTokens = 0;
+    let totalOutputTokens = 0;
 
     for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
       const stream = client.messages.stream({
@@ -248,6 +250,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       let finalMessage;
       try {
         finalMessage = await stream.finalMessage();
+        // Accumulate token usage across tool-use rounds
+        totalInputTokens += finalMessage.usage?.input_tokens ?? 0;
+        totalOutputTokens += finalMessage.usage?.output_tokens ?? 0;
       } catch (streamErr) {
         console.error("[tool-chat] stream error:", streamErr);
         if (!res.writableEnded) {
@@ -328,12 +333,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .eq("id", convoId)
       .then(() => {});
 
-    // Log usage
+    // Log usage with real token counts
     supabase.from("usage_logs").insert({
       tenant_id: ctx.tenantId,
       endpoint: "/api/client/tools/chat",
       model: MODELS.DEFAULT,
-      tokens_used: 0,
+      tokens_used: totalInputTokens + totalOutputTokens,
+      input_tokens: totalInputTokens,
+      output_tokens: totalOutputTokens,
     }).then(() => {});
   } catch (error) {
     console.error("[tool-chat] error:", error);

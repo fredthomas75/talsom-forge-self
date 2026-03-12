@@ -24,7 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { data: logs } = await supabase
     .from("usage_logs")
-    .select("endpoint, tokens_used, created_at")
+    .select("endpoint, tokens_used, input_tokens, output_tokens, created_at")
     .eq("tenant_id", ctx.tenantId)
     .gte("created_at", since.toISOString())
     .order("created_at", { ascending: true });
@@ -34,25 +34,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Aggregate
   const apiCalls = entries.length;
   const tokensUsed = entries.reduce((sum, r) => sum + (r.tokens_used ?? 0), 0);
+  const inputTokens = entries.reduce((sum, r) => sum + (r.input_tokens ?? 0), 0);
+  const outputTokens = entries.reduce((sum, r) => sum + (r.output_tokens ?? 0), 0);
 
   // Daily breakdown
-  const dailyMap: Record<string, { calls: number; tokens: number }> = {};
+  const dailyMap: Record<string, { calls: number; tokens: number; input: number; output: number }> = {};
   for (const e of entries) {
     const day = e.created_at.slice(0, 10);
-    if (!dailyMap[day]) dailyMap[day] = { calls: 0, tokens: 0 };
+    if (!dailyMap[day]) dailyMap[day] = { calls: 0, tokens: 0, input: 0, output: 0 };
     dailyMap[day].calls++;
     dailyMap[day].tokens += e.tokens_used ?? 0;
+    dailyMap[day].input += e.input_tokens ?? 0;
+    dailyMap[day].output += e.output_tokens ?? 0;
   }
   const daily = Object.entries(dailyMap).map(([date, v]) => ({ date, ...v }));
 
   // By endpoint
-  const endpointMap: Record<string, number> = {};
+  const endpointMap: Record<string, { count: number; tokens: number }> = {};
   for (const e of entries) {
-    endpointMap[e.endpoint] = (endpointMap[e.endpoint] ?? 0) + 1;
+    if (!endpointMap[e.endpoint]) endpointMap[e.endpoint] = { count: 0, tokens: 0 };
+    endpointMap[e.endpoint].count++;
+    endpointMap[e.endpoint].tokens += e.tokens_used ?? 0;
   }
   const byEndpoint = Object.entries(endpointMap)
-    .map(([endpoint, count]) => ({ endpoint, count }))
+    .map(([endpoint, v]) => ({ endpoint, count: v.count, tokens: v.tokens }))
     .sort((a, b) => b.count - a.count);
 
-  return res.status(200).json({ apiCalls, tokensUsed, daily, byEndpoint });
+  return res.status(200).json({ apiCalls, tokensUsed, inputTokens, outputTokens, daily, byEndpoint });
 }

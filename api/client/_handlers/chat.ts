@@ -95,38 +95,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.write(`data: ${JSON.stringify({ text })}\n\n`);
     });
 
-    stream.on("end", () => {
-      res.write(`data: [DONE]\n\n`);
-      res.end();
-
-      // Save assistant message and log usage
-      supabase.from("chat_messages").insert({
-        conversation_id: convoId,
-        role: "assistant",
-        content: fullResponse,
-      }).then(() => {});
-
-      supabase.from("chat_conversations")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", convoId)
-        .then(() => {});
-
-      supabase.from("usage_logs").insert({
-        tenant_id: ctx.tenantId,
-        endpoint: "/api/client/chat",
-        model: MODELS.DEFAULT,
-        tokens_used: 0,
-      }).then(() => {});
-
-      logAudit({
-        tenant_id: ctx.tenantId,
-        user_id: ctx.userId,
-        action: ACTIONS.CHAT_MESSAGE,
-        resource_type: "conversation",
-        resource_id: convoId,
-      }, req);
-    });
-
     stream.on("error", (err) => {
       console.error("Chat stream error:", err);
       if (!res.writableEnded) {
@@ -134,6 +102,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.end();
       }
     });
+
+    // Wait for the final message to capture token usage
+    const finalMessage = await stream.finalMessage();
+    const inputTokens = finalMessage.usage?.input_tokens ?? 0;
+    const outputTokens = finalMessage.usage?.output_tokens ?? 0;
+
+    res.write(`data: [DONE]\n\n`);
+    res.end();
+
+    // Save assistant message and log usage with real token counts
+    supabase.from("chat_messages").insert({
+      conversation_id: convoId,
+      role: "assistant",
+      content: fullResponse,
+    }).then(() => {});
+
+    supabase.from("chat_conversations")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("id", convoId)
+      .then(() => {});
+
+    supabase.from("usage_logs").insert({
+      tenant_id: ctx.tenantId,
+      endpoint: "/api/client/chat",
+      model: MODELS.DEFAULT,
+      tokens_used: inputTokens + outputTokens,
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+    }).then(() => {});
+
+    logAudit({
+      tenant_id: ctx.tenantId,
+      user_id: ctx.userId,
+      action: ACTIONS.CHAT_MESSAGE,
+      resource_type: "conversation",
+      resource_id: convoId,
+    }, req);
   } catch (error) {
     console.error("Chat error:", error);
     if (!res.headersSent) return res.status(500).json({ error: "Internal server error" });

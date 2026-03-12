@@ -62,20 +62,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.write(`data: ${JSON.stringify({ text })}\n\n`);
     });
 
-    stream.on("end", () => {
-      res.write(`data: [DONE]\n\n`);
-      res.end();
-      // Log usage asynchronously (fire and forget)
-      try {
-        const sb = getSupabaseAdmin();
-        sb.from("usage_logs").insert({
-          endpoint: "/api/chat",
-          model: MODELS.DEFAULT,
-          tokens_used: 0,
-        }).then(() => {});
-      } catch { /* ignore logging errors */ }
-    });
-
     stream.on("error", (err) => {
       console.error("Stream error:", err);
       if (!res.writableEnded) {
@@ -83,6 +69,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.end();
       }
     });
+
+    // Wait for final message to capture token usage
+    const finalMessage = await stream.finalMessage();
+    const inputTokens = finalMessage.usage?.input_tokens ?? 0;
+    const outputTokens = finalMessage.usage?.output_tokens ?? 0;
+
+    res.write(`data: [DONE]\n\n`);
+    res.end();
+
+    // Log usage with real token counts (fire and forget)
+    try {
+      const sb = getSupabaseAdmin();
+      sb.from("usage_logs").insert({
+        endpoint: "/api/chat",
+        model: MODELS.DEFAULT,
+        tokens_used: inputTokens + outputTokens,
+        input_tokens: inputTokens,
+        output_tokens: outputTokens,
+      }).then(() => {});
+    } catch { /* ignore logging errors */ }
   } catch (error) {
     console.error("Chat error:", error);
     if (!res.headersSent) {

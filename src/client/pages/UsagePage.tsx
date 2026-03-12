@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Cpu, Loader2 } from "lucide-react";
+import { Activity, Cpu, ArrowDownToLine, ArrowUpFromLine, Loader2 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useClient } from "../contexts/ClientContext";
@@ -11,8 +11,10 @@ import { clientI18n } from "../i18n";
 interface UsageData {
   apiCalls: number;
   tokensUsed: number;
-  daily: { date: string; calls: number; tokens: number }[];
-  byEndpoint: { endpoint: string; count: number }[];
+  inputTokens: number;
+  outputTokens: number;
+  daily: { date: string; calls: number; tokens: number; input: number; output: number }[];
+  byEndpoint: { endpoint: string; count: number; tokens: number }[];
 }
 
 export function UsagePage() {
@@ -118,10 +120,12 @@ export function UsagePage() {
       ) : (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
-              { label: bi(clientI18n.apiCalls), value: data?.apiCalls ?? 0, max: quotas?.max_api_calls_per_month ?? 0, icon: Activity },
-              { label: bi(clientI18n.tokensUsed), value: data?.tokensUsed ?? 0, max: quotas?.max_tokens_per_month ?? 0, icon: Cpu },
+              { label: bi(clientI18n.apiCalls), value: data?.apiCalls ?? 0, max: quotas?.max_api_calls_per_month ?? 0, icon: Activity, showBar: true },
+              { label: bi(clientI18n.tokensUsed), value: data?.tokensUsed ?? 0, max: quotas?.max_tokens_per_month ?? 0, icon: Cpu, showBar: true },
+              { label: bi({ fr: "Tokens entrée", en: "Input Tokens" }), value: data?.inputTokens ?? 0, max: 0, icon: ArrowDownToLine, showBar: false },
+              { label: bi({ fr: "Tokens sortie", en: "Output Tokens" }), value: data?.outputTokens ?? 0, max: 0, icon: ArrowUpFromLine, showBar: false },
             ].map((m) => {
               const pct = isUnlimited(m.max) ? 0 : m.max > 0 ? Math.min((m.value / m.max) * 100, 100) : 0;
               return (
@@ -134,12 +138,16 @@ export function UsagePage() {
                     <p className={`text-3xl font-bold mb-2 ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
                       {formatNum(m.value)}
                     </p>
-                    <div className={`h-2 rounded-full overflow-hidden mb-1 ${dark ? "bg-white/5" : "bg-gray-100"}`}>
-                      <div className="h-full rounded-full transition-all" style={{ width: isUnlimited(m.max) ? "3%" : `${pct}%`, background: pct > 90 ? "#EF4444" : C.green }} />
-                    </div>
-                    <p className={`text-[10px] ${dark ? "text-white/20" : "text-gray-400"}`}>
-                      {bi(clientI18n.of)} {isUnlimited(m.max) ? bi(clientI18n.unlimited) : formatNum(m.max)}
-                    </p>
+                    {m.showBar && (
+                      <>
+                        <div className={`h-2 rounded-full overflow-hidden mb-1 ${dark ? "bg-white/5" : "bg-gray-100"}`}>
+                          <div className="h-full rounded-full transition-all" style={{ width: isUnlimited(m.max) ? "3%" : `${pct}%`, background: pct > 90 ? "#EF4444" : C.green }} />
+                        </div>
+                        <p className={`text-[10px] ${dark ? "text-white/20" : "text-gray-400"}`}>
+                          {bi(clientI18n.of)} {isUnlimited(m.max) ? bi(clientI18n.unlimited) : formatNum(m.max)}
+                        </p>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -169,9 +177,16 @@ export function UsagePage() {
                 </h3>
                 <div className="space-y-2">
                   {data.byEndpoint.map((e) => (
-                    <div key={e.endpoint} className="flex items-center justify-between">
+                    <div key={e.endpoint} className="flex items-center justify-between gap-3">
                       <code className={`text-xs font-mono ${dark ? "text-white/50" : "text-gray-600"}`}>{e.endpoint}</code>
-                      <Badge variant="outline" className="text-xs rounded-full">{e.count}</Badge>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {e.tokens > 0 && (
+                          <span className={`text-[10px] ${dark ? "text-white/30" : "text-gray-400"}`}>
+                            {formatNum(e.tokens)} tokens
+                          </span>
+                        )}
+                        <Badge variant="outline" className="text-xs rounded-full">{e.count}</Badge>
+                      </div>
                     </div>
                   ))}
                 </div>
