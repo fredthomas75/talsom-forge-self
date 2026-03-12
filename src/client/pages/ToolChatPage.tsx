@@ -689,8 +689,14 @@ export function ToolChatPage() {
             </div>
           )}
 
-          {/* ── Human Review Request ── */}
-          {hasHumanReview && hasGeneratedFiles && !isStreaming && (conversationId || selectedId) && (
+          <div ref={bottomRef} />
+        </div>
+      </ScrollArea>
+
+      {/* ── Human Review Request (sticky, always visible above input) ── */}
+      {hasHumanReview && hasGeneratedFiles && !isStreaming && (conversationId || selectedId) && (
+        <div className={`shrink-0 border-t px-4 py-3 ${dark ? "border-white/5 bg-gray-950/80 backdrop-blur-sm" : "border-gray-100 bg-white/80 backdrop-blur-sm"}`}>
+          <div className="max-w-3xl mx-auto">
             <ReviewRequestButton
               conversationId={conversationId || selectedId}
               toolName={toolName ?? ""}
@@ -702,11 +708,9 @@ export function ToolChatPage() {
               dark={dark}
               onReviewCreated={(review) => setExistingReview(review)}
             />
-          )}
-
-          <div ref={bottomRef} />
+          </div>
         </div>
-      </ScrollArea>
+      )}
 
       {/* ── Attachment chips ── */}
       {attachments.length > 0 && (
