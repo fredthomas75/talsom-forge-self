@@ -52,16 +52,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(409).json({ error: "Review already exists", reviewId: existing.id, status: existing.status });
     }
 
-    // Get pricing
+    // Get pricing (supports tiered + legacy flat)
     const { data: config } = await supabase
       .from("review_config")
       .select("value")
       .eq("key", "pricing")
       .single();
 
-    const pricing = config?.value as { default_price_cents: number; currency: string; enterprise_included: boolean } | null;
-    const priceCents = pricing?.default_price_cents ?? 14900;
+    const pricing = config?.value as {
+      tiers?: Record<string, { price_cents: number }>;
+      tool_tiers?: Record<string, string>;
+      default_tier?: string;
+      default_price_cents?: number;
+      currency?: string;
+      enterprise_included?: boolean;
+    } | null;
+
+    let priceCents: number;
     const currency = pricing?.currency ?? "cad";
+
+    if (pricing?.tiers && pricing?.tool_tiers) {
+      // Tiered pricing: look up tool → tier → price
+      const tierKey = pricing.tool_tiers[toolName] ?? pricing.default_tier ?? "premium";
+      priceCents = pricing.tiers[tierKey]?.price_cents ?? 44900;
+    } else {
+      // Legacy flat pricing
+      priceCents = pricing?.default_price_cents ?? 14900;
+    }
+
     const paymentStatus = ctx.plan === "enterprise" && pricing?.enterprise_included ? "included" : "pending";
 
     // Create review

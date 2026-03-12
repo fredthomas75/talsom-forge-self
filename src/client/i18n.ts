@@ -89,7 +89,7 @@ export const clientI18n = {
   reviewApproved: { fr: "Approuvé", en: "Approved" },
   reviewNeedsRevision: { fr: "Révision nécessaire", en: "Needs revision" },
   reviewDelivered: { fr: "Vérifié par", en: "Verified by" },
-  reviewPrice: { fr: "149 $ / livrable", en: "$149 / deliverable" },
+  reviewPrice: { fr: "Par livrable", en: "Per deliverable" },
   reviewTurnaround: { fr: "Délai : 48h", en: "Turnaround: 48h" },
   consultantFeedback: { fr: "Commentaire du consultant", en: "Consultant feedback" },
   downloadVerified: { fr: "Télécharger le livrable vérifié", en: "Download verified deliverable" },

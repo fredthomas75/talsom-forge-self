@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import {
   ShieldCheck, Loader2, Download, ChevronDown, ChevronUp,
-  MessageSquare, FileSpreadsheet,
+  MessageSquare, FileSpreadsheet, Sparkles,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { ReviewStatusBadge } from "./ReviewStatusBadge";
@@ -19,6 +19,15 @@ interface ReviewData {
   original_file_url?: string | null;
 }
 
+interface ToolPricing {
+  tier: string;
+  price_cents: number;
+  label_fr: string;
+  label_en: string;
+  currency: string;
+  enterprise_included: boolean;
+}
+
 interface ReviewRequestButtonProps {
   conversationId: string | null;
   toolName: string;
@@ -29,6 +38,18 @@ interface ReviewRequestButtonProps {
   existingReview?: ReviewData | null;
   dark?: boolean;
   onReviewCreated?: (review: ReviewData) => void;
+}
+
+const TIER_COLORS: Record<string, { bg: string; text: string; darkBg: string }> = {
+  standard: { bg: "bg-blue-50", text: "text-blue-700", darkBg: "bg-blue-500/10" },
+  premium:  { bg: "bg-amber-50", text: "text-amber-700", darkBg: "bg-amber-500/10" },
+  expert:   { bg: "bg-purple-50", text: "text-purple-700", darkBg: "bg-purple-500/10" },
+};
+
+function formatPrice(cents: number, currency: string, lang: "fr" | "en"): string {
+  const amount = (cents / 100).toFixed(0);
+  if (lang === "fr") return `${amount} $ ${currency.toUpperCase()}`;
+  return `$${amount} ${currency.toUpperCase()}`;
 }
 
 export function ReviewRequestButton({
@@ -45,7 +66,24 @@ export function ReviewRequestButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showContent, setShowContent] = useState(false);
+  const [pricing, setPricing] = useState<ToolPricing | null>(null);
   const bi = (fr: string, en: string) => (lang === "fr" ? fr : en);
+
+  // Fetch pricing for this tool
+  useEffect(() => {
+    if (existingReview || !conversationId || !toolName) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/client/review-pricing?tool=${toolName}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPricing(data);
+        }
+      } catch { /* fallback to default display */ }
+    })();
+  }, [toolName, conversationId, existingReview]);
 
   if (!conversationId) return null;
 
@@ -208,7 +246,7 @@ export function ReviewRequestButton({
     );
   }
 
-  // ── No review yet — show request button ──
+  // ── No review yet — show request button with dynamic pricing ──
   const handleRequest = async () => {
     setLoading(true);
     setError(null);
@@ -245,6 +283,19 @@ export function ReviewRequestButton({
     }
   };
 
+  // Tier display
+  const tierKey = pricing?.tier ?? "premium";
+  const tierColor = TIER_COLORS[tierKey] ?? TIER_COLORS.premium;
+  const tierLabel = pricing
+    ? (lang === "fr" ? pricing.label_fr : pricing.label_en)
+    : bi("Premium", "Premium");
+  const priceDisplay = pricing
+    ? (pricing.enterprise_included
+        ? bi("Inclus dans votre forfait", "Included in your plan")
+        : formatPrice(pricing.price_cents, pricing.currency, lang))
+    : bi("449 $ CAD", "$449 CAD");
+  const isIncluded = pricing?.enterprise_included ?? false;
+
   return (
     <div className={`mt-4 rounded-xl p-4 border ${dark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"}`}>
       <div className="flex items-start gap-3">
@@ -255,17 +306,30 @@ export function ReviewRequestButton({
           <ShieldCheck className="w-5 h-5" style={{ color: C.green }} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
-            {bi("Vérification par un consultant", "Consultant Verification")}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+              {bi("Vérification par un consultant", "Consultant Verification")}
+            </p>
+            <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+              dark ? `${tierColor.darkBg} ${tierColor.text}` : `${tierColor.bg} ${tierColor.text}`
+            }`}>
+              <Sparkles className="w-2.5 h-2.5" />
+              {tierLabel}
+            </span>
+          </div>
           <p className={`text-xs mt-0.5 ${dark ? "text-white/40" : "text-gray-500"}`}>
             {bi(
               "Un consultant Talsom vérifie, améliore et certifie votre livrable. Délai : 48h.",
               "A Talsom consultant verifies, improves and certifies your deliverable. Turnaround: 48h."
             )}
           </p>
-          <p className="text-xs mt-1 font-semibold" style={{ color: C.green }}>
-            149 $ CAD / {bi("livrable", "deliverable")}
+          <p className={`text-xs mt-1.5 font-bold ${isIncluded ? "" : ""}`} style={{ color: C.green }}>
+            {priceDisplay}
+            {!isIncluded && (
+              <span className={`font-normal ml-1 ${dark ? "text-white/30" : "text-gray-400"}`}>
+                / {bi("livrable", "deliverable")}
+              </span>
+            )}
           </p>
         </div>
       </div>

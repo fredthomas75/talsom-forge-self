@@ -31,6 +31,7 @@ import tenantAssetsHandler from "./client/_handlers/tenant-assets.js";
 import integrationsHandler from "./client/_handlers/integrations.js";
 import reviewsHandler from "./client/_handlers/reviews.js";
 import reviewsByIdHandler from "./client/_handlers/reviews-by-id.js";
+import reviewPricingHandler from "./client/_handlers/review-pricing.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Parse path from rewrite query param: /api/client/billing/checkout → _path="billing/checkout"
@@ -123,6 +124,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       break;
 
     // ── Human Reviews ──
+    case "review-pricing":
+      return reviewPricingHandler(req, res);
+
     case "reviews":
       if (seg1) {
         req.query.id = seg1;
