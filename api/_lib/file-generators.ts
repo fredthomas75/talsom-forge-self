@@ -1,9 +1,18 @@
 import type Anthropic from "@anthropic-ai/sdk";
+import { createRequire } from "node:module";
 
 // ── IMPORTANT: No heavy library imports at module level! ──
 // ExcelJS (~20MB), docx (~3.6MB), and pptxgenjs (~3.5MB) are loaded
-// dynamically inside each generate* function to avoid exceeding
-// Vercel's serverless cold-start memory/time limits.
+// lazily inside each generate* function via CJS require() to avoid
+// exceeding Vercel's serverless cold-start memory/time limits.
+//
+// We use createRequire (CJS) instead of dynamic import() because Vercel
+// compiles API routes to CJS modules. Dynamic import() resolves packages
+// via the "exports.import" field in package.json, which points to ESM
+// bundles that crash at runtime with:
+//   SyntaxError: Cannot use import statement outside a module
+// CJS require() uses "exports.require" → loads the CJS builds instead.
+const _require = createRequire(__filename);
 
 // ── Default branding constants (Talsom Forge defaults) ──
 const DEFAULT_PRIMARY = "003533";
@@ -237,7 +246,8 @@ export interface GenerateExcelInput {
 }
 
 export async function generateExcel(input: GenerateExcelInput, brand?: BrandContext): Promise<Buffer> {
-  const ExcelJS = (await import("exceljs")).default;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ExcelJS = _require("exceljs") as any;
   const colors = bc(brand);
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Talsom Forge";
@@ -322,11 +332,13 @@ export interface GenerateWordInput {
 }
 
 export async function generateWord(input: GenerateWordInput, brand?: BrandContext): Promise<Buffer> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const docxModule = _require("docx") as any;
   const {
     Document, Packer, Paragraph, TextRun, HeadingLevel,
     Table, TableRow, TableCell, WidthType, AlignmentType,
     BorderStyle, ShadingType, Footer, PageNumber, ImageRun, Header,
-  } = await import("docx");
+  } = docxModule;
 
   const colors = bc(brand);
 
@@ -599,7 +611,8 @@ export interface GeneratePptxInput {
 }
 
 export async function generatePptx(input: GeneratePptxInput, brand?: BrandContext): Promise<Buffer> {
-  const PptxGenJS = (await import("pptxgenjs")).default;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const PptxGenJS = _require("pptxgenjs") as any;
   const colors = bc(brand);
   const pres = new PptxGenJS();
   pres.author = "Talsom Forge";

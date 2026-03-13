@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("tenant_invitations")
         .select("*")
         .eq("token", inviteToken)
-        .eq("status", "pending")
+        .is("accepted_at", null)
         .single();
 
       if (!invite) {
@@ -57,7 +57,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       if (new Date(invite.expires_at) < new Date()) {
-        await supabase.from("tenant_invitations").update({ status: "expired" }).eq("id", invite.id);
         return res.status(400).json({ error: "Invitation expired" });
       }
 
@@ -68,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         role: invite.role ?? "member",
       });
 
-      await supabase.from("tenant_invitations").update({ status: "accepted" }).eq("id", invite.id);
+      await supabase.from("tenant_invitations").update({ accepted_at: new Date().toISOString() }).eq("id", invite.id);
 
       logAudit({
         tenant_id: invite.tenant_id,
@@ -81,10 +80,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Create new tenant
       const tenantName = company || name || email.split("@")[0] || "My Company";
 
+      // Generate a URL-friendly slug (required: UNIQUE NOT NULL)
+      const baseSlug = tenantName
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // strip accents
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 40) || "tenant";
+      const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
       const { data: tenant, error: tenantErr } = await supabase
         .from("tenants")
         .insert({
           name: tenantName,
+          slug,
           plan: "free",
           billing_email: email,
           created_by: user.id,
