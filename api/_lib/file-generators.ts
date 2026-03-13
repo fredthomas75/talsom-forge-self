@@ -12,7 +12,8 @@ import { createRequire } from "node:module";
 // bundles that crash at runtime with:
 //   SyntaxError: Cannot use import statement outside a module
 // CJS require() uses "exports.require" → loads the CJS builds instead.
-const _require = createRequire(__filename);
+// Vercel's runtime has "type": "module" so we use import.meta.url (not __filename).
+const _require = createRequire(import.meta.url);
 
 // ── Default branding constants (Talsom Forge defaults) ──
 const DEFAULT_PRIMARY = "003533";
