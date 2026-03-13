@@ -16,11 +16,61 @@ import { useCloudIntegrations, type Provider } from "../hooks/useCloudIntegratio
 
 type Tab = "profile" | "tenant" | "plan" | "integrations";
 
-const PLAN_FEATURES: Record<string, { name: { fr: string; en: string }; price: string; features: string[] }> = {
-  free: { name: { fr: "Gratuit", en: "Free" }, price: "$0", features: ["100 API calls", "50K tokens", "1 member", "1 API key"] },
-  starter: { name: { fr: "Starter", en: "Starter" }, price: "$49/mo", features: ["2K API calls", "500K tokens", "3 members", "MCP tools", "Audit log"] },
-  pro: { name: { fr: "Pro", en: "Pro" }, price: "$149/mo", features: ["10K API calls", "5M tokens", "10 members", "Export", "Full features"] },
-  enterprise: { name: { fr: "Entreprise", en: "Enterprise" }, price: "Custom", features: ["Unlimited", "Unlimited tokens", "Unlimited members", "Priority support"] },
+const PLAN_FEATURES: Record<string, {
+  name: { fr: string; en: string };
+  price: { fr: string; en: string };
+  annual?: { fr: string; en: string };
+  features: { fr: string; en: string }[];
+}> = {
+  free: {
+    name: { fr: "Explorer", en: "Explorer" },
+    price: { fr: "Gratuit", en: "Free" },
+    features: [
+      { fr: "Chat AI Expert (10 msg/mois)", en: "AI Expert Chat (10 msg/month)" },
+      { fr: "1 Quick Scan AI (partiel)", en: "1 Quick Scan AI (partial)" },
+      { fr: "Acc\u00e8s marketplace (lecture seule)", en: "Marketplace access (read-only)" },
+      { fr: "Support communautaire", en: "Community support" },
+    ],
+  },
+  starter: {
+    name: { fr: "Starter", en: "Starter" },
+    price: { fr: "349$/mois", en: "$349/mo" },
+    annual: { fr: "3 490$/an", en: "$3,490/yr" },
+    features: [
+      { fr: "Chat AI Expert (100 msg/mois)", en: "AI Expert Chat (100 msg/month)" },
+      { fr: "3 Quick Scans AI complets/mois", en: "3 full Quick Scans AI/month" },
+      { fr: "5 cr\u00e9dits consulting/mois", en: "5 consulting credits/month" },
+      { fr: "Livrables AI (templates)", en: "AI Deliverables (templates)" },
+      { fr: "Outils Marketplace \u00e0 la carte", en: "Marketplace tools \u00e0 la carte" },
+      { fr: "Support email (48h)", en: "Email support (48h)" },
+    ],
+  },
+  pro: {
+    name: { fr: "Professional", en: "Professional" },
+    price: { fr: "990$/mois", en: "$990/mo" },
+    annual: { fr: "9 900$/an", en: "$9,900/yr" },
+    features: [
+      { fr: "Chat AI Expert illimit\u00e9", en: "Unlimited AI Expert Chat" },
+      { fr: "Quick Scans AI illimit\u00e9s", en: "Unlimited Quick Scans AI" },
+      { fr: "25 cr\u00e9dits consulting/mois", en: "25 consulting credits/month" },
+      { fr: "Livrables AI complets (Excel, Word, PPTX)", en: "Full AI deliverables (Excel, Word, PPTX)" },
+      { fr: "Ateliers virtuels co-facilit\u00e9s AI", en: "AI co-facilitated virtual workshops" },
+      { fr: "Outils Marketplace (rabais 15-25%)", en: "Marketplace tools (15-25% discount)" },
+      { fr: "Support prioritaire (24h)", en: "Priority support (24h)" },
+    ],
+  },
+  enterprise: {
+    name: { fr: "Entreprise", en: "Enterprise" },
+    price: { fr: "Sur mesure", en: "Custom" },
+    features: [
+      { fr: "Tout Professional +", en: "Everything in Professional +" },
+      { fr: "Consultants seniors d\u00e9di\u00e9s", en: "Dedicated senior consultants" },
+      { fr: "Livrables personnalis\u00e9s \u00e0 votre marque", en: "Brand-customized deliverables" },
+      { fr: "Ateliers et formations sur mesure", en: "Custom workshops and training" },
+      { fr: "Outils Marketplace inclus", en: "Marketplace tools included" },
+      { fr: "SLA garanti + support d\u00e9di\u00e9", en: "Guaranteed SLA + dedicated support" },
+    ],
+  },
 };
 
 // Google Workspace SVG logo
@@ -245,11 +295,14 @@ export function SettingsPage() {
                       <h3 className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`}>{bi(plan.name)}</h3>
                       {isCurrent && <Badge className="text-[9px] rounded-full border-0" style={{ background: C.green, color: C.yellow }}>Current</Badge>}
                     </div>
-                    <p className="text-xl font-bold mb-3" style={{ ...HDR_FONT, color: C.green }}>{plan.price}</p>
-                    <Separator className={`mb-3 ${dark ? "bg-white/5" : ""}`} />
+                    <p className="text-xl font-bold" style={{ ...HDR_FONT, color: C.green }}>{bi(plan.price)}</p>
+                    {plan.annual && (
+                      <p className={`text-[10px] mb-1 ${dark ? "text-white/25" : "text-gray-400"}`}>{bi(plan.annual)}</p>
+                    )}
+                    <Separator className={`mb-3 mt-2 ${dark ? "bg-white/5" : ""}`} />
                     <div className="space-y-1.5 mb-4">
-                      {plan.features.map((f) => (
-                        <p key={f} className={`text-[11px] ${dark ? "text-white/40" : "text-gray-500"}`}>✓ {f}</p>
+                      {plan.features.map((f, i) => (
+                        <p key={i} className={`text-[11px] ${dark ? "text-white/40" : "text-gray-500"}`}>✓ {bi(f)}</p>
                       ))}
                     </div>
                     {!isCurrent && key !== "enterprise" && (
