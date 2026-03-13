@@ -12,13 +12,13 @@ import { useSection, useBi } from "@/hooks/useContent";
 
 function ProductMockup({ productId, dark }: { productId: string; dark: boolean }) {
   const mockups: Record<string, { icon: typeof BarChart3; lines: string[] }> = {
-    "forge-pia": { icon: Shield, lines: ["Privacy Impact Assessment", "Risk Level: Medium", "Data Classification: ███████", "Compliance: Loi 25 ✓  RGPD ✓", "Recommendations: 12 items"] },
-    "forge-backlog": { icon: Layers, lines: ["Sprint Backlog Manager", "Epic: Digital Transform...", "Story Points: ████░░  68%", "Velocity: 42 pts/sprint", "Next: API Integration"] },
-    "forge-analytics": { icon: BarChart3, lines: ["Adoption Analytics", "Active Users: ████████ 94%", "Feature Usage: ██████░ 78%", "Satisfaction: █████████ 96%", "Trend: ↑ +12% this month"] },
-    "forge-docs": { icon: FileText, lines: ["Document Generator", "Template: Process Map", "Sections: 8/8 complete", "Format: PDF + PPTX", "AI Confidence: 97%"] },
+    "hub": { icon: BarChart3, lines: ["Talsom Forge Hub", "Tools: 20+ AI modules", "Deliverables: Excel · Word · PPTX", "Consultant Review: ✓ Active", "Client Portal: ████████ Live"] },
+    "backlog": { icon: Layers, lines: ["AI Backlog Manager", "Epic: Digital Transform...", "Story Points: ████░░  68%", "Velocity: 42 pts/sprint", "Next: API Integration"] },
+    "pia": { icon: Shield, lines: ["Privacy Impact Assessment", "Risk Level: Medium", "Data Classification: ███████", "Compliance: Loi 25 ✓  RGPD ✓", "Recommendations: 12 items"] },
+    "governance-tool": { icon: FileText, lines: ["AI Governance Suite", "Policies: 8/8 deployed", "Model Registry: 24 models", "Risk Classification: ██████ Active", "Audit Trail: ✓ Complete"] },
   };
 
-  const m = mockups[productId] || mockups["forge-pia"];
+  const m = mockups[productId] || mockups["hub"];
   const Icon = m.icon;
 
   return (
