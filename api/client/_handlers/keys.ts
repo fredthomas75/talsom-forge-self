@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import crypto from "crypto";
+import * as crypto from "crypto";
 import { authenticateClient } from "../../_lib/client-auth.js";
 import { getSupabaseAdmin } from "../../_lib/supabase-server.js";
 import { logAudit, ACTIONS } from "../../_lib/audit.js";

@@ -131,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) return res.status(500).json({ error: error.message });
 
     // Enrich with consultant names for delivered reviews
-    const consultantIds = [...new Set((reviews ?? []).filter((r) => r.consultant_id).map((r) => r.consultant_id!))];
+    const consultantIds = Array.from(new Set((reviews ?? []).filter((r) => r.consultant_id).map((r) => r.consultant_id!)));
     let consultantMap: Record<string, string> = {};
     if (consultantIds.length > 0) {
       const { data: consultants } = await supabase
