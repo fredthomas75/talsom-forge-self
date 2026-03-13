@@ -1,11 +1,11 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import * as ExcelJS from "exceljs";
+import ExcelJS from "exceljs";
 import {
   Document, Packer, Paragraph, TextRun, HeadingLevel,
   Table, TableRow, TableCell, WidthType, AlignmentType,
   BorderStyle, ShadingType, Footer, PageNumber, ImageRun, Header,
 } from "docx";
-import * as PptxGenJS from "pptxgenjs";
+import PptxGenJS from "pptxgenjs";
 
 // ── Default branding constants (Talsom Forge defaults) ──
 const DEFAULT_PRIMARY = "003533";

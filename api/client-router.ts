@@ -4,17 +4,19 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 // Consolidates all client API endpoints into a single Vercel serverless function
 // to stay within Vercel Hobby plan's 12-function limit.
 // Vercel rewrites /api/client/:path* → /api/client-router?_path=:path*
+//
+// Heavy handlers (tool-chat, chat, integrations) use dynamic imports to avoid
+// pulling large dependencies (exceljs, docx, pptxgenjs) into the initial bundle,
+// which was causing FUNCTION_INVOCATION_FAILED on cold starts.
 
 import meHandler from "./client/_handlers/me.js";
 import signupHandler from "./client/_handlers/signup.js";
 import onboardHandler from "./client/_handlers/onboard.js";
 import acceptInviteHandler from "./client/_handlers/accept-invite.js";
 import dashboardHandler from "./client/_handlers/dashboard.js";
-import chatHandler from "./client/_handlers/chat.js";
 import conversationsHandler from "./client/_handlers/conversations.js";
 import conversationsByIdHandler from "./client/_handlers/conversations-by-id.js";
 import toolsQueryHandler from "./client/_handlers/tools-query.js";
-import toolChatHandler from "./client/_handlers/tool-chat.js";
 import keysHandler from "./client/_handlers/keys.js";
 import keysByIdHandler from "./client/_handlers/keys-by-id.js";
 import usageHandler from "./client/_handlers/usage.js";
@@ -28,7 +30,6 @@ import billingPortalHandler from "./client/_handlers/billing-portal.js";
 import billingWebhookHandler from "./client/_handlers/billing-webhook.js";
 import tenantProfileHandler from "./client/_handlers/tenant-profile.js";
 import tenantAssetsHandler from "./client/_handlers/tenant-assets.js";
-import integrationsHandler from "./client/_handlers/integrations.js";
 import reviewsHandler from "./client/_handlers/reviews.js";
 import reviewsByIdHandler from "./client/_handlers/reviews-by-id.js";
 import reviewPricingHandler from "./client/_handlers/review-pricing.js";
@@ -61,9 +62,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case "dashboard":
       return dashboardHandler(req, res);
 
-    // ── Chat (SSE streaming) ──
-    case "chat":
+    // ── Chat (SSE streaming) — dynamic import (pulls @anthropic-ai/sdk + file-generators) ──
+    case "chat": {
+      const { default: chatHandler } = await import("./client/_handlers/chat.js");
       return chatHandler(req, res);
+    }
 
     // ── Conversations ──
     case "conversations":
@@ -76,7 +79,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── MCP Tools ──
     case "tools":
       if (seg1 === "query") return toolsQueryHandler(req, res);
-      if (seg1 === "chat") return toolChatHandler(req, res);
+      if (seg1 === "chat") {
+        // Dynamic import — pulls exceljs, docx, pptxgenjs via file-generators
+        const { default: toolChatHandler } = await import("./client/_handlers/tool-chat.js");
+        return toolChatHandler(req, res);
+      }
       break;
 
     // ── API Keys ──
@@ -108,11 +115,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case "audit-log":
       return auditLogHandler(req, res);
 
-    // ── Cloud Integrations (Google Workspace / Microsoft 365) ──
-    case "integrations":
+    // ── Cloud Integrations — dynamic import (pulls oauth-tokens, cloud-providers) ──
+    case "integrations": {
       req.query._seg1 = seg1;
       req.query._seg2 = seg2;
+      const { default: integrationsHandler } = await import("./client/_handlers/integrations.js");
       return integrationsHandler(req, res);
+    }
 
     // ── Customization (tenant profile + assets) ──
     case "customization":
