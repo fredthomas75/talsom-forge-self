@@ -23,7 +23,7 @@ export function Pricing() {
           <p className={dark ? "text-white/40" : "text-gray-500"}>{bi(subtitle)}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto reveal-stagger">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto reveal-stagger">
           {plans.map((p) => (
             <Card key={p.name} className={`reveal rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl ${p.highlight ? "border-2 shadow-xl relative" : ""} ${dark ? "bg-gray-900 border-white/5" : "border-gray-100"}`} style={p.highlight ? { borderColor: C.green } : undefined}>
               {p.highlight && <div className="absolute top-0 inset-x-0 h-1" style={{ background: `linear-gradient(90deg, ${C.green}, ${C.yellow})` }} />}

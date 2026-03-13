@@ -55,6 +55,7 @@ export interface ServiceItem {
 export interface SubServiceItem {
   name: Bi;
   price: Bi;
+  credits?: number;
   desc: Bi;
   deliverables: Bi[];
   timeline: Bi;
@@ -89,6 +90,8 @@ export interface MarketplaceItem {
   features: Bi;
   tier: string;
   badgeCls: string;
+  price?: Bi;
+  forgeDiscount?: string;
 }
 
 export interface MarketplaceBenefit { title: Bi; desc: Bi }

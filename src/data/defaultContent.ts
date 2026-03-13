@@ -67,11 +67,11 @@ export const defaultContent: SiteContent = {
 
   // ─── Services ──────────────────────────────────────
   services: {
-    badge: { fr: "Services virtuels", en: "Virtual services" },
+    badge: { fr: "Services consulting", en: "Consulting services" },
     title: { fr: "Du consulting virtuel,\npropuls\u00e9 par l'AI.", en: "Virtual consulting,\npowered by AI." },
     subtitle: {
-      fr: "Choisissez parmi nos 4 domaines d\u2019expertise. Chaque service combine l\u2019accompagnement de consultants seniors avec la puissance de nos agents AI.",
-      en: "Choose from our 4 areas of expertise. Each service combines senior consultant guidance with the power of our AI agents.",
+      fr: "Choisissez parmi nos 4 domaines d\u2019expertise. Chaque service est livr\u00e9 par un consultant senior + AI, pay\u00e9 en cr\u00e9dits consulting (1 cr\u00e9dit \u2248 100$).",
+      en: "Choose from our 4 areas of expertise. Each service is delivered by a senior consultant + AI, paid via consulting credits (1 credit \u2248 $100).",
     },
     items: [
       {
@@ -160,6 +160,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Diagnostic de processus", en: "Process Diagnostic" },
             price: { fr: "15 000$", en: "$15,000" },
+            credits: 150,
             desc: { fr: "Cartographie rapide AS-IS de 3 \u00e0 5 processus cl\u00e9s avec identification des goulots et quick wins.", en: "Rapid AS-IS mapping of 3-5 key processes with bottleneck identification and quick wins." },
             deliverables: [
               { fr: "Cartographies AS-IS (BPMN)", en: "AS-IS maps (BPMN)" },
@@ -171,6 +172,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Design de mod\u00e8le op\u00e9rationnel", en: "Operating Model Design" },
             price: { fr: "25 000$", en: "$25,000" },
+            credits: 250,
             desc: { fr: "Conception compl\u00e8te du mod\u00e8le op\u00e9rationnel cible incluant structure, processus, gouvernance et technologie.", en: "Complete target operating model design including structure, processes, governance, and technology." },
             deliverables: [
               { fr: "Mod\u00e8le op\u00e9rationnel TO-BE", en: "TO-BE operating model" },
@@ -182,6 +184,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Automatisation de processus", en: "Process Automation" },
             price: { fr: "20 000$", en: "$20,000" },
+            credits: 200,
             desc: { fr: "Identification et impl\u00e9mentation des opportunit\u00e9s d\u2019automatisation RPA et AI dans vos processus existants.", en: "Identification and implementation of RPA and AI automation opportunities in your existing processes." },
             deliverables: [
               { fr: "Analyse d\u2019automatisation", en: "Automation analysis" },
@@ -193,6 +196,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Redesign AI Native", en: "AI Native Redesign" },
             price: { fr: "30 000$", en: "$30,000" },
+            credits: 300,
             desc: { fr: "Reconception compl\u00e8te d\u2019un processus en positionnant des agents AI (pr\u00e9diction, d\u00e9cision, ex\u00e9cution) \u00e0 chaque \u00e9tape \u2014 l\u2019humain ne g\u00e8re que les exceptions et les d\u00e9cisions strat\u00e9giques.", en: "Complete process redesign positioning AI agents (prediction, decision, execution) at each step \u2014 humans only handle exceptions and strategic decisions." },
             deliverables: [
               { fr: "Processus TO-BE AI Native (BPMN + agents)", en: "AI Native TO-BE process (BPMN + agents)" },
@@ -235,6 +239,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Audit de dette technique", en: "Technical Debt Audit" },
             price: { fr: "15 000$", en: "$15,000" },
+            credits: 150,
             desc: { fr: "\u00c9valuation approfondie de votre dette technique avec scoring par application et recommandations de rem\u00e9diation.", en: "In-depth technical debt evaluation with per-application scoring and remediation recommendations." },
             deliverables: [
               { fr: "Rapport de dette technique", en: "Technical debt report" },
@@ -246,6 +251,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Strat\u00e9gie cloud et migration", en: "Cloud Strategy & Migration" },
             price: { fr: "25 000$", en: "$25,000" },
+            credits: 250,
             desc: { fr: "D\u00e9finition de votre strat\u00e9gie cloud (public, priv\u00e9, hybride) avec plan de migration s\u00e9quenc\u00e9.", en: "Definition of your cloud strategy (public, private, hybrid) with sequenced migration plan." },
             deliverables: [
               { fr: "Strat\u00e9gie cloud", en: "Cloud strategy" },
@@ -257,6 +263,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Architecture d\u2019entreprise cible", en: "Target Enterprise Architecture" },
             price: { fr: "30 000$", en: "$30,000" },
+            credits: 300,
             desc: { fr: "Conception de l\u2019architecture cible align\u00e9e sur votre strat\u00e9gie d\u2019affaires, incluant int\u00e9grations et s\u00e9curit\u00e9.", en: "Target architecture design aligned with your business strategy, including integrations and security." },
             deliverables: [
               { fr: "Architecture de r\u00e9f\u00e9rence", en: "Reference architecture" },
@@ -300,6 +307,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "\u00c9valuation de maturit\u00e9 AI", en: "AI Maturity Assessment" },
             price: { fr: "8 000$", en: "$8,000" },
+            credits: 80,
             desc: { fr: "Diagnostic de votre maturit\u00e9 AI sur 6 dimensions avec benchmark sectoriel et plan d\u2019action.", en: "Diagnostic of your AI maturity across 6 dimensions with industry benchmarking and action plan." },
             deliverables: [
               { fr: "Rapport de maturit\u00e9 AI", en: "AI maturity report" },
@@ -311,6 +319,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Gouvernance AI", en: "AI Governance" },
             price: { fr: "15 000$", en: "$15,000" },
+            credits: 150,
             desc: { fr: "Cadre de gouvernance complet : politiques d\u2019utilisation, conformit\u00e9 Loi 25 / EU AI Act, registre de mod\u00e8les.", en: "Complete governance framework: usage policies, Bill 25 / EU AI Act compliance, model registry." },
             deliverables: [
               { fr: "Politique d\u2019utilisation de l\u2019IA", en: "AI usage policy" },
@@ -322,6 +331,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "D\u00e9ploiement Copilot 365", en: "Copilot 365 Deployment" },
             price: { fr: "20 000$", en: "$20,000" },
+            credits: 200,
             desc: { fr: "Programme complet de d\u00e9ploiement Microsoft Copilot : audit technique, pilote, rollout par vagues et gestion du changement.", en: "Complete Microsoft Copilot deployment program: technical audit, pilot, wave-based rollout, and change management." },
             deliverables: [
               { fr: "Plan de d\u00e9ploiement", en: "Deployment plan" },
@@ -333,6 +343,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Dossier d\u2019affaires AI", en: "AI Business Case" },
             price: { fr: "10 000$", en: "$10,000" },
+            credits: 100,
             desc: { fr: "Dossier d\u2019affaires AI avec mod\u00e8le financier ROI, benchmarks sectoriels et pr\u00e9sentation ex\u00e9cutive.", en: "AI business case with ROI financial model, industry benchmarks, and executive presentation." },
             deliverables: [
               { fr: "Dossier d\u2019affaires complet", en: "Complete business case" },
@@ -374,6 +385,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Gestion du changement", en: "Change Management" },
             price: { fr: "15 000$", en: "$15,000" },
+            credits: 150,
             desc: { fr: "Programme complet de gestion du changement : analyse d\u2019impact, plan de communication, formation et mesure d\u2019adoption.", en: "Complete change management program: impact analysis, communication plan, training, and adoption measurement." },
             deliverables: [
               { fr: "Plan de changement", en: "Change plan" },
@@ -385,6 +397,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Design organisationnel", en: "Organizational Design" },
             price: { fr: "20 000$", en: "$20,000" },
+            credits: 200,
             desc: { fr: "Conception de la structure organisationnelle cible : r\u00f4les, responsabilit\u00e9s, gouvernance et m\u00e9canismes de coordination.", en: "Target organizational structure design: roles, responsibilities, governance, and coordination mechanisms." },
             deliverables: [
               { fr: "Organigramme cible", en: "Target org chart" },
@@ -396,6 +409,7 @@ export const defaultContent: SiteContent = {
           {
             name: { fr: "Programme de leadership", en: "Leadership Program" },
             price: { fr: "10 000$", en: "$10,000" },
+            credits: 100,
             desc: { fr: "Programme de d\u00e9veloppement du leadership adapt\u00e9 \u00e0 votre contexte de transformation, avec coaching individuel et ateliers collectifs.", en: "Leadership development program adapted to your transformation context, with individual coaching and group workshops." },
             deliverables: [
               { fr: "Programme de d\u00e9veloppement", en: "Development program" },
@@ -435,6 +449,8 @@ export const defaultContent: SiteContent = {
         features: { fr: "Scoring multicrit\u00e8re,Vues portefeuille,Suivi ROI,Collaboration", en: "Multi-criteria Scoring,Portfolio Views,ROI Tracking,Collaboration" },
         tier: "Tool",
         badgeCls: "bg-emerald-400/15 text-emerald-300 border-emerald-400/25",
+        price: { fr: "199$/mois", en: "$199/month" },
+        forgeDiscount: "-25%",
       },
       {
         id: "pia",
@@ -444,6 +460,8 @@ export const defaultContent: SiteContent = {
         features: { fr: "Conformit\u00e9 Loi 25,Rapport automatis\u00e9,Registre des risques,Suivi", en: "Bill 25 Compliance,Automated Reports,Risk Registry,Tracking" },
         tier: "Tool",
         badgeCls: "bg-amber-400/15 text-amber-300 border-amber-400/25",
+        price: { fr: "\u00c0 partir de 349$/mois", en: "Starting at $349/month" },
+        forgeDiscount: "-15%",
       },
       {
         id: "governance-tool",
@@ -453,6 +471,8 @@ export const defaultContent: SiteContent = {
         features: { fr: "Politiques AI,RACI automatis\u00e9,Registre de mod\u00e8les,Audit trail", en: "AI Policies,Automated RACI,Model Registry,Audit Trail" },
         tier: "Suite",
         badgeCls: "bg-[#D2D9D9]/15 text-[#D2D9D9] border-[#D2D9D9]/25",
+        price: { fr: "499$/mois", en: "$499/month" },
+        forgeDiscount: "-20%",
       },
     ],
     details: {
@@ -627,6 +647,8 @@ export const defaultContent: SiteContent = {
       { label: { fr: "Documents \u00e0 l'image de votre marque", en: "Brand-customized documents" }, traditional: false, forge: true },
       { label: { fr: "Revue et bonification par un consultant", en: "Consultant review & enhancement" }, traditional: { fr: "Optionnel, factur\u00e9", en: "Optional, billed" }, forge: { fr: "Int\u00e9gr\u00e9 \u00e0 la plateforme", en: "Built into the platform" } },
       { label: { fr: "Chat multimodal (images, PDF, fichiers)", en: "Multimodal chat (images, PDF, files)" }, traditional: false, forge: true },
+      { label: { fr: "Quick Scans AI self-serve", en: "Self-serve AI Quick Scans" }, traditional: false, forge: true },
+      { label: { fr: "Syst\u00e8me de cr\u00e9dits flexible", en: "Flexible credit system" }, traditional: false, forge: true },
     ],
   },
 
@@ -747,12 +769,27 @@ export const defaultContent: SiteContent = {
         price: { fr: "Gratuit", en: "Free" },
         sub: { fr: "Pour d\u00e9couvrir", en: "To explore" },
         features: [
-          { fr: "Chat AI (10 messages/mois)", en: "AI Chat (10 messages/month)" },
-          { fr: "1 diagnostic d\u2019affaires", en: "1 business diagnostic" },
-          { fr: "Acc\u00e8s marketplace (lecture)", en: "Marketplace access (read-only)" },
+          { fr: "Chat AI Expert (10 msg/mois)", en: "AI Expert Chat (10 msg/month)" },
+          { fr: "1 Quick Scan AI (partiel)", en: "1 Quick Scan AI (partial)" },
+          { fr: "Acc\u00e8s marketplace (lecture seule)", en: "Marketplace access (read-only)" },
           { fr: "Support communautaire", en: "Community support" },
         ],
         cta: { fr: "Commencer gratuitement", en: "Start for free" },
+        highlight: false,
+      },
+      {
+        name: "Starter",
+        price: { fr: "349$/mois", en: "$349/month" },
+        sub: { fr: "Pour les PME", en: "For SMBs" },
+        features: [
+          { fr: "Chat AI Expert (100 msg/mois)", en: "AI Expert Chat (100 msg/month)" },
+          { fr: "3 Quick Scans AI complets/mois", en: "3 full Quick Scans AI/month" },
+          { fr: "5 cr\u00e9dits consulting/mois", en: "5 consulting credits/month" },
+          { fr: "Livrables AI (templates)", en: "AI Deliverables (templates)" },
+          { fr: "Outils Marketplace \u00e0 la carte", en: "Marketplace tools \u00e0 la carte" },
+          { fr: "Support email (48h)", en: "Email support (48h)" },
+        ],
+        cta: { fr: "Essai gratuit 14 jours", en: "Free 14-day trial" },
         highlight: false,
       },
       {
@@ -760,13 +797,13 @@ export const defaultContent: SiteContent = {
         price: { fr: "990$/mois", en: "$990/month" },
         sub: { fr: "Pour les \u00e9quipes", en: "For teams" },
         features: [
-          { fr: "Chat AI illimit\u00e9 et multimodal", en: "Unlimited multimodal AI Chat" },
-          { fr: "20+ outils AI sp\u00e9cialis\u00e9s", en: "20+ specialized AI tools" },
-          { fr: "Livrables multi-formats (Excel, Word, PPTX)", en: "Multi-format deliverables (Excel, Word, PPTX)" },
-          { fr: "Documents personnalis\u00e9s \u00e0 vos couleurs et logo", en: "Brand-customized documents with your colors & logo" },
-          { fr: "Revue par un consultant senior", en: "Senior consultant review" },
-          { fr: "5 services virtuels/mois", en: "5 virtual services/month" },
-          { fr: "Support prioritaire", en: "Priority support" },
+          { fr: "Chat AI Expert illimit\u00e9", en: "Unlimited AI Expert Chat" },
+          { fr: "Quick Scans AI illimit\u00e9s", en: "Unlimited Quick Scans AI" },
+          { fr: "25 cr\u00e9dits consulting/mois", en: "25 consulting credits/month" },
+          { fr: "Livrables AI complets (Excel, Word, PPTX)", en: "Full AI deliverables (Excel, Word, PPTX)" },
+          { fr: "Ateliers virtuels co-facilit\u00e9s AI", en: "AI co-facilitated virtual workshops" },
+          { fr: "Outils Marketplace (rabais 15-25%)", en: "Marketplace tools (15-25% discount)" },
+          { fr: "Support prioritaire (24h)", en: "Priority support (24h)" },
         ],
         cta: { fr: "Essai gratuit 14 jours", en: "Free 14-day trial" },
         highlight: true,
@@ -778,10 +815,10 @@ export const defaultContent: SiteContent = {
         features: [
           { fr: "Tout Professional +", en: "Everything in Professional +" },
           { fr: "Consultants seniors d\u00e9di\u00e9s", en: "Dedicated senior consultants" },
-          { fr: "Personnalisation compl\u00e8te (portail, marque, outils)", en: "Full customization (portal, brand, tools)" },
-          { fr: "SLA garanti", en: "Guaranteed SLA" },
+          { fr: "Livrables personnalis\u00e9s \u00e0 votre marque", en: "Brand-customized deliverables" },
           { fr: "Ateliers et formations sur mesure", en: "Custom workshops and training" },
-          { fr: "API & integrations", en: "API & integrations" },
+          { fr: "Outils Marketplace inclus", en: "Marketplace tools included" },
+          { fr: "SLA garanti + support d\u00e9di\u00e9", en: "Guaranteed SLA + dedicated support" },
         ],
         cta: { fr: "Contactez-nous", en: "Contact us" },
         highlight: false,
@@ -798,8 +835,8 @@ export const defaultContent: SiteContent = {
       {
         q: { fr: "Qu\u2019est-ce que Talsom Forge exactement?", en: "What is Talsom Forge exactly?" },
         a: {
-          fr: "Talsom Forge est une plateforme de consulting virtuel qui couvre 4 domaines d\u2019expertise : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. La plateforme int\u00e8gre 20+ outils AI sp\u00e9cialis\u00e9s, un chat multimodal (images, PDF, fichiers), la g\u00e9n\u00e9ration de livrables en Excel, Word et PowerPoint personnalis\u00e9s \u00e0 vos couleurs, et un circuit de revue par des consultants seniors.",
-          en: "Talsom Forge is a virtual consulting platform covering 4 areas of expertise: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. The platform includes 20+ specialized AI tools, a multimodal chat (images, PDF, files), deliverable generation in Excel, Word, and PowerPoint customized to your brand, and a consultant review workflow.",
+          fr: "Talsom Forge est un \u00e9cosyst\u00e8me de consulting virtuel couvrant 4 domaines : Business et Process Design, Modernisation technologique, Intelligence artificielle et Performance organisationnelle. La plateforme int\u00e8gre un Chat AI Expert, des Quick Scans AI (analyses self-serve), des livrables g\u00e9n\u00e9r\u00e9s en Excel, Word et PowerPoint personnalis\u00e9s \u00e0 vos couleurs, des services consulting (pay\u00e9s en cr\u00e9dits), des ateliers virtuels co-facilit\u00e9s par AI, et une marketplace d\u2019outils sp\u00e9cialis\u00e9s.",
+          en: "Talsom Forge is a virtual consulting ecosystem covering 4 domains: Business and Process Design, Technology Modernization, Artificial Intelligence, and Organizational Performance. The platform includes an AI Expert Chat, Quick Scan AI (self-serve analyses), deliverables generated in Excel, Word, and PowerPoint customized to your brand, consulting services (paid via credits), AI co-facilitated virtual workshops, and a marketplace of specialized tools.",
         },
       },
       {
@@ -826,8 +863,8 @@ export const defaultContent: SiteContent = {
       {
         q: { fr: "Puis-je essayer avant de m\u2019engager?", en: "Can I try before committing?" },
         a: {
-          fr: "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat par mois, un diagnostic d\u2019affaires et l\u2019acc\u00e8s en lecture \u00e0 la marketplace. Vous pouvez aussi demander un essai gratuit de 14 jours du plan Professional.",
-          en: "Yes! The Explorer plan is free and includes 10 chat messages per month, one business diagnostic, and read-only marketplace access. You can also request a free 14-day trial of the Professional plan.",
+          fr: "Oui! Le plan Explorer est gratuit et inclut 10 messages de chat par mois et un Quick Scan AI partiel. Le plan Starter \u00e0 349$/mois vous donne 100 messages, 3 Quick Scans complets et 5 cr\u00e9dits consulting. Vous pouvez aussi demander un essai gratuit de 14 jours des plans Starter ou Professional.",
+          en: "Yes! The Explorer plan is free and includes 10 chat messages per month and a partial Quick Scan AI. The Starter plan at $349/month gives you 100 messages, 3 full Quick Scans, and 5 consulting credits. You can also request a free 14-day trial of the Starter or Professional plans.",
         },
       },
       {
@@ -835,6 +872,20 @@ export const defaultContent: SiteContent = {
         a: {
           fr: "Cela d\u00e9pend du domaine. Un diagnostic de processus prend 3-4 semaines, une roadmap de modernisation 8-10 semaines, une Roadmap IA 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles imm\u00e9diatement.",
           en: "It depends on the domain. A process diagnostic takes 3-4 weeks, a modernization roadmap 8-10 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.",
+        },
+      },
+      {
+        q: { fr: "Comment fonctionnent les cr\u00e9dits consulting?", en: "How do consulting credits work?" },
+        a: {
+          fr: "Les cr\u00e9dits consulting sont l\u2019unit\u00e9 de consommation pour les services avec consultant senior (1 cr\u00e9dit \u2248 100$ de valeur). Chaque tier inclut des cr\u00e9dits mensuels : Starter (5/mois), Professional (25/mois), Enterprise (sur mesure). Les cr\u00e9dits non utilis\u00e9s sont reportables sur 3 mois. Des packs pr\u00e9pay\u00e9s sont aussi disponibles avec des rabais volume allant jusqu\u2019\u00e0 38%.",
+          en: "Consulting credits are the unit for consuming services with a senior consultant (1 credit \u2248 $100 in value). Each tier includes monthly credits: Starter (5/month), Professional (25/month), Enterprise (custom). Unused credits roll over for 3 months. Prepaid packs are also available with volume discounts up to 38%.",
+        },
+      },
+      {
+        q: { fr: "Qu\u2019est-ce qu\u2019un Quick Scan AI?", en: "What is a Quick Scan AI?" },
+        a: {
+          fr: "Un Quick Scan AI est une analyse self-serve r\u00e9alis\u00e9e enti\u00e8rement par l\u2019AI, sans consultant. En quelques minutes, vous obtenez un rapport structur\u00e9 (ex: scan maturit\u00e9 AI, analyse de processus rapide, audit readiness cloud). \u00c0 ne pas confondre avec un service diagnostic complet qui implique un consultant senior et se paie en cr\u00e9dits.",
+          en: "A Quick Scan AI is a self-serve analysis done entirely by AI, without a consultant. In a few minutes, you get a structured report (e.g., AI maturity scan, rapid process analysis, cloud readiness audit). Not to be confused with a full diagnostic service which involves a senior consultant and is paid with credits.",
         },
       },
       {
