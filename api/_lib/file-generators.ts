@@ -1,11 +1,9 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import ExcelJS from "exceljs";
-import {
-  Document, Packer, Paragraph, TextRun, HeadingLevel,
-  Table, TableRow, TableCell, WidthType, AlignmentType,
-  BorderStyle, ShadingType, Footer, PageNumber, ImageRun, Header,
-} from "docx";
-import PptxGenJS from "pptxgenjs";
+
+// ── IMPORTANT: No heavy library imports at module level! ──
+// ExcelJS (~20MB), docx (~3.6MB), and pptxgenjs (~3.5MB) are loaded
+// dynamically inside each generate* function to avoid exceeding
+// Vercel's serverless cold-start memory/time limits.
 
 // ── Default branding constants (Talsom Forge defaults) ──
 const DEFAULT_PRIMARY = "003533";
@@ -224,7 +222,7 @@ export const FILE_GENERATION_TOOLS: Anthropic.Messages.Tool[] = [
 ];
 
 // ══════════════════════════════════════════════════════════
-// Excel generation
+// Excel generation (lazy-loads exceljs)
 // ══════════════════════════════════════════════════════════
 
 interface SheetData {
@@ -239,6 +237,7 @@ export interface GenerateExcelInput {
 }
 
 export async function generateExcel(input: GenerateExcelInput, brand?: BrandContext): Promise<Buffer> {
+  const ExcelJS = (await import("exceljs")).default;
   const colors = bc(brand);
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Talsom Forge";
@@ -300,7 +299,7 @@ export async function generateExcel(input: GenerateExcelInput, brand?: BrandCont
 }
 
 // ══════════════════════════════════════════════════════════
-// Word generation
+// Word generation (lazy-loads docx)
 // ══════════════════════════════════════════════════════════
 
 interface ContentBlock {
@@ -322,64 +321,73 @@ export interface GenerateWordInput {
   sections: SectionData[];
 }
 
-function headingLevelFromNumber(n?: number): (typeof HeadingLevel)[keyof typeof HeadingLevel] {
-  if (n === 2) return HeadingLevel.HEADING_2;
-  if (n === 3) return HeadingLevel.HEADING_3;
-  return HeadingLevel.HEADING_1;
-}
-
-function buildWordTable(columns: string[], rows: (string | number | boolean | null)[][], colors: ReturnType<typeof bc>): Table {
-  const borderStyle = {
-    style: BorderStyle.SINGLE,
-    size: 1,
-    color: "CCCCCC",
-  };
-  const borders = { top: borderStyle, bottom: borderStyle, left: borderStyle, right: borderStyle };
-
-  // Header row
-  const headerCells = columns.map(
-    (col) =>
-      new TableCell({
-        children: [
-          new Paragraph({
-            children: [new TextRun({ text: col, bold: true, color: "FFFFFF", size: 20, font: "Calibri" })],
-            alignment: AlignmentType.CENTER,
-          }),
-        ],
-        shading: { type: ShadingType.SOLID, color: colors.primary },
-        borders,
-        width: { size: Math.floor(9000 / columns.length), type: WidthType.DXA },
-      })
-  );
-
-  // Data rows
-  const dataRows = rows.map(
-    (row, ri) =>
-      new TableRow({
-        children: row.map(
-          (cell) =>
-            new TableCell({
-              children: [
-                new Paragraph({
-                  children: [new TextRun({ text: String(cell ?? ""), size: 20, font: "Calibri" })],
-                }),
-              ],
-              shading: ri % 2 === 1 ? { type: ShadingType.SOLID, color: colors.light } : undefined,
-              borders,
-            })
-        ),
-      })
-  );
-
-  return new Table({
-    rows: [new TableRow({ children: headerCells }), ...dataRows],
-    width: { size: 9000, type: WidthType.DXA },
-  });
-}
-
 export async function generateWord(input: GenerateWordInput, brand?: BrandContext): Promise<Buffer> {
+  const {
+    Document, Packer, Paragraph, TextRun, HeadingLevel,
+    Table, TableRow, TableCell, WidthType, AlignmentType,
+    BorderStyle, ShadingType, Footer, PageNumber, ImageRun, Header,
+  } = await import("docx");
+
   const colors = bc(brand);
-  const children: (Paragraph | Table)[] = [];
+
+  // ── Helper: heading level ──
+  function headingLevelFromNumber(n?: number): (typeof HeadingLevel)[keyof typeof HeadingLevel] {
+    if (n === 2) return HeadingLevel.HEADING_2;
+    if (n === 3) return HeadingLevel.HEADING_3;
+    return HeadingLevel.HEADING_1;
+  }
+
+  // ── Helper: build Word table ──
+  function buildWordTable(columns: string[], rows: (string | number | boolean | null)[][]): Table {
+    const borderStyle = {
+      style: BorderStyle.SINGLE,
+      size: 1,
+      color: "CCCCCC",
+    };
+    const borders = { top: borderStyle, bottom: borderStyle, left: borderStyle, right: borderStyle };
+
+    // Header row
+    const headerCells = columns.map(
+      (col) =>
+        new TableCell({
+          children: [
+            new Paragraph({
+              children: [new TextRun({ text: col, bold: true, color: "FFFFFF", size: 20, font: "Calibri" })],
+              alignment: AlignmentType.CENTER,
+            }),
+          ],
+          shading: { type: ShadingType.SOLID, color: colors.primary },
+          borders,
+          width: { size: Math.floor(9000 / columns.length), type: WidthType.DXA },
+        })
+    );
+
+    // Data rows
+    const dataRows = rows.map(
+      (row, ri) =>
+        new TableRow({
+          children: row.map(
+            (cell) =>
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [new TextRun({ text: String(cell ?? ""), size: 20, font: "Calibri" })],
+                  }),
+                ],
+                shading: ri % 2 === 1 ? { type: ShadingType.SOLID, color: colors.light } : undefined,
+                borders,
+              })
+          ),
+        })
+    );
+
+    return new Table({
+      rows: [new TableRow({ children: headerCells }), ...dataRows],
+      width: { size: 9000, type: WidthType.DXA },
+    });
+  }
+
+  const children: (InstanceType<typeof Paragraph> | InstanceType<typeof Table>)[] = [];
   const companyLabel = brand?.companyName ?? "";
 
   // Logo (if available)
@@ -504,7 +512,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
 
         case "table":
           if (block.columns && block.rows) {
-            children.push(buildWordTable(block.columns, block.rows, colors));
+            children.push(buildWordTable(block.columns, block.rows));
             children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
           }
           break;
@@ -517,7 +525,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
     : "Talsom Forge — Confidentiel / Confidential  •  Page ";
 
   // Build header (with logo on every page if available)
-  const headerChildren: Paragraph[] = [];
+  const headerChildren: InstanceType<typeof Paragraph>[] = [];
   if (brand?.logoBuffer) {
     headerChildren.push(
       new Paragraph({
@@ -566,7 +574,7 @@ export async function generateWord(input: GenerateWordInput, brand?: BrandContex
 }
 
 // ══════════════════════════════════════════════════════════
-// PowerPoint generation
+// PowerPoint generation (lazy-loads pptxgenjs)
 // ══════════════════════════════════════════════════════════
 
 interface SlideTableData {
@@ -591,6 +599,7 @@ export interface GeneratePptxInput {
 }
 
 export async function generatePptx(input: GeneratePptxInput, brand?: BrandContext): Promise<Buffer> {
+  const PptxGenJS = (await import("pptxgenjs")).default;
   const colors = bc(brand);
   const pres = new PptxGenJS();
   pres.author = "Talsom Forge";
