@@ -63,8 +63,14 @@ export function ClientProvider({ session, children }: { session: Session; childr
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to load profile");
+        let msg = "Failed to load profile";
+        try {
+          const data = await res.json();
+          msg = data.error || msg;
+        } catch {
+          // Server returned non-JSON (e.g. Vercel generic error page)
+        }
+        throw new Error(msg);
       }
 
       const data = await res.json();
