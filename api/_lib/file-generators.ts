@@ -15,6 +15,16 @@ import { createRequire } from "node:module";
 // Vercel's runtime has "type": "module" so we use import.meta.url (not __filename).
 const _require = createRequire(import.meta.url);
 
+// Module-level cache — heavy libs are loaded once per cold start, then reused.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _exceljs: any, _docx: any, _pptxgenjs: any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadExcelJS(): any   { return (_exceljs   ??= _require("exceljs")); }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadDocx(): any      { return (_docx      ??= _require("docx")); }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadPptxGenJS(): any { return (_pptxgenjs ??= _require("pptxgenjs")); }
+
 // ── Default branding constants (Talsom Forge defaults) ──
 const DEFAULT_PRIMARY = "003533";
 const DEFAULT_SECONDARY = "FDF100";
@@ -247,8 +257,7 @@ export interface GenerateExcelInput {
 }
 
 export async function generateExcel(input: GenerateExcelInput, brand?: BrandContext): Promise<Buffer> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ExcelJS = _require("exceljs") as any;
+  const ExcelJS = loadExcelJS();
   const colors = bc(brand);
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Talsom Forge";
@@ -333,8 +342,7 @@ export interface GenerateWordInput {
 }
 
 export async function generateWord(input: GenerateWordInput, brand?: BrandContext): Promise<Buffer> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const docxModule = _require("docx") as any;
+  const docxModule = loadDocx();
   const {
     Document, Packer, Paragraph, TextRun, HeadingLevel,
     Table, TableRow, TableCell, WidthType, AlignmentType,
@@ -612,8 +620,7 @@ export interface GeneratePptxInput {
 }
 
 export async function generatePptx(input: GeneratePptxInput, brand?: BrandContext): Promise<Buffer> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const PptxGenJS = _require("pptxgenjs") as any;
+  const PptxGenJS = loadPptxGenJS();
   const colors = bc(brand);
   const pres = new PptxGenJS();
   pres.author = "Talsom Forge";

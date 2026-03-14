@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Cpu, ArrowDownToLine, ArrowUpFromLine, Loader2 } from "lucide-react";
+import { Activity, Cpu, ArrowDownToLine, ArrowUpFromLine, Loader2, Coins } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useClient } from "../contexts/ClientContext";
@@ -120,10 +120,11 @@ export function UsagePage() {
       ) : (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             {[
               { label: bi(clientI18n.apiCalls), value: data?.apiCalls ?? 0, max: quotas?.max_api_calls_per_month ?? 0, icon: Activity, showBar: true },
               { label: bi(clientI18n.tokensUsed), value: data?.tokensUsed ?? 0, max: quotas?.max_tokens_per_month ?? 0, icon: Cpu, showBar: true },
+              { label: bi({ fr: "Crédits consulting", en: "Consulting Credits" }), value: quotas?.consulting_credits_per_month ? (quotas.consulting_credits_per_month === -1 ? 0 : 0) : 0, max: quotas?.consulting_credits_per_month ?? 0, icon: Coins, showBar: true },
               { label: bi({ fr: "Tokens entrée", en: "Input Tokens" }), value: data?.inputTokens ?? 0, max: 0, icon: ArrowDownToLine, showBar: false },
               { label: bi({ fr: "Tokens sortie", en: "Output Tokens" }), value: data?.outputTokens ?? 0, max: 0, icon: ArrowUpFromLine, showBar: false },
             ].map((m) => {

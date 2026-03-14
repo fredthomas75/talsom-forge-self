@@ -103,6 +103,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (tenantErr || !tenant) {
         console.error("[signup] tenant creation failed:", tenantErr);
+        // Rollback: delete the orphaned auth user to avoid zombie accounts
+        await supabase.auth.admin.deleteUser(user.id).catch((e: unknown) =>
+          console.error("[signup] rollback deleteUser failed:", e)
+        );
         return res.status(500).json({ error: "Failed to create tenant" });
       }
 

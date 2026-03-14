@@ -25,6 +25,7 @@ export interface ClientQuotas {
   max_team_members: number;
   max_api_keys: number;
   max_conversations: number;
+  consulting_credits_per_month: number;
   features: Record<string, boolean>;
 }
 

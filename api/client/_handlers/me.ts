@@ -33,6 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         plan: ctx.plan,
         role: ctx.role,
         quotas: ctx.quotas,
+        credits: ctx.credits,
       });
     }
 
@@ -60,10 +61,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Create tenant + membership automatically
     const companyName = user.user_metadata?.company || user.user_metadata?.name || user.email?.split("@")[0] || "My Company";
 
+    // Generate a URL-friendly slug (required: UNIQUE NOT NULL)
+    const baseSlug = companyName
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40) || "tenant";
+    const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
     const { data: tenant, error: tenantErr } = await supabase
       .from("tenants")
       .insert({
         name: companyName,
+        slug,
         plan: "free",
         billing_email: user.email,
         created_by: user.id,

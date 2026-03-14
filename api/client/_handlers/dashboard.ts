@@ -54,11 +54,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiCalls = usageLogs.length;
   const tokensUsed = usageLogs.reduce((sum, r) => sum + (r.tokens_used ?? 0), 0);
 
+  // Credits info from auth context
+  const creditsInfo = ctx.credits
+    ? { granted: ctx.credits.granted, used: ctx.credits.used, remaining: ctx.credits.remaining }
+    : { granted: ctx.quotas?.consulting_credits_per_month ?? 0, used: 0, remaining: ctx.quotas?.consulting_credits_per_month ?? 0 };
+
   return res.status(200).json({
     apiCalls,
     tokensUsed,
     conversations: convosResult.count ?? 0,
     teamMembers: teamResult.count ?? 1,
+    consultingCredits: creditsInfo,
     recentActivity: (activityResult.data ?? []).map((a) => ({
       action: a.action,
       resource_type: a.resource_type,

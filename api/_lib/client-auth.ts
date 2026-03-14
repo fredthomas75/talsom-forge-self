@@ -17,7 +17,16 @@ export interface ClientContext {
     max_team_members: number;
     max_api_keys: number;
     max_conversations: number;
+    consulting_credits_per_month: number;
     features: Record<string, boolean>;
+  } | null;
+  /** Current billing period credits (null if credits table doesn't exist yet) */
+  credits: {
+    granted: number;
+    used: number;
+    remaining: number;
+    periodStart: string;
+    periodEnd: string;
   } | null;
 }
 
@@ -57,12 +66,22 @@ export async function authenticateClient(
 
   if (tenantError || !tenant) return null;
 
-  // 4. Get plan quotas
-  const { data: quotas } = await supabase
-    .from("plan_quotas")
-    .select("*")
-    .eq("plan", tenant.plan)
-    .single();
+  // 4. Get plan quotas + current credits in parallel
+  const now = new Date();
+  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+
+  const [quotasResult, creditsResult] = await Promise.all([
+    supabase.from("plan_quotas").select("*").eq("plan", tenant.plan).single(),
+    supabase
+      .from("consulting_credits")
+      .select("credits_granted, credits_used, period_start, period_end")
+      .eq("tenant_id", membership.tenant_id)
+      .eq("period_start", periodStart)
+      .single(),
+  ]);
+
+  const quotas = quotasResult.data;
+  const creditsRow = creditsResult.data;
 
   return {
     userId: user.id,
@@ -78,7 +97,17 @@ export async function authenticateClient(
           max_team_members: quotas.max_team_members,
           max_api_keys: quotas.max_api_keys,
           max_conversations: quotas.max_conversations,
+          consulting_credits_per_month: quotas.consulting_credits_per_month ?? 0,
           features: quotas.features ?? {},
+        }
+      : null,
+    credits: creditsRow
+      ? {
+          granted: creditsRow.credits_granted,
+          used: creditsRow.credits_used,
+          remaining: creditsRow.credits_granted - creditsRow.credits_used,
+          periodStart: creditsRow.period_start,
+          periodEnd: creditsRow.period_end,
         }
       : null,
   };

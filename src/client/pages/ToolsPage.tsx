@@ -8,7 +8,7 @@ import {
   ArrowRight, Search, Activity, Database,
   ShieldCheck, Users, GitBranch, ClipboardList, Map, Briefcase,
   Table2, Lock, Building2, GraduationCap, ArrowLeftRight, BookOpen,
-  Rocket, BarChart3, Shield, Layers, X,
+  Rocket, BarChart3, Shield, Layers, X, Store, ExternalLink,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -58,6 +58,59 @@ const COMMANDS: PluginCommand[] = [
 
   // ── Phase 4 — Déploiement ──
   { command: "copilot-deployment",        phase: "deployment", icon: Rocket,        label: { fr: "Déploiement Copilot 365",            en: "Copilot 365 Deployment" },            output: { fr: "Plan 4 phases (readiness, pilote, rollout, optimisation)", en: "4-phase plan (readiness, pilot, rollout, optimization)" } },
+];
+
+// ── Marketplace tools (standalone products) ──
+interface MarketplaceTool {
+  id: string;
+  name: string;
+  tagline: { fr: string; en: string };
+  price: { fr: string; en: string };
+  discount: string;
+  icon: typeof Layers;
+  features: { fr: string; en: string }[];
+}
+
+const MARKETPLACE_TOOLS: MarketplaceTool[] = [
+  {
+    id: "backlog",
+    name: "AI Backlog Manager",
+    tagline: { fr: "Gestion de portefeuille de cas d'usage", en: "Use case portfolio management" },
+    price: { fr: "199$/mois", en: "$199/mo" },
+    discount: "-25%",
+    icon: ClipboardList,
+    features: [
+      { fr: "Scoring multicritère", en: "Multi-criteria scoring" },
+      { fr: "Vues portefeuille", en: "Portfolio views" },
+      { fr: "Suivi ROI", en: "ROI tracking" },
+    ],
+  },
+  {
+    id: "pia",
+    name: "Privacy Impact Assessor",
+    tagline: { fr: "EFVP automatisée Loi 25", en: "Automated Bill 25 PIA" },
+    price: { fr: "À partir de 349$/mois", en: "From $349/mo" },
+    discount: "-15%",
+    icon: Lock,
+    features: [
+      { fr: "Conformité Loi 25", en: "Bill 25 compliance" },
+      { fr: "Rapport automatisé", en: "Automated reports" },
+      { fr: "Registre des risques", en: "Risk registry" },
+    ],
+  },
+  {
+    id: "governance-tool",
+    name: "AI Governance Suite",
+    tagline: { fr: "Gouvernance AI clé en main", en: "Turnkey AI governance" },
+    price: { fr: "499$/mois", en: "$499/mo" },
+    discount: "-20%",
+    icon: ShieldCheck,
+    features: [
+      { fr: "Politiques AI", en: "AI policies" },
+      { fr: "RACI automatisé", en: "Automated RACI" },
+      { fr: "Audit trail", en: "Audit trail" },
+    ],
+  },
 ];
 
 function groupByPhase(cmds: PluginCommand[]) {
@@ -223,6 +276,72 @@ export function ToolsPage() {
           ))}
         </div>
       )}
+
+      {/* ── Marketplace Section ── */}
+      <div className="mt-12">
+        <div className="flex items-center gap-2 mb-4">
+          <Store className="w-5 h-5" style={{ color: C.yellow }} />
+          <h2 className={`text-lg font-bold tracking-tight ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
+            {bi({ fr: "Marketplace", en: "Marketplace" })}
+          </h2>
+          <div className={`flex-1 h-px ${dark ? "bg-white/5" : "bg-gray-100"}`} />
+        </div>
+        <p className={`text-xs mb-5 ${dark ? "text-white/30" : "text-gray-400"}`}>
+          {bi({
+            fr: "Outils spécialisés disponibles à la carte — rabais exclusifs pour les abonnés Forge",
+            en: "Specialized tools available à la carte — exclusive discounts for Forge subscribers",
+          })}
+        </p>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {MARKETPLACE_TOOLS.map((tool) => (
+            <Card
+              key={tool.id}
+              className={`rounded-xl border group transition-all hover:shadow-md ${
+                dark ? "bg-gray-900 border-white/5 hover:border-white/10" : "border-gray-100 hover:border-gray-200"
+              }`}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${dark ? "bg-white/5" : "bg-gray-50"}`}>
+                    <tool.icon className="w-4.5 h-4.5" style={{ color: C.yellow }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
+                      {tool.name}
+                    </CardTitle>
+                    <p className={`text-[10px] ${dark ? "text-white/30" : "text-gray-400"}`}>
+                      {bi(tool.tagline)}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`}>{bi(tool.price)}</span>
+                  <Badge className="text-[9px] px-1.5 py-0 h-4 rounded-full" style={{ background: `${C.green}20`, color: C.green, border: "none" }}>
+                    {bi({ fr: `Forge ${tool.discount}`, en: `Forge ${tool.discount}` })}
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  {tool.features.map((f, i) => (
+                    <p key={i} className={`text-[11px] ${dark ? "text-white/40" : "text-gray-500"}`}>
+                      ✓ {bi(f)}
+                    </p>
+                  ))}
+                </div>
+                <Button
+                  variant="outline" size="sm"
+                  className={`w-full mt-3 text-xs rounded-lg gap-1.5 ${dark ? "border-white/10 text-white/60 hover:bg-white/5" : ""}`}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  {bi({ fr: "En savoir plus", en: "Learn more" })}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
