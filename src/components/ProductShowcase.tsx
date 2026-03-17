@@ -16,7 +16,7 @@ interface ProductCard {
   accentColor: string;
   stats: { value: string; label: { fr: string; en: string } }[];
   features: { fr: string; en: string }[];
-  marketSize: string;
+
   cta: { fr: string; en: string };
 }
 
@@ -24,51 +24,49 @@ const PRODUCTS: ProductCard[] = [
   {
     id: "transform",
     name: "Forge | Transform",
-    tagline: { fr: "Gestion du changement mid-market", en: "Mid-market change management" },
+    tagline: { fr: "Réussissez chaque transformation", en: "Make every transformation succeed" },
     desc: {
-      fr: "Le marché de $3.5B de la gestion du changement a un trou béant au milieu. Aucune plateforme ne combine méthodologie OCM, guidance d'adoption numérique, analytique AI et tarification transparente pour le mid-market.",
-      en: "The $3.5B change management market has a gaping mid-market hole. No platform combines OCM methodology, digital adoption guidance, AI analytics, and transparent mid-market pricing.",
+      fr: "Vos projets de changement méritent mieux qu'un tableur et un plan de communication générique. Transform pilote chaque étape — de l'évaluation de préparation à l'adoption terrain — avec l'IA comme copilote et des tableaux de bord en temps réel.",
+      en: "Your change projects deserve more than a spreadsheet and a generic comms plan. Transform guides every step — from readiness assessment to field adoption — with AI as copilot and real-time dashboards.",
     },
     icon: ArrowLeftRight,
     gradient: "linear-gradient(135deg, #06B6D4, #0891B2)",
     accentColor: "#22D3EE",
     stats: [
-      { value: "$3.5B", label: { fr: "Marché mondial", en: "Global market" } },
-      { value: "17%", label: { fr: "CAGR projeté", en: "Projected CAGR" } },
-      { value: "48%", label: { fr: "Praticiens utilisant l'IA", en: "Practitioners using AI" } },
+      { value: "70%", label: { fr: "Projets de changement échouent", en: "Change projects fail" } },
+      { value: "3x", label: { fr: "Plus rapide qu'un plan manuel", en: "Faster than manual planning" } },
+      { value: "100%", label: { fr: "Bilingue FR/EN natif", en: "Natively bilingual FR/EN" } },
     ],
     features: [
-      { fr: "Évaluation de préparation au changement", en: "Change readiness assessment engine" },
-      { fr: "Prédiction de résistance par IA", en: "AI-driven resistance prediction" },
-      { fr: "Communications bilingues automatisées", en: "Automated bilingual communications" },
-      { fr: "Tableaux de bord d'adoption → KPIs business", en: "Adoption dashboards → Business KPIs" },
+      { fr: "Score de préparation en temps réel par équipe", en: "Real-time readiness score per team" },
+      { fr: "Prédiction de résistance alimentée par l'IA", en: "AI-powered resistance prediction" },
+      { fr: "Communications bilingues générées automatiquement", en: "Auto-generated bilingual communications" },
+      { fr: "Tableaux de bord d'adoption liés aux KPIs business", en: "Adoption dashboards linked to business KPIs" },
     ],
-    marketSize: "$110M",
     cta: { fr: "Découvrir Transform", en: "Discover Transform" },
   },
   {
     id: "discover",
     name: "Forge | Discover",
-    tagline: { fr: "Découverte de cas d'usage IA", en: "AI use case discovery" },
+    tagline: { fr: "Trouvez vos meilleurs cas d'usage IA", en: "Find your best AI use cases" },
     desc: {
-      fr: "88% des organisations utilisent l'IA mais seulement 23% ont une stratégie formelle. Aucun produit SaaS self-service dominant n'existe pour la découverte systématique de cas d'usage IA — un marché \"Catégorie 0\".",
-      en: "88% of organizations use AI but only 23% have a formal strategy. No dominant self-service SaaS product exists for systematic AI use case discovery — a \"Category 0\" market.",
+      fr: "Arrêtez de deviner où l'IA peut vous aider. Discover analyse votre organisation, identifie les cas d'usage à fort impact et vous donne un plan d'action concret — en commençant par un quiz gratuit de 10 minutes.",
+      en: "Stop guessing where AI can help. Discover analyzes your organization, identifies high-impact use cases, and gives you a concrete action plan — starting with a free 10-minute quiz.",
     },
     icon: Lightbulb,
     gradient: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
     accentColor: "#A78BFA",
     stats: [
-      { value: "$307B", label: { fr: "Dépenses IA 2025", en: "AI spending 2025" } },
-      { value: "88%", label: { fr: "Organisations utilisant l'IA", en: "Organizations using AI" } },
-      { value: "40%", label: { fr: "Projets IA annulés d'ici 2027", en: "AI projects cancelled by 2027" } },
+      { value: "10 min", label: { fr: "Quiz gratuit pour commencer", en: "Free quiz to get started" } },
+      { value: "50+", label: { fr: "Cas d'usage par industrie", en: "Use cases per industry" } },
+      { value: "5x", label: { fr: "ROI moyen sur 12 mois", en: "Average ROI over 12 months" } },
     ],
     features: [
-      { fr: "Évaluation de maturité IA gratuite", en: "Free AI maturity assessment" },
-      { fr: "Bibliothèque de cas d'usage par industrie", en: "Industry-specific use case library" },
-      { fr: "Scoring de faisabilité et ROI", en: "Feasibility & ROI scoring" },
-      { fr: "Gouvernance IA intégrée", en: "Integrated AI governance" },
+      { fr: "Quiz de maturité IA gratuit et instantané", en: "Free and instant AI maturity quiz" },
+      { fr: "Cas d'usage matchés à votre industrie et contexte", en: "Use cases matched to your industry and context" },
+      { fr: "Score de faisabilité et estimation de ROI automatiques", en: "Automatic feasibility score and ROI estimation" },
+      { fr: "Cadre de gouvernance IA intégré dès le départ", en: "Built-in AI governance framework from day one" },
     ],
-    marketSize: "$500M-$1B",
     cta: { fr: "Découvrir Discover", en: "Explore Discover" },
   },
 ];
@@ -92,13 +90,13 @@ export function ProductShowcase() {
             {bi({ fr: "Produits phares", en: "Flagship products" })}
           </Badge>
           <h2 className={`text-4xl font-bold tracking-tight mb-4 ${dark ? "text-white" : ""}`} style={{ ...HDR_FONT, color: dark ? undefined : C.green }}>
-            {bi({ fr: "Deux produits pour deux marchés", en: "Two products for two markets" })}{" "}
-            <span style={{ color: C.yellow }}>{bi({ fr: "sans leader dominant", en: "with no dominant player" })}</span>
+            {bi({ fr: "Transformez plus vite.", en: "Transform faster." })}{" "}
+            <span style={{ color: C.yellow }}>{bi({ fr: "Innovez plus intelligemment.", en: "Innovate smarter." })}</span>
           </h2>
           <p className={`text-lg leading-relaxed ${dark ? "text-white/45" : "text-gray-500"}`}>
             {bi({
-              fr: "Talsom occupe une intersection rare — 15 ans d'IP consulting, opérations bilingues, crédibilité B Corp et plateforme IA pré-lancement — pour bâtir deux produits SaaS dans des marchés où aucun joueur ne domine.",
-              en: "Talsom sits at a rare intersection — 15 years of consulting IP, bilingual operations, B Corp credibility, and a pre-launch AI platform — to build two SaaS products in markets where no player dominates.",
+              fr: "Deux produits conçus par 15 ans de terrain en transformation numérique. Bilingues par défaut, propulsés par l'IA, et pensés pour les entreprises qui veulent passer à l'action.",
+              en: "Two products built from 15 years of hands-on digital transformation. Bilingual by default, AI-powered, and designed for organizations ready to take action.",
             })}
           </p>
         </div>
@@ -151,14 +149,16 @@ export function ProductShowcase() {
                     ))}
                   </div>
 
-                  {/* Market opportunity callout */}
+                  {/* Trust callout */}
                   <div className={`rounded-xl p-3 mb-5 flex items-center gap-3 ${dark ? "bg-white/5" : "bg-gray-50"}`}>
                     <TrendingUp className="w-4 h-4 shrink-0" style={{ color: product.accentColor }} />
                     <div>
                       <span className={`text-xs font-semibold ${dark ? "text-white/70" : "text-gray-700"}`}>
-                        {bi({ fr: "Marché adressable Canada", en: "Canada addressable market" })}:
+                        {bi({ fr: "Conçu au Québec", en: "Built in Quebec" })}
                       </span>
-                      <span className="text-xs font-bold ml-1.5" style={{ color: product.accentColor }}>{product.marketSize}</span>
+                      <span className={`text-xs ml-1.5 ${dark ? "text-white/50" : "text-gray-500"}`}>
+                        {bi({ fr: "· 100% bilingue · Conforme Loi 25", en: "· 100% bilingual · Bill 25 compliant" })}
+                      </span>
                     </div>
                     <Globe className={`w-3.5 h-3.5 ml-auto ${dark ? "text-white/20" : "text-gray-300"}`} />
                   </div>
@@ -174,31 +174,29 @@ export function ProductShowcase() {
           })}
         </div>
 
-        {/* Quebec advantage callout */}
+        {/* Why clients trust us */}
         <div ref={ref} className="reveal mt-12 rounded-2xl p-8 relative overflow-hidden" style={{ background: dark ? "rgba(0,53,51,0.3)" : C.greenLight }}>
           <div className="max-w-3xl mx-auto text-center">
             <h3 className="text-xl font-bold mb-3" style={{ ...HDR_FONT, color: dark ? "white" : C.green }}>
-              {bi({ fr: "Le Québec comme tête de pont défendable", en: "Quebec as a defensible beachhead" })}
+              {bi({ fr: "Pourquoi nos clients nous choisissent", en: "Why our clients choose us" })}
             </h3>
             <div className="grid sm:grid-cols-3 gap-6 mt-6">
               <div>
-                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>
-                  {bi({ fr: "Loi 96", en: "Bill 96" })}
-                </div>
+                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>15+</div>
                 <p className={`text-xs mt-1 ${dark ? "text-white/50" : "text-gray-600"}`}>
-                  {bi({ fr: "Fossé de conformité : interfaces FR obligatoires pour les entreprises 25+ employés", en: "Compliance moat: mandatory FR interfaces for 25+ employee companies" })}
+                  {bi({ fr: "Années d'expertise terrain en transformation numérique", en: "Years of hands-on digital transformation expertise" })}
                 </p>
               </div>
               <div>
-                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>$900M</div>
+                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>FR/EN</div>
                 <p className={`text-xs mt-1 ${dark ? "text-white/50" : "text-gray-600"}`}>
-                  {bi({ fr: "Budget QC 2025 pour l'automatisation, l'IA et la transformation numérique", en: "QC 2025 budget for automation, AI, and digital transformation" })}
+                  {bi({ fr: "Plateforme 100% bilingue, conforme à la Loi 96 et Loi 25", en: "100% bilingual platform, compliant with Bill 96 and Bill 25" })}
                 </p>
               </div>
               <div>
-                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>14K+</div>
+                <div className="text-2xl font-bold" style={{ ...HDR_FONT, color: C.yellow }}>B Corp</div>
                 <p className={`text-xs mt-1 ${dark ? "text-white/50" : "text-gray-600"}`}>
-                  {bi({ fr: "Entreprises mid-market QC+ON (100-2000 employés)", en: "Mid-market enterprises QC+ON (100-2000 employees)" })}
+                  {bi({ fr: "Certifié B Corp — technologie responsable et impact positif", en: "B Corp certified — responsible technology and positive impact" })}
                 </p>
               </div>
             </div>
