@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Lightbulb, Sparkles, Target, LineChart,
-  Compass, FileSearch, CheckCircle2, TrendingUp, Globe,
+  Compass, FileSearch, CheckCircle2, TrendingUp, Globe, Package,
 } from "lucide-react";
 import { HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -15,6 +15,7 @@ const DISCOVER_TOOLS = [
   { command: "ai-roi-estimation", icon: LineChart, label: { fr: "Estimation ROI", en: "ROI Estimation" }, desc: { fr: "Modélisation ROI incluant coûts de données, inférence et HITL", en: "ROI modeling including data prep costs, inference, and HITL" } },
   { command: "ai-portfolio-dashboard", icon: Compass, label: { fr: "Portefeuille IA", en: "AI Portfolio" }, desc: { fr: "Suivi des initiatives de la découverte au déploiement", en: "Initiative tracking from discovery to deployment" } },
   { command: "ai-governance-assessment", icon: FileSearch, label: { fr: "Évaluation gouvernance IA", en: "AI Governance Assessment" }, desc: { fr: "Risques, conformité Loi 25 et considérations éthiques par cas d'usage", en: "Risks, Bill 25 compliance, and ethical considerations per use case" } },
+  { command: "ai-usecase-package", icon: Package, label: { fr: "Package cas d'usage IA", en: "AI Use Case Package" }, desc: { fr: "Note technique + fiche professionnelle à partir d'un cas d'usage brut", en: "Technical note + professional brief from raw use case input" } },
 ];
 
 const STATS = [

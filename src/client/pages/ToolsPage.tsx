@@ -50,6 +50,7 @@ const COMMANDS: PluginCommand[] = [
   { command: "ai-roi-estimation",             phase: "discover",  icon: LineChart,      label: { fr: "Estimation ROI",                     en: "ROI Estimation" },                    output: { fr: "Modélisation ROI incluant coûts de données, inférence, précision et HITL", en: "ROI modeling including data prep costs, inference, accuracy, and HITL" } },
   { command: "ai-portfolio-dashboard",        phase: "discover",  icon: Compass,        label: { fr: "Portefeuille IA",                    en: "AI Portfolio" },                      output: { fr: "Suivi des initiatives de la découverte au déploiement avec performance portefeuille", en: "Initiative tracking from discovery to deployment with portfolio performance" } },
   { command: "ai-governance-assessment",      phase: "discover",  icon: FileSearch,     label: { fr: "Évaluation gouvernance IA",          en: "AI Governance Assessment" },          output: { fr: "Risques, conformité Loi 25 et considérations éthiques par cas d'usage", en: "Risks, Bill 25 compliance, and ethical considerations per use case" } },
+  { command: "ai-usecase-package",           phase: "discover",  icon: Layers,         label: { fr: "Package cas d'usage IA",             en: "AI Use Case Package" },               output: { fr: "Note technique + fiche professionnelle à partir d'un cas d'usage brut", en: "Technical note + professional brief from raw use case input" } },
 
   // ── Phase 1 — Diagnostic ──
   { command: "ai-maturity-assessment",    phase: "diagnostic", icon: Activity,      label: { fr: "Maturité IA",                      en: "AI Maturity" },                       output: { fr: "Évaluation sur 6 dimensions avec scores et recommandations", en: "6-dimension assessment with scores and recommendations" } },
@@ -211,7 +212,7 @@ export function ToolsPage() {
         </h1>
         <p className={`text-sm mt-1 ${dark ? "text-white/40" : "text-gray-500"}`}>
           {bi({
-            fr: "30 outils spécialisés incluant Forge | Transform et Forge | Discover — chacun produit un livrable structuré",
+            fr: "31 outils spécialisés incluant Forge | Transform et Forge | Discover — chacun produit un livrable structuré",
             en: "30 specialized tools including Forge | Transform and Forge | Discover — each produces a structured deliverable",
           })}
         </p>
