@@ -18,5 +18,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     consultantId: ctx.consultantId,
     name: ctx.name,
     specialties: ctx.specialties,
+    role: ctx.role,
   });
 }

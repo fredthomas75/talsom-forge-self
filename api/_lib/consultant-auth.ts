@@ -11,6 +11,7 @@ export interface ConsultantContext {
   consultantId: string;
   name: string;
   specialties: string[];
+  role: "consultant" | "supervisor" | "admin";
 }
 
 export async function authenticateConsultant(
@@ -33,7 +34,7 @@ export async function authenticateConsultant(
   // 2. Find active consultant record
   const { data: consultant, error: consultantError } = await supabase
     .from("consultants")
-    .select("id, name, email, specialties")
+    .select("id, name, email, specialties, role")
     .eq("user_id", user.id)
     .eq("active", true)
     .single();
@@ -46,5 +47,6 @@ export async function authenticateConsultant(
     consultantId: consultant.id,
     name: consultant.name,
     specialties: consultant.specialties ?? [],
+    role: consultant.role ?? "consultant",
   };
 }
