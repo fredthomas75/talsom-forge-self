@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowRight, ArrowUpRight, CheckCircle2, BarChart3, FileText, Layers, Shield } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, BarChart3, FileText, Layers, Shield, ArrowLeftRight, Lightbulb } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useTheme } from "@/lib/contexts";
 import { useReveal } from "@/hooks/useReveal";
@@ -16,6 +16,8 @@ function ProductMockup({ productId, dark }: { productId: string; dark: boolean }
     "backlog": { icon: Layers, lines: ["AI Backlog Manager", "Epic: Digital Transform...", "Story Points: ████░░  68%", "Velocity: 42 pts/sprint", "Next: API Integration"] },
     "pia": { icon: Shield, lines: ["Privacy Impact Assessment", "Risk Level: Medium", "Data Classification: ███████", "Compliance: Loi 25 ✓  RGPD ✓", "Recommendations: 12 items"] },
     "governance-tool": { icon: FileText, lines: ["AI Governance Suite", "Policies: 8/8 deployed", "Model Registry: 24 models", "Risk Classification: ██████ Active", "Audit Trail: ✓ Complete"] },
+    "transform": { icon: ArrowLeftRight, lines: ["Forge | Transform", "Readiness Score: ████░░ 72%", "Stakeholders: 48 mapped", "Resistance Risk: ██░░ Medium", "Adoption: ████████ 89%"] },
+    "discover": { icon: Lightbulb, lines: ["Forge | Discover", "AI Maturity: ███░░░ Level 3", "Use Cases: 34 identified", "Top ROI: $2.4M (Predictive QA)", "Portfolio: ████░ 12 active"] },
   };
 
   const m = mockups[productId] || mockups["hub"];
@@ -140,40 +142,89 @@ export function MarketplaceSection() {
         <div ref={ref} className="reveal max-w-2xl mb-16">
           <Badge className="mb-4 bg-white/5 text-white/50 border-white/8 rounded-full px-3 text-xs">{bi(mktData.badge)}</Badge>
           <h2 className="text-4xl font-bold text-white tracking-tight mb-4" style={HDR_FONT}>
-            Talsom Forge <span style={{ color: C.yellow }}>Hub</span>
+            Forge <span style={{ color: C.yellow }}>Products</span>
           </h2>
           <p className="text-lg text-white/40 leading-relaxed">{bi(mktData.subtitle)}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 reveal-stagger">
-          {mktData.items.map((p) => (
-            <div key={p.id} className="reveal glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group hover:translate-y-[-2px]">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <Badge className={`${p.badgeCls} border rounded-full text-[10px] px-2.5 mb-3`}>{p.tier}</Badge>
-                  <h3 className="text-xl font-semibold text-white mb-1">{p.name}</h3>
-                  <p className="text-sm text-white/35">{bi(p.tagline)}</p>
+        {/* Featured products: Transform & Discover */}
+        {(() => {
+          const featured = mktData.items.filter((p) => p.id === "transform" || p.id === "discover");
+          const others = mktData.items.filter((p) => p.id !== "transform" && p.id !== "discover");
+          return (
+            <>
+              {featured.length > 0 && (
+                <div className="grid md:grid-cols-2 gap-5 mb-5 reveal-stagger">
+                  {featured.map((p) => (
+                    <div key={p.id} className="reveal glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group hover:translate-y-[-2px] relative overflow-hidden">
+                      <div className="absolute top-0 inset-x-0 h-1" style={{ background: p.id === "transform" ? "linear-gradient(90deg, #22D3EE, #06B6D4)" : "linear-gradient(90deg, #A78BFA, #8B5CF6)" }} />
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Badge className={`${p.badgeCls} border rounded-full text-[10px] px-2.5`}>{p.tier}</Badge>
+                            <Badge className="bg-white/10 text-white/70 border-white/15 rounded-full text-[10px] px-2.5">{bi({ fr: "Nouveau", en: "New" })}</Badge>
+                          </div>
+                          <h3 className="text-xl font-semibold text-white mb-1">{p.name}</h3>
+                          <p className="text-sm text-white/35">{bi(p.tagline)}</p>
+                        </div>
+                        <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
+                      </div>
+
+                      <p className="text-xs text-white/30 leading-relaxed mb-4 line-clamp-3">{bi(p.desc)}</p>
+
+                      <div className="mb-5">
+                        <ProductMockup productId={p.id} dark={true} />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 mb-5">
+                        {bi(p.features).split(",").map((f) => (
+                          <div key={f} className="flex items-center gap-2 text-xs text-white/45">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.yellow }} />
+                            {f}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-semibold text-white/60">{bi(p.price ?? { fr: "", en: "" })}</span>
+                        {p.forgeDiscount && <Badge className="text-[9px] px-1.5 py-0 h-4 rounded-full border-0" style={{ background: `${C.yellow}25`, color: C.yellow }}>Forge {p.forgeDiscount}</Badge>}
+                      </div>
+                      <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{bi({ fr: "En savoir plus", en: "Learn more" })}</Button>
+                    </div>
+                  ))}
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
-              </div>
+              )}
 
-              {/* Inline mini mockup */}
-              <div className="mb-5">
-                <ProductMockup productId={p.id} dark={true} />
-              </div>
+              <div className="grid md:grid-cols-2 gap-5 reveal-stagger">
+                {others.map((p) => (
+                  <div key={p.id} className="reveal glass-card rounded-2xl p-6 hover:bg-white/[0.06] transition-all duration-300 group hover:translate-y-[-2px]">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <Badge className={`${p.badgeCls} border rounded-full text-[10px] px-2.5 mb-3`}>{p.tier}</Badge>
+                        <h3 className="text-xl font-semibold text-white mb-1">{p.name}</h3>
+                        <p className="text-sm text-white/35">{bi(p.tagline)}</p>
+                      </div>
+                      <ArrowUpRight className="w-5 h-5 text-white/15 group-hover:text-white/50 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
+                    </div>
 
-              <div className="grid grid-cols-2 gap-2 mb-5">
-                {bi(p.features).split(",").map((f) => (
-                  <div key={f} className="flex items-center gap-2 text-xs text-white/45">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.yellow }} />
-                    {f}
+                    <div className="mb-5">
+                      <ProductMockup productId={p.id} dark={true} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 mb-5">
+                      {bi(p.features).split(",").map((f) => (
+                        <div key={f} className="flex items-center gap-2 text-xs text-white/45">
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: C.yellow }} />
+                          {f}
+                        </div>
+                      ))}
+                    </div>
+                    <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{bi({ fr: "En savoir plus", en: "Learn more" })}</Button>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" size="sm" className="rounded-full border-white/8 text-white/60 bg-transparent hover:bg-white/8 hover:text-white w-full transition-all" onClick={() => setSelectedId(p.id)}>{bi({ fr: "En savoir plus", en: "Learn more" })}</Button>
-            </div>
-          ))}
-        </div>
+            </>
+          );
+        })()}
       </div>
 
       <Sheet open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>

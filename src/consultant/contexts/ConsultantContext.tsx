@@ -4,12 +4,16 @@ import type { Session } from "@supabase/supabase-js";
 // ─── CONSULTANT PORTAL CONTEXT ────────────────────
 // Fetches consultant profile from /api/consultant/me on mount.
 
+export type ConsultantRole = "consultant" | "supervisor" | "admin";
+
 export interface ConsultantUser {
   userId: string;
   email: string;
   consultantId: string;
   name: string;
   specialties: string[];
+  role: ConsultantRole;
+  avatar?: string;
 }
 
 export interface ConsultantContextData {
@@ -54,6 +58,8 @@ export function ConsultantProvider({ session, children }: { session: Session; ch
         consultantId: data.consultantId,
         name: data.name,
         specialties: data.specialties ?? [],
+        role: data.role ?? "consultant",
+        avatar: data.avatar,
       });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Unknown error");

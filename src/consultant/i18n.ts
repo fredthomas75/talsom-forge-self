@@ -4,7 +4,10 @@
 export const consultantI18n = {
   // Sidebar
   dashboard: { fr: "Tableau de bord", en: "Dashboard" },
+  supervisorDashboard: { fr: "Vue superviseur", en: "Supervisor View" },
   queue: { fr: "File d'attente", en: "Review Queue" },
+  assignments: { fr: "Assignation", en: "Assignments" },
+  team: { fr: "Équipe", en: "Team" },
   portal: { fr: "Portail consultant", en: "Consultant Portal" },
 
   // Common

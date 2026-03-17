@@ -25,6 +25,7 @@ export const defaultContent: SiteContent = {
   // ─── Nav ───────────────────────────────────────────
   nav: {
     links: [
+      { label: { fr: "Produits", en: "Products" }, href: "#products" },
       { label: { fr: "Services", en: "Services" }, href: "#services" },
       { label: { fr: "Marketplace", en: "Marketplace" }, href: "#marketplace" },
       { label: { fr: "AI Chat", en: "AI Chat" }, href: "#ai-chat" },
@@ -771,6 +772,8 @@ export const defaultContent: SiteContent = {
         features: [
           { fr: "Chat AI Expert (10 msg/mois)", en: "AI Expert Chat (10 msg/month)" },
           { fr: "1 Quick Scan AI (partiel)", en: "1 Quick Scan AI (partial)" },
+          { fr: "Quiz maturité IA gratuit (Discover)", en: "Free AI maturity quiz (Discover)" },
+          { fr: "Quiz préparation au changement (Transform)", en: "Change readiness quiz (Transform)" },
           { fr: "Acc\u00e8s marketplace (lecture seule)", en: "Marketplace access (read-only)" },
           { fr: "Support communautaire", en: "Community support" },
         ],
@@ -786,6 +789,8 @@ export const defaultContent: SiteContent = {
           { fr: "3 Quick Scans AI complets/mois", en: "3 full Quick Scans AI/month" },
           { fr: "5 cr\u00e9dits consulting/mois", en: "5 consulting credits/month" },
           { fr: "Livrables AI (templates)", en: "AI Deliverables (templates)" },
+          { fr: "Discover : évaluation maturité + 50 cas d'usage/industrie", en: "Discover: maturity assessment + 50 use cases/industry" },
+          { fr: "Transform : 3 projets de changement actifs", en: "Transform: 3 active change projects" },
           { fr: "Outils Marketplace \u00e0 la carte", en: "Marketplace tools \u00e0 la carte" },
           { fr: "Support email (48h)", en: "Email support (48h)" },
         ],
@@ -801,6 +806,8 @@ export const defaultContent: SiteContent = {
           { fr: "Quick Scans AI illimit\u00e9s", en: "Unlimited Quick Scans AI" },
           { fr: "25 cr\u00e9dits consulting/mois", en: "25 consulting credits/month" },
           { fr: "Livrables AI complets (Excel, Word, PPTX)", en: "Full AI deliverables (Excel, Word, PPTX)" },
+          { fr: "Discover : ROI avancé, matching personnalisé, portefeuille IA", en: "Discover: advanced ROI, custom matching, AI portfolio" },
+          { fr: "Transform : projets illimités, prédiction de résistance, HRIS", en: "Transform: unlimited projects, resistance prediction, HRIS" },
           { fr: "Ateliers virtuels co-facilit\u00e9s AI", en: "AI co-facilitated virtual workshops" },
           { fr: "Outils Marketplace (rabais 15-25%)", en: "Marketplace tools (15-25% discount)" },
           { fr: "Support prioritaire (24h)", en: "Priority support (24h)" },
@@ -816,6 +823,7 @@ export const defaultContent: SiteContent = {
           { fr: "Tout Professional +", en: "Everything in Professional +" },
           { fr: "Consultants seniors d\u00e9di\u00e9s", en: "Dedicated senior consultants" },
           { fr: "Livrables personnalis\u00e9s \u00e0 votre marque", en: "Brand-customized deliverables" },
+          { fr: "Discover & Transform : multi-org, méthodologie custom, API", en: "Discover & Transform: multi-org, custom methodology, API" },
           { fr: "Ateliers et formations sur mesure", en: "Custom workshops and training" },
           { fr: "Outils Marketplace inclus", en: "Marketplace tools included" },
           { fr: "SLA garanti + support d\u00e9di\u00e9", en: "Guaranteed SLA + dedicated support" },
@@ -872,6 +880,13 @@ export const defaultContent: SiteContent = {
         a: {
           fr: "Cela d\u00e9pend du domaine. Un diagnostic de processus prend 3-4 semaines, une roadmap de modernisation 8-10 semaines, une Roadmap IA 10-12 semaines. Les outils de la marketplace (PIA, Backlog Manager) sont disponibles imm\u00e9diatement.",
           en: "It depends on the domain. A process diagnostic takes 3-4 weeks, a modernization roadmap 8-10 weeks, an AI Roadmap 10-12 weeks. Marketplace tools (PIA, Backlog Manager) are available immediately.",
+        },
+      },
+      {
+        q: { fr: "Que sont Forge | Transform et Forge | Discover?", en: "What are Forge | Transform and Forge | Discover?" },
+        a: {
+          fr: "Ce sont nos deux produits SaaS phares. Forge | Transform est une plateforme de gestion du changement mid-market combinant méthodologie OCM, prédiction de résistance par IA, communications bilingues automatisées et tableaux de bord d'adoption liés aux KPIs business. Forge | Discover est un outil de découverte de cas d'usage IA qui productise ce que les firmes de conseil vendent pour six chiffres : évaluation de maturité IA, bibliothèque de cas d'usage par industrie (50+ par verticale), scoring de faisabilité et ROI, et gouvernance IA intégrée. Les deux sont disponibles dans les plans Starter, Professional et Enterprise.",
+          en: "These are our two flagship SaaS products. Forge | Transform is a mid-market change management platform combining OCM methodology, AI-powered resistance prediction, automated bilingual communications, and adoption dashboards linked to business KPIs. Forge | Discover is an AI use case discovery tool that productizes what consulting firms sell for six figures: AI maturity assessment, industry-specific use case library (50+ per vertical), feasibility & ROI scoring, and integrated AI governance. Both are available in Starter, Professional, and Enterprise plans.",
         },
       },
       {

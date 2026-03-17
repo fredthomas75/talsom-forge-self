@@ -9,21 +9,38 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import {
   ShieldCheck, LogOut, ArrowLeft, LayoutDashboard, ListChecks,
-  Menu, Sun, Moon, Loader2,
+  Menu, Sun, Moon, Loader2, BarChart3, UserPlus, Users,
 } from "lucide-react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import type { ConsultantRole } from "./contexts/ConsultantContext";
 
 // Page imports
 import { DashboardPage } from "./pages/DashboardPage";
 import { QueuePage } from "./pages/QueuePage";
 import { ReviewDetailPage } from "./pages/ReviewDetailPage";
+import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
+import { AssignmentPage } from "./pages/AssignmentPage";
+import { TeamPage } from "./pages/TeamPage";
 
-const NAV_ITEMS = [
+interface NavItem {
+  key: string;
+  path: string;
+  icon: typeof LayoutDashboard;
+  roles?: ConsultantRole[];
+  section?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", path: "/consultant", icon: LayoutDashboard },
   { key: "queue", path: "/consultant/queue", icon: ListChecks },
-] as const;
+  // Supervisor-only items
+  { key: "supervisorDashboard", path: "/consultant/supervisor", icon: BarChart3, roles: ["supervisor", "admin"], section: "supervisor" },
+  { key: "assignments", path: "/consultant/assignments", icon: UserPlus, roles: ["supervisor", "admin"], section: "supervisor" },
+  { key: "team", path: "/consultant/team", icon: Users, roles: ["supervisor", "admin"], section: "supervisor" },
+];
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { lang } = useLang();
@@ -66,7 +83,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {user && (
         <div className={`mx-3 mb-2 px-3 py-2 rounded-lg ${dark ? "bg-white/5" : "bg-gray-50"}`}>
           <p className={`text-xs font-semibold truncate ${dark ? "text-white" : "text-gray-900"}`}>{user.name}</p>
-          <p className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>{user.email}</p>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <Badge
+              variant="outline"
+              className="text-[10px] px-1.5 py-0 h-4 rounded-full"
+              style={{
+                borderColor: user.role === "supervisor" || user.role === "admin" ? C.green : "#3b82f6",
+                color: user.role === "supervisor" || user.role === "admin" ? C.green : "#3b82f6",
+              }}
+            >
+              {user.role === "supervisor" ? bi({ fr: "Superviseur", en: "Supervisor" }) : user.role === "admin" ? "Admin" : bi({ fr: "Consultant", en: "Consultant" })}
+            </Badge>
+            <span className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>{user.email}</span>
+          </div>
         </div>
       )}
 
@@ -75,20 +104,39 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* Nav items */}
       <ScrollArea className="flex-1 py-2">
         <nav className="space-y-0.5 px-2">
-          {NAV_ITEMS.map(({ key, path, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => { navigate(path); onNavigate?.(); }}
-              className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-2.5 ${
-                isActive(path)
-                  ? dark ? "bg-white/10 text-white font-medium" : "bg-gray-100 text-gray-900 font-medium"
-                  : dark ? "text-white/50 hover:text-white hover:bg-white/5" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              {bi(consultantI18n[key as keyof typeof consultantI18n])}
-            </button>
-          ))}
+          {(() => {
+            const userRole = user?.role ?? "consultant";
+            const visibleItems = NAV_ITEMS.filter(item =>
+              !item.roles || item.roles.includes(userRole)
+            );
+            let lastSection: string | undefined;
+            return visibleItems.map(({ key, path, icon: Icon, section }) => {
+              const showSectionHeader = section && section !== lastSection;
+              lastSection = section;
+              return (
+                <div key={key}>
+                  {showSectionHeader && (
+                    <div className={`px-3 pt-3 pb-1`}>
+                      <p className={`text-[10px] font-semibold uppercase tracking-wider ${dark ? "text-white/20" : "text-gray-300"}`}>
+                        {bi({ fr: "Supervision", en: "Supervision" })}
+                      </p>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => { navigate(path); onNavigate?.(); }}
+                    className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-2.5 ${
+                      isActive(path)
+                        ? dark ? "bg-white/10 text-white font-medium" : "bg-gray-100 text-gray-900 font-medium"
+                        : dark ? "text-white/50 hover:text-white hover:bg-white/5" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    {bi(consultantI18n[key as keyof typeof consultantI18n])}
+                  </button>
+                </div>
+              );
+            });
+          })()}
         </nav>
       </ScrollArea>
 
@@ -195,6 +243,9 @@ export function ConsultantLayout() {
             <Route index element={<DashboardPage />} />
             <Route path="queue" element={<QueuePage />} />
             <Route path="reviews/:reviewId" element={<ReviewDetailPage />} />
+            <Route path="supervisor" element={<SupervisorDashboardPage />} />
+            <Route path="assignments" element={<AssignmentPage />} />
+            <Route path="team" element={<TeamPage />} />
             <Route path="*" element={<Navigate to="/consultant" replace />} />
           </Routes>
         </ErrorBoundary>

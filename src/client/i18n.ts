@@ -6,6 +6,8 @@ export const clientI18n = {
   dashboard: { fr: "Tableau de bord", en: "Dashboard" },
   chat: { fr: "Chat AI", en: "AI Chat" },
   tools: { fr: "Outils IA", en: "AI Tools" },
+  transform: { fr: "Transform", en: "Transform" },
+  discover: { fr: "Discover", en: "Discover" },
   apiKeys: { fr: "Clés API", en: "API Keys" },
   usage: { fr: "Utilisation", en: "Usage" },
   team: { fr: "Équipe", en: "Team" },

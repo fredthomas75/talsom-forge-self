@@ -14,13 +14,15 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Brain, LogOut, ArrowLeft, LayoutDashboard, MessageSquare,
   Bot, Key, BarChart3, Users, Settings, Shield, Palette,
-  Menu, Sun, Moon, Loader2, FileCheck,
+  Menu, Sun, Moon, Loader2, FileCheck, ArrowLeftRight, Lightbulb,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "dashboard", path: "/client", icon: LayoutDashboard },
   { key: "chat", path: "/client/chat", icon: MessageSquare },
   { key: "tools", path: "/client/tools", icon: Bot },
+  { key: "transform", path: "/client/transform", icon: ArrowLeftRight },
+  { key: "discover", path: "/client/discover", icon: Lightbulb },
   { key: "deliverables", path: "/client/deliverables", icon: FileCheck, featureGate: "human_review" },
   { key: "apiKeys", path: "/client/keys", icon: Key },
   { key: "usage", path: "/client/usage", icon: BarChart3 },
@@ -42,6 +44,8 @@ import { AuditLogPage } from "./pages/AuditLogPage";
 import { ToolChatPage } from "./pages/ToolChatPage";
 import { CustomizationPage } from "./pages/CustomizationPage";
 import { DeliverablesPage } from "./pages/DeliverablesPage";
+import { TransformPage } from "./pages/TransformPage";
+import { DiscoverPage } from "./pages/DiscoverPage";
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { lang } = useLang();
@@ -239,6 +243,8 @@ export function ClientLayout() {
             <Route path="chat" element={<ChatPage />} />
             <Route path="tools" element={<ToolsPage />} />
             <Route path="tools/:toolName" element={<ToolChatPage />} />
+            <Route path="transform" element={<TransformPage />} />
+            <Route path="discover" element={<DiscoverPage />} />
             <Route path="deliverables" element={<DeliverablesPage />} />
             <Route path="keys" element={<ApiKeysPage />} />
             <Route path="usage" element={<UsagePage />} />

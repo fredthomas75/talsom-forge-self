@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Activity, Cpu, MessageSquare, Users,
   ArrowRight, Bot, Key, UserPlus,
-  TrendingUp,
+  TrendingUp, ArrowLeftRight, Lightbulb,
 } from "lucide-react";
 import { ErrorRetry } from "@/components/ErrorRetry";
 import { C, HDR_FONT } from "@/lib/constants";
@@ -97,6 +97,8 @@ export function DashboardPage() {
   const quickActions = [
     { label: bi(clientI18n.startChat), icon: MessageSquare, path: "/client/chat" },
     { label: bi(clientI18n.browseTools), icon: Bot, path: "/client/tools" },
+    { label: "Forge | Transform", icon: ArrowLeftRight, path: "/client/transform" },
+    { label: "Forge | Discover", icon: Lightbulb, path: "/client/discover" },
     { label: bi(clientI18n.manageKeys), icon: Key, path: "/client/keys" },
     { label: bi(clientI18n.inviteMember), icon: UserPlus, path: "/client/team" },
   ];
@@ -189,7 +191,7 @@ export function DashboardPage() {
           <h3 className={`text-sm font-semibold mb-3 ${dark ? "text-white" : "text-gray-900"}`}>
             {bi(clientI18n.quickActions)}
           </h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {quickActions.map((a) => (
               <button
                 key={a.path}

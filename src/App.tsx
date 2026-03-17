@@ -18,6 +18,7 @@ import { ConsultantProtectedRoute } from "@/consultant/ConsultantProtectedRoute"
 const ClientLayout = lazy(() => import("@/client/ClientLayout").then(m => ({ default: m.ClientLayout })));
 const ConsultantLayout = lazy(() => import("@/consultant/ConsultantLayout").then(m => ({ default: m.ConsultantLayout })));
 
+const ProductShowcase = lazy(() => import("@/components/ProductShowcase").then(m => ({ default: m.ProductShowcase })));
 const ServicesSection = lazy(() => import("@/components/ServicesSection").then(m => ({ default: m.ServicesSection })));
 const HowItWorks = lazy(() => import("@/components/HowItWorks").then(m => ({ default: m.HowItWorks })));
 const MarketplaceSection = lazy(() => import("@/components/MarketplaceSection").then(m => ({ default: m.MarketplaceSection })));
@@ -52,6 +53,7 @@ function MainSite() {
       <Hero />
       <TrustBar />
       <Suspense fallback={null}>
+        <ProductShowcase />
         <ServicesSection />
         <HowItWorks />
         <MarketplaceSection />
