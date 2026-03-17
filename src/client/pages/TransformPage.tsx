@@ -3,25 +3,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, ArrowLeftRight, Gauge, Network, HeartPulse,
-  MessageCircle, BarChart3, Scale, CheckCircle2, TrendingUp, Globe,
+  MessageCircle, BarChart3, Scale, CheckCircle2, Shield,
 } from "lucide-react";
 import { HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 
 const TRANSFORM_TOOLS = [
-  { command: "change-readiness-assessment", icon: Gauge, label: { fr: "Évaluation de préparation", en: "Readiness Assessment" }, desc: { fr: "Score de préparation quantifié avec capacité d'absorption organisationnelle", en: "Quantified readiness score with organizational absorption capacity" } },
-  { command: "stakeholder-mapping", icon: Network, label: { fr: "Cartographie des parties prenantes", en: "Stakeholder Mapping" }, desc: { fr: "Cartes d'influence dynamiques avec identification des populations à risque", en: "Dynamic influence maps with at-risk population identification" } },
-  { command: "resistance-prediction", icon: HeartPulse, label: { fr: "Prédiction de résistance", en: "Resistance Prediction" }, desc: { fr: "Modélisation prédictive des hotspots de résistance et courbes d'adoption", en: "Predictive modeling of resistance hotspots and adoption curves" } },
-  { command: "change-communications", icon: MessageCircle, label: { fr: "Communications de changement", en: "Change Communications" }, desc: { fr: "Plan de communication bilingue par canal et segment", en: "Bilingual communication plan by channel and segment" } },
-  { command: "adoption-dashboard", icon: BarChart3, label: { fr: "Tableau de bord d'adoption", en: "Adoption Dashboard" }, desc: { fr: "Métriques de changement liées aux KPIs opérationnels", en: "Change metrics linked to operational KPIs" } },
-  { command: "change-saturation-analysis", icon: Scale, label: { fr: "Analyse de saturation", en: "Saturation Analysis" }, desc: { fr: "Détection de fatigue organisationnelle multi-changements", en: "Multi-change organizational fatigue detection" } },
+  { command: "change-readiness-assessment", icon: Gauge, label: { fr: "Évaluation de préparation", en: "Readiness Assessment" }, desc: { fr: "Mesurez la capacité de vos équipes à absorber le changement — score en temps réel par département", en: "Measure your teams' capacity to absorb change — real-time score per department" } },
+  { command: "stakeholder-mapping", icon: Network, label: { fr: "Cartographie des parties prenantes", en: "Stakeholder Mapping" }, desc: { fr: "Identifiez vos champions et anticipez les résistances avec des cartes d'influence dynamiques", en: "Identify your champions and anticipate resistance with dynamic influence maps" } },
+  { command: "resistance-prediction", icon: HeartPulse, label: { fr: "Prédiction de résistance", en: "Resistance Prediction" }, desc: { fr: "L'IA prédit où la résistance va émerger et recommande des interventions ciblées", en: "AI predicts where resistance will emerge and recommends targeted interventions" } },
+  { command: "change-communications", icon: MessageCircle, label: { fr: "Communications de changement", en: "Change Communications" }, desc: { fr: "Générez des messages prêts-à-envoyer en FR et EN, adaptés par audience et phase", en: "Generate ready-to-send messages in FR and EN, tailored by audience and phase" } },
+  { command: "adoption-dashboard", icon: BarChart3, label: { fr: "Tableau de bord d'adoption", en: "Adoption Dashboard" }, desc: { fr: "Suivez l'adoption en temps réel et reliez-la à vos KPIs business (productivité, satisfaction)", en: "Track adoption in real time and link it to your business KPIs (productivity, satisfaction)" } },
+  { command: "change-saturation-analysis", icon: Scale, label: { fr: "Analyse de saturation", en: "Saturation Analysis" }, desc: { fr: "Détectez la fatigue organisationnelle avant qu'elle ne fasse dérailler vos projets", en: "Detect organizational fatigue before it derails your projects" } },
 ];
 
 const STATS = [
-  { value: "$3.5B", label: { fr: "Marché mondial", en: "Global market" } },
-  { value: "17%", label: { fr: "CAGR", en: "CAGR" } },
-  { value: "48%", label: { fr: "Praticiens utilisant l'IA", en: "Practitioners using AI" } },
-  { value: "$110M", label: { fr: "Marché Canada", en: "Canada market" } },
+  { value: "70%", label: { fr: "Des projets de changement échouent", en: "Of change projects fail" } },
+  { value: "3x", label: { fr: "Plus rapide qu'un plan manuel", en: "Faster than manual planning" } },
+  { value: "100%", label: { fr: "Bilingue FR/EN natif", en: "Natively bilingual FR/EN" } },
+  { value: "6", label: { fr: "Outils IA spécialisés", en: "Specialized AI tools" } },
 ];
 
 export function TransformPage() {
@@ -46,8 +46,8 @@ export function TransformPage() {
               <h1 className="text-3xl font-bold text-white mb-2" style={HDR_FONT}>Forge | Transform</h1>
               <p className="text-white/80 text-sm leading-relaxed max-w-2xl">
                 {bi({
-                  fr: "Plateforme complète de gestion du changement mid-market. Combinez méthodologie OCM, prédiction de résistance par IA, communications bilingues et tableaux de bord d'adoption — sans certification requise.",
-                  en: "Complete mid-market change management platform. Combine OCM methodology, AI resistance prediction, bilingual communications, and adoption dashboards — no certification required.",
+                  fr: "70% des projets de changement échouent. Transform vous donne les outils IA pour piloter chaque étape — évaluation de préparation, communications ciblées, suivi d'adoption — et faire partie des 30% qui réussissent.",
+                  en: "70% of change projects fail. Transform gives you AI tools to guide every step — readiness assessment, targeted communications, adoption tracking — and be among the 30% that succeed.",
                 })}
               </p>
             </div>
@@ -65,22 +65,22 @@ export function TransformPage() {
         </div>
       </div>
 
-      {/* Key differentiators */}
+      {/* Why Transform is different */}
       <div className={`rounded-xl p-5 mb-8 ${dark ? "bg-white/5" : "bg-cyan-50 border border-cyan-100"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <TrendingUp className="w-4 h-4" style={{ color: "#06B6D4" }} />
-          {bi({ fr: "Pourquoi le marché est ouvert", en: "Why the market is wide open" })}
+          <Shield className="w-4 h-4" style={{ color: "#06B6D4" }} />
+          {bi({ fr: "Pourquoi Transform est différent", en: "Why Transform is different" })}
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
-            { fr: "Aucune plateforme ne combine OCM + adoption numérique + analytique IA + prix mid-market", en: "No platform combines OCM + digital adoption + AI analytics + mid-market pricing" },
-            { fr: "Gestion de portefeuille de changements et saturation organisationnelle reste manuelle", en: "Change portfolio and organizational saturation management remains manual" },
-            { fr: "Génération de contenu bilingue avec adaptation culturelle québécoise — conformité Loi 96", en: "Bilingual content generation with Quebec cultural adaptation — Bill 96 compliance" },
-            { fr: "Lien entre métriques d'adoption et KPIs business (productivité, tickets, roulement)", en: "Link between adoption metrics and business KPIs (productivity, tickets, turnover)" },
-          ].map((gap, i) => (
+            { fr: "Pas besoin de certification — l'IA intègre la méthodologie OCM pour vous", en: "No certification needed — AI integrates OCM methodology for you" },
+            { fr: "Communications bilingues FR/EN générées automatiquement, adaptées au Québec", en: "Bilingual FR/EN communications auto-generated, adapted for Quebec" },
+            { fr: "Détection de saturation — sachez quand vos équipes sont en surcharge de changements", en: "Saturation detection — know when your teams are overloaded with changes" },
+            { fr: "Métriques d'adoption reliées directement à vos KPIs business (productivité, rétention)", en: "Adoption metrics directly linked to your business KPIs (productivity, retention)" },
+          ].map((benefit, i) => (
             <div key={i} className={`flex items-start gap-2 text-xs ${dark ? "text-white/50" : "text-gray-600"}`}>
               <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#06B6D4" }} />
-              {bi(gap)}
+              {bi(benefit)}
             </div>
           ))}
         </div>
@@ -89,10 +89,10 @@ export function TransformPage() {
       {/* Tools grid */}
       <div className="mb-4">
         <h2 className={`text-lg font-bold tracking-tight mb-1 ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
-          {bi({ fr: "Outils Transform", en: "Transform Tools" })}
+          {bi({ fr: "Vos outils Transform", en: "Your Transform Tools" })}
         </h2>
         <p className={`text-xs ${dark ? "text-white/30" : "text-gray-400"}`}>
-          {bi({ fr: "6 outils spécialisés pour la gestion du changement", en: "6 specialized change management tools" })}
+          {bi({ fr: "6 outils IA pour réussir chaque projet de changement", en: "6 AI tools to make every change project succeed" })}
         </p>
       </div>
 
@@ -125,41 +125,6 @@ export function TransformPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {/* Competitive positioning */}
-      <div className={`mt-8 rounded-xl border p-5 ${dark ? "border-white/5 bg-gray-900" : "border-gray-100 bg-white"}`}>
-        <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <Globe className="w-4 h-4" style={{ color: "#06B6D4" }} />
-          {bi({ fr: "Positionnement vs concurrents", en: "Competitive positioning" })}
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className={dark ? "text-white/40" : "text-gray-400"}>
-                <th className="text-left py-2 pr-4 font-medium">{bi({ fr: "Concurrent", en: "Competitor" })}</th>
-                <th className="text-left py-2 pr-4 font-medium">{bi({ fr: "Coût annuel", en: "Annual Cost" })}</th>
-                <th className="text-left py-2 pr-4 font-medium">{bi({ fr: "Profondeur IA", en: "AI Depth" })}</th>
-                <th className="text-left py-2 font-medium">{bi({ fr: "Changement humain", en: "People-Side Change" })}</th>
-              </tr>
-            </thead>
-            <tbody className={dark ? "text-white/60" : "text-gray-600"}>
-              {[
-                ["Prosci Proxima", "$4,500+ (cert)", "Kaiya AI", "★★★★★"],
-                ["WalkMe (SAP)", "$50K-$150K+", "WalkMeX", "★★☆☆☆"],
-                ["Howspace", "Gratuit-$8,400", "Text analysis", "★★★★☆"],
-                ["Forge | Transform", "$4,188-$17,988", "AI-first natif", "★★★★★"],
-              ].map(([name, cost, ai, change], i) => (
-                <tr key={i} className={`border-t ${i === 3 ? "font-semibold" : ""} ${dark ? "border-white/5" : "border-gray-100"}`} style={i === 3 ? { color: "#06B6D4" } : undefined}>
-                  <td className="py-2 pr-4">{name}</td>
-                  <td className="py-2 pr-4">{cost}</td>
-                  <td className="py-2 pr-4">{ai}</td>
-                  <td className="py-2">{change}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   );

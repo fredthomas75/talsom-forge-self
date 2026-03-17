@@ -9,8 +9,7 @@ import {
   ShieldCheck, Users, GitBranch, ClipboardList, Map, Briefcase,
   Table2, Lock, Building2, GraduationCap, ArrowLeftRight, BookOpen,
   Rocket, BarChart3, Shield, Layers, X, Store, ExternalLink,
-  Lightbulb, Target, LineChart, FileSearch, Scale,
-  HeartPulse, MessageCircle, Gauge, Network, Compass, Sparkles,
+  Lightbulb,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
@@ -25,8 +24,6 @@ interface PluginCommand {
 }
 
 const PHASES: Record<string, { fr: string; en: string; order: number }> = {
-  transform:    { fr: "Forge | Transform",                       en: "Forge | Transform",               order: 0 },
-  discover:     { fr: "Forge | Discover",                        en: "Forge | Discover",                order: 0.5 },
   diagnostic:   { fr: "Diagnostic",                              en: "Diagnostic",                      order: 1 },
   governance:   { fr: "Gouvernance IA",                          en: "AI Governance",                   order: 2 },
   design:       { fr: "Design",                                  en: "Design",                          order: 3 },
@@ -35,23 +32,6 @@ const PHASES: Record<string, { fr: string; en: string; order: number }> = {
 };
 
 const COMMANDS: PluginCommand[] = [
-  // ── Forge | Transform — Change Management ──
-  { command: "change-readiness-assessment",   phase: "transform", icon: Gauge,          label: { fr: "Évaluation de préparation",         en: "Readiness Assessment" },              output: { fr: "Score de préparation quantifié avec capacité d'absorption organisationnelle", en: "Quantified readiness score with organizational absorption capacity" } },
-  { command: "stakeholder-mapping",           phase: "transform", icon: Network,        label: { fr: "Cartographie des parties prenantes", en: "Stakeholder Mapping" },               output: { fr: "Cartes d'influence dynamiques avec identification des populations à risque", en: "Dynamic influence maps with at-risk population identification" } },
-  { command: "resistance-prediction",         phase: "transform", icon: HeartPulse,     label: { fr: "Prédiction de résistance",           en: "Resistance Prediction" },             output: { fr: "Modélisation prédictive des hotspots de résistance et courbes d'adoption", en: "Predictive modeling of resistance hotspots and adoption curves" } },
-  { command: "change-communications",         phase: "transform", icon: MessageCircle,  label: { fr: "Communications de changement",       en: "Change Communications" },             output: { fr: "Plan de communication bilingue par canal, segment d'audience et phase", en: "Bilingual communication plan by channel, audience segment, and phase" } },
-  { command: "adoption-dashboard",            phase: "transform", icon: BarChart3,      label: { fr: "Tableau de bord d'adoption",         en: "Adoption Dashboard" },                output: { fr: "Métriques de changement liées aux KPIs opérationnels (productivité, roulement)", en: "Change metrics linked to operational KPIs (productivity, turnover)" } },
-  { command: "change-saturation-analysis",    phase: "transform", icon: Scale,          label: { fr: "Analyse de saturation",              en: "Saturation Analysis" },               output: { fr: "Suivi multi-changements simultanés avec détection de fatigue organisationnelle", en: "Multi-change tracking with organizational fatigue detection" } },
-
-  // ── Forge | Discover — AI Use Case Discovery ──
-  { command: "ai-readiness-quiz",             phase: "discover",  icon: Sparkles,       label: { fr: "Quiz maturité IA",                   en: "AI Readiness Quiz" },                 output: { fr: "Évaluation 10 minutes avec score de maturité et 3 suggestions de cas d'usage", en: "10-minute assessment with maturity score and 3 use case suggestions" } },
-  { command: "ai-use-case-library",           phase: "discover",  icon: Lightbulb,      label: { fr: "Bibliothèque de cas d'usage",        en: "Use Case Library" },                  output: { fr: "50+ cas d'usage par industrie matchés au contexte spécifique du client", en: "50+ use cases per industry matched to client-specific context" } },
-  { command: "ai-feasibility-scoring",        phase: "discover",  icon: Target,         label: { fr: "Scoring de faisabilité",             en: "Feasibility Scoring" },               output: { fr: "Évaluation 5 dimensions : données, complexité, infra, organisation, réglementaire", en: "5-dimension evaluation: data, complexity, infra, organization, regulatory" } },
-  { command: "ai-roi-estimation",             phase: "discover",  icon: LineChart,      label: { fr: "Estimation ROI",                     en: "ROI Estimation" },                    output: { fr: "Modélisation ROI incluant coûts de données, inférence, précision et HITL", en: "ROI modeling including data prep costs, inference, accuracy, and HITL" } },
-  { command: "ai-portfolio-dashboard",        phase: "discover",  icon: Compass,        label: { fr: "Portefeuille IA",                    en: "AI Portfolio" },                      output: { fr: "Suivi des initiatives de la découverte au déploiement avec performance portefeuille", en: "Initiative tracking from discovery to deployment with portfolio performance" } },
-  { command: "ai-governance-assessment",      phase: "discover",  icon: FileSearch,     label: { fr: "Évaluation gouvernance IA",          en: "AI Governance Assessment" },          output: { fr: "Risques, conformité Loi 25 et considérations éthiques par cas d'usage", en: "Risks, Bill 25 compliance, and ethical considerations per use case" } },
-  { command: "ai-usecase-package",           phase: "discover",  icon: Layers,         label: { fr: "Package cas d'usage IA",             en: "AI Use Case Package" },               output: { fr: "Note technique + fiche professionnelle à partir d'un cas d'usage brut", en: "Technical note + professional brief from raw use case input" } },
-
   // ── Phase 1 — Diagnostic ──
   { command: "ai-maturity-assessment",    phase: "diagnostic", icon: Activity,      label: { fr: "Maturité IA",                      en: "AI Maturity" },                       output: { fr: "Évaluation sur 6 dimensions avec scores et recommandations", en: "6-dimension assessment with scores and recommendations" } },
   { command: "data-readiness-assessment", phase: "diagnostic", icon: Database,      label: { fr: "Maturité des données",              en: "Data Readiness" },                    output: { fr: "Score sur 7 dimensions (qualité, gouvernance, sécurité, architecture...)", en: "Score across 7 dimensions (quality, governance, security, architecture...)" } },
@@ -212,10 +192,27 @@ export function ToolsPage() {
         </h1>
         <p className={`text-sm mt-1 ${dark ? "text-white/40" : "text-gray-500"}`}>
           {bi({
-            fr: "31 outils spécialisés incluant Forge | Transform et Forge | Discover — chacun produit un livrable structuré",
-            en: "30 specialized tools including Forge | Transform and Forge | Discover — each produces a structured deliverable",
+            fr: "18 outils de consulting IA — chacun produit un livrable structuré (Excel, Word, PowerPoint)",
+            en: "18 AI consulting tools — each produces a structured deliverable (Excel, Word, PowerPoint)",
           })}
         </p>
+      </div>
+
+      {/* Cross-link banner to Transform & Discover */}
+      <div className={`rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 border ${dark ? "bg-white/[0.02] border-white/5" : "bg-gray-50 border-gray-100"}`}>
+        <div className="flex-1">
+          <p className={`text-sm font-medium ${dark ? "text-white/70" : "text-gray-700"}`}>
+            {bi({ fr: "Découvrez aussi nos produits phares", en: "Also explore our flagship products" })}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: "linear-gradient(135deg, #06B6D4, #0891B2)", color: "white" }} onClick={() => navigate("/client/transform")}>
+            <ArrowLeftRight className="w-3 h-3" /> Transform
+          </Button>
+          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", color: "white" }} onClick={() => navigate("/client/discover")}>
+            <Lightbulb className="w-3 h-3" /> Discover
+          </Button>
+        </div>
       </div>
 
       {/* Search + Phase filter */}

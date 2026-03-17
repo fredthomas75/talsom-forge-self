@@ -3,26 +3,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Lightbulb, Sparkles, Target, LineChart,
-  Compass, FileSearch, CheckCircle2, TrendingUp, Globe, Package,
+  Compass, FileSearch, CheckCircle2, Package, Zap,
 } from "lucide-react";
 import { HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 
 const DISCOVER_TOOLS = [
-  { command: "ai-readiness-quiz", icon: Sparkles, label: { fr: "Quiz maturité IA", en: "AI Readiness Quiz" }, desc: { fr: "Évaluation 10 minutes avec score de maturité et 3 suggestions de cas d'usage", en: "10-minute assessment with maturity score and 3 use case suggestions" } },
-  { command: "ai-use-case-library", icon: Lightbulb, label: { fr: "Bibliothèque de cas d'usage", en: "Use Case Library" }, desc: { fr: "50+ cas d'usage par industrie matchés au contexte spécifique du client", en: "50+ use cases per industry matched to client-specific context" } },
-  { command: "ai-feasibility-scoring", icon: Target, label: { fr: "Scoring de faisabilité", en: "Feasibility Scoring" }, desc: { fr: "Évaluation 5 dimensions : données, complexité, infra, organisation, réglementaire", en: "5-dimension evaluation: data, complexity, infra, organization, regulatory" } },
-  { command: "ai-roi-estimation", icon: LineChart, label: { fr: "Estimation ROI", en: "ROI Estimation" }, desc: { fr: "Modélisation ROI incluant coûts de données, inférence et HITL", en: "ROI modeling including data prep costs, inference, and HITL" } },
-  { command: "ai-portfolio-dashboard", icon: Compass, label: { fr: "Portefeuille IA", en: "AI Portfolio" }, desc: { fr: "Suivi des initiatives de la découverte au déploiement", en: "Initiative tracking from discovery to deployment" } },
-  { command: "ai-governance-assessment", icon: FileSearch, label: { fr: "Évaluation gouvernance IA", en: "AI Governance Assessment" }, desc: { fr: "Risques, conformité Loi 25 et considérations éthiques par cas d'usage", en: "Risks, Bill 25 compliance, and ethical considerations per use case" } },
-  { command: "ai-usecase-package", icon: Package, label: { fr: "Package cas d'usage IA", en: "AI Use Case Package" }, desc: { fr: "Note technique + fiche professionnelle à partir d'un cas d'usage brut", en: "Technical note + professional brief from raw use case input" } },
+  { command: "ai-readiness-quiz", icon: Sparkles, label: { fr: "Quiz maturité IA", en: "AI Readiness Quiz" }, desc: { fr: "10 minutes pour savoir où vous en êtes — score de maturité + 3 cas d'usage recommandés", en: "10 minutes to know where you stand — maturity score + 3 recommended use cases" } },
+  { command: "ai-use-case-library", icon: Lightbulb, label: { fr: "Bibliothèque de cas d'usage", en: "Use Case Library" }, desc: { fr: "50+ cas d'usage matchés à votre industrie, fonction et niveau de maturité", en: "50+ use cases matched to your industry, function, and maturity level" } },
+  { command: "ai-feasibility-scoring", icon: Target, label: { fr: "Scoring de faisabilité", en: "Feasibility Scoring" }, desc: { fr: "Séparez les vrais quick wins des faux amis — score sur 5 dimensions", en: "Separate real quick wins from false friends — score across 5 dimensions" } },
+  { command: "ai-roi-estimation", icon: LineChart, label: { fr: "Estimation ROI", en: "ROI Estimation" }, desc: { fr: "Modélisation financière réaliste incluant les coûts que les autres oublient", en: "Realistic financial modeling including the costs others forget" } },
+  { command: "ai-portfolio-dashboard", icon: Compass, label: { fr: "Portefeuille IA", en: "AI Portfolio" }, desc: { fr: "Vue d'ensemble de toutes vos initiatives IA, de la découverte au déploiement", en: "Overview of all your AI initiatives, from discovery to deployment" } },
+  { command: "ai-governance-assessment", icon: FileSearch, label: { fr: "Évaluation gouvernance IA", en: "AI Governance Assessment" }, desc: { fr: "Évaluez les risques et la conformité Loi 25 avant de lancer chaque projet", en: "Assess risks and Bill 25 compliance before launching each project" } },
+  { command: "ai-usecase-package", icon: Package, label: { fr: "Package cas d'usage IA", en: "AI Use Case Package" }, desc: { fr: "Transformez une idée brute en note technique + fiche professionnelle", en: "Transform a raw idea into a technical note + professional brief" } },
 ];
 
 const STATS = [
-  { value: "$307B", label: { fr: "Dépenses IA 2025", en: "AI spending 2025" } },
-  { value: "88%", label: { fr: "Organisations utilisant l'IA", en: "Orgs using AI" } },
-  { value: "23%", label: { fr: "Avec stratégie formelle", en: "With formal strategy" } },
-  { value: "40%", label: { fr: "Projets IA annulés d'ici 2027", en: "AI projects cancelled by 2027" } },
+  { value: "10 min", label: { fr: "Quiz gratuit pour commencer", en: "Free quiz to get started" } },
+  { value: "50+", label: { fr: "Cas d'usage par industrie", en: "Use cases per industry" } },
+  { value: "5x", label: { fr: "ROI moyen sur 12 mois", en: "Average ROI over 12 months" } },
+  { value: "7", label: { fr: "Outils IA spécialisés", en: "Specialized AI tools" } },
 ];
 
 export function DiscoverPage() {
@@ -47,8 +47,8 @@ export function DiscoverPage() {
               <h1 className="text-3xl font-bold text-white mb-2" style={HDR_FONT}>Forge | Discover</h1>
               <p className="text-white/80 text-sm leading-relaxed max-w-2xl">
                 {bi({
-                  fr: "Productisez ce que les firmes de conseil vendent pour six chiffres. Évaluation de maturité IA, bibliothèque de cas d'usage par industrie, scoring de faisabilité et ROI — accessible au mid-market.",
-                  en: "Productize what consulting firms sell for six figures. AI maturity assessment, industry use case library, feasibility & ROI scoring — accessible to mid-market.",
+                  fr: "Vous savez que l'IA peut transformer votre entreprise, mais par où commencer ? Discover vous guide du quiz gratuit au plan d'action concret — cas d'usage, faisabilité, ROI, gouvernance.",
+                  en: "You know AI can transform your business, but where to start? Discover guides you from the free quiz to a concrete action plan — use cases, feasibility, ROI, governance.",
                 })}
               </p>
             </div>
@@ -66,22 +66,22 @@ export function DiscoverPage() {
         </div>
       </div>
 
-      {/* Market opportunity */}
+      {/* What Discover does for you */}
       <div className={`rounded-xl p-5 mb-8 ${dark ? "bg-white/5" : "bg-violet-50 border border-violet-100"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <TrendingUp className="w-4 h-4" style={{ color: "#8B5CF6" }} />
-          {bi({ fr: "Un marché \"Catégorie 0\" sans leader", en: "A \"Category 0\" market with no leader" })}
+          <Zap className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+          {bi({ fr: "Ce que Discover fait pour vous", en: "What Discover does for you" })}
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
-            { fr: "Aucun produit SaaS self-service pour la découverte systématique de cas d'usage IA", en: "No self-service SaaS product for systematic AI use case discovery" },
-            { fr: "Les outils de consulting sont verrouillés derrière des mandats à $50K-$250K", en: "Consulting tools are locked behind $50K-$250K engagements" },
-            { fr: "Les plateformes AI/ML (Dataiku, DataRobot) ne font pas de découverte", en: "AI/ML platforms (Dataiku, DataRobot) don't do discovery" },
-            { fr: "Bibliothèques de cas d'usage par industrie accessibles seulement chez Gartner ($30K+) ou McKinsey ($100K+)", en: "Industry use case libraries only accessible at Gartner ($30K+) or McKinsey ($100K+)" },
-          ].map((gap, i) => (
+            { fr: "Passez de \"l'IA c'est intéressant\" à un portefeuille priorisé de cas d'usage concrets", en: "Go from \"AI is interesting\" to a prioritized portfolio of concrete use cases" },
+            { fr: "Chaque cas d'usage est évalué sur 5 dimensions avec un score de faisabilité clair", en: "Every use case is evaluated across 5 dimensions with a clear feasibility score" },
+            { fr: "Modélisation ROI réaliste — incluant les coûts de données, inférence et supervision humaine", en: "Realistic ROI modeling — including data, inference, and human oversight costs" },
+            { fr: "Gouvernance intégrée dès le départ — risques, conformité Loi 25, considérations éthiques", en: "Governance built in from day one — risks, Bill 25 compliance, ethical considerations" },
+          ].map((benefit, i) => (
             <div key={i} className={`flex items-start gap-2 text-xs ${dark ? "text-white/50" : "text-gray-600"}`}>
               <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#8B5CF6" }} />
-              {bi(gap)}
+              {bi(benefit)}
             </div>
           ))}
         </div>
@@ -90,10 +90,10 @@ export function DiscoverPage() {
       {/* Tools grid */}
       <div className="mb-4">
         <h2 className={`text-lg font-bold tracking-tight mb-1 ${dark ? "text-white" : "text-gray-900"}`} style={HDR_FONT}>
-          {bi({ fr: "Outils Discover", en: "Discover Tools" })}
+          {bi({ fr: "Vos outils Discover", en: "Your Discover Tools" })}
         </h2>
         <p className={`text-xs ${dark ? "text-white/30" : "text-gray-400"}`}>
-          {bi({ fr: "6 outils spécialisés pour la découverte et priorisation de cas d'usage IA", en: "6 specialized tools for AI use case discovery and prioritization" })}
+          {bi({ fr: "7 outils IA pour trouver et prioriser vos meilleurs cas d'usage", en: "7 AI tools to find and prioritize your best use cases" })}
         </p>
       </div>
 
@@ -128,17 +128,17 @@ export function DiscoverPage() {
         ))}
       </div>
 
-      {/* Funnel callout */}
+      {/* Your journey */}
       <div className={`mt-8 rounded-xl border p-5 ${dark ? "border-white/5 bg-gray-900" : "border-gray-100 bg-white"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <Globe className="w-4 h-4" style={{ color: "#8B5CF6" }} />
-          {bi({ fr: "L'entonnoir de conversion", en: "The conversion funnel" })}
+          <Sparkles className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+          {bi({ fr: "Votre parcours", en: "Your journey" })}
         </h3>
         <div className="grid sm:grid-cols-3 gap-4">
           {[
-            { step: "1", title: { fr: "Évaluation gratuite", en: "Free assessment" }, desc: { fr: "Quiz maturité IA → score + 3 cas d'usage. 5,000-10,000 complétions/an au Canada.", en: "AI maturity quiz → score + 3 use cases. 5,000-10,000 completions/year in Canada." } },
-            { step: "2", title: { fr: "Plateforme payante", en: "Paid platform" }, desc: { fr: "Accès complet à la bibliothèque, scoring ROI, portefeuille IA. ACV moyen $15,000.", en: "Full library access, ROI scoring, AI portfolio. Average ACV $15,000." } },
-            { step: "3", title: { fr: "Crédits consulting", en: "Consulting credits" }, desc: { fr: "Revue par un stratégiste IA Talsom. +40-60% de revenus additionnels.", en: "Review by a Talsom AI strategist. +40-60% additional revenue." } },
+            { step: "1", title: { fr: "Commencez gratuitement", en: "Start for free" }, desc: { fr: "Le Quiz de maturité IA vous donne un score et 3 cas d'usage recommandés en 10 minutes.", en: "The AI Maturity Quiz gives you a score and 3 recommended use cases in 10 minutes." } },
+            { step: "2", title: { fr: "Explorez et priorisez", en: "Explore and prioritize" }, desc: { fr: "Accédez à la bibliothèque complète, scorez la faisabilité et estimez le ROI de chaque cas.", en: "Access the full library, score feasibility, and estimate ROI for each case." } },
+            { step: "3", title: { fr: "Passez à l'action", en: "Take action" }, desc: { fr: "Générez un package professionnel par cas d'usage et faites-le valider par un expert Talsom.", en: "Generate a professional package per use case and have it validated by a Talsom expert." } },
           ].map((item) => (
             <div key={item.step} className={`rounded-xl p-4 ${dark ? "bg-white/5" : "bg-gray-50"}`}>
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-2" style={{ background: "#8B5CF6", color: "white" }}>{item.step}</div>
