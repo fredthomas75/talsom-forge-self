@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Clock, CheckCircle2, Activity, Gauge, Shield, Package,
+  Clock, CheckCircle2, Activity, Gauge, Shield,
   Users, TrendingUp, AlertTriangle, BarChart3,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 import { useConsultant } from "../contexts/ConsultantContext";
-import { consultantI18n } from "../i18n";
 
 interface TeamMember {
   consultantId: string;

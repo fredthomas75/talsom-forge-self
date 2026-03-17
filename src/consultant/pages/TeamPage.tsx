@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Users, UserPlus, Mail, Search, X, CheckCircle2,
-  Clock, Shield, Briefcase, MoreVertical, Loader2,
+  UserPlus, Mail, Search, X, CheckCircle2,
+  Clock, Shield, Briefcase, Loader2,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";

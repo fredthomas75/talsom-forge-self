@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Lightbulb, Sparkles, Target, LineChart,
   Compass, FileSearch, CheckCircle2, TrendingUp, Globe,
 } from "lucide-react";
-import { C, HDR_FONT } from "@/lib/constants";
+import { HDR_FONT } from "@/lib/constants";
 import { useLang, useTheme } from "@/lib/contexts";
 
 const DISCOVER_TOOLS = [

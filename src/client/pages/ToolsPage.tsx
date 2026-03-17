@@ -9,7 +9,7 @@ import {
   ShieldCheck, Users, GitBranch, ClipboardList, Map, Briefcase,
   Table2, Lock, Building2, GraduationCap, ArrowLeftRight, BookOpen,
   Rocket, BarChart3, Shield, Layers, X, Store, ExternalLink,
-  Lightbulb, Target, Brain, LineChart, FileSearch, Scale,
+  Lightbulb, Target, LineChart, FileSearch, Scale,
   HeartPulse, MessageCircle, Gauge, Network, Compass, Sparkles,
 } from "lucide-react";
 import { C, HDR_FONT } from "@/lib/constants";
