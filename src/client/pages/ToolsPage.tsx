@@ -11,8 +11,9 @@ import {
   Rocket, BarChart3, Shield, Layers, X, Store, ExternalLink,
   Lightbulb,
 } from "lucide-react";
-import { C, HDR_FONT } from "@/lib/constants";
-import { useLang, useTheme } from "@/lib/contexts";
+import { C, HDR_FONT, PRODUCT_COLORS } from "@/lib/constants";
+import { useTheme } from "@/lib/contexts";
+import { useBi } from "@/hooks/useContent";
 import { clientI18n } from "../i18n";
 
 interface PluginCommand {
@@ -140,6 +141,8 @@ const MARKETPLACE_TOOLS: MarketplaceTool[] = [
   },
 ];
 
+const PHASE_KEYS = Object.keys(PHASES);
+
 function groupByPhase(cmds: PluginCommand[]) {
   const groups: Record<string, PluginCommand[]> = {};
   for (const c of cmds) {
@@ -152,11 +155,10 @@ function groupByPhase(cmds: PluginCommand[]) {
 }
 
 export function ToolsPage() {
-  const { lang } = useLang();
   const { theme } = useTheme();
   const dark = theme === "dark";
   const navigate = useNavigate();
-  const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
+  const bi = useBi();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [phaseFilter, setPhaseFilter] = useState<string | null>(null);
@@ -176,10 +178,9 @@ export function ToolsPage() {
       );
     }
     return cmds;
-  }, [searchQuery, phaseFilter, lang]);
+  }, [searchQuery, phaseFilter, bi]);
 
-  const groups = groupByPhase(filteredCommands);
-  const phaseKeys = Object.keys(PHASES);
+  const groups = useMemo(() => groupByPhase(filteredCommands), [filteredCommands]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-8">
@@ -206,10 +207,10 @@ export function ToolsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: "linear-gradient(135deg, #06B6D4, #0891B2)", color: "white" }} onClick={() => navigate("/client/transform")}>
+          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: PRODUCT_COLORS.transform.gradient, color: "white" }} onClick={() => navigate("/client/transform")}>
             <ArrowLeftRight className="w-3 h-3" /> Transform
           </Button>
-          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", color: "white" }} onClick={() => navigate("/client/discover")}>
+          <Button size="sm" className="rounded-full text-xs gap-1.5 border-0" style={{ background: PRODUCT_COLORS.discover.gradient, color: "white" }} onClick={() => navigate("/client/discover")}>
             <Lightbulb className="w-3 h-3" /> Discover
           </Button>
         </div>
@@ -245,7 +246,7 @@ export function ToolsPage() {
           >
             {bi({ fr: "Toutes", en: "All" })}
           </Button>
-          {phaseKeys.map((key) => (
+          {PHASE_KEYS.map((key) => (
             <Button
               key={key}
               variant="ghost" size="sm"

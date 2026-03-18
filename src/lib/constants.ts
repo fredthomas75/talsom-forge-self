@@ -15,6 +15,12 @@ export const C = {
 
 export const HDR_FONT = { fontFamily: "'Space Grotesk', Arial, sans-serif" };
 
+/* ─── Product accent colors ─────────────────────────── */
+export const PRODUCT_COLORS = {
+  transform: { primary: "#06B6D4", secondary: "#0891B2", gradient: "linear-gradient(135deg, #06B6D4, #0891B2)" },
+  discover:  { primary: "#8B5CF6", secondary: "#7C3AED", gradient: "linear-gradient(135deg, #8B5CF6, #7C3AED)" },
+} as const;
+
 // ─── I18N ────────────────────────────────────────────
 
 export type Lang = "fr" | "en";

@@ -5,8 +5,11 @@ import {
   ArrowRight, ArrowLeftRight, Gauge, Network, HeartPulse,
   MessageCircle, BarChart3, Scale, CheckCircle2, Shield,
 } from "lucide-react";
-import { HDR_FONT } from "@/lib/constants";
-import { useLang, useTheme } from "@/lib/contexts";
+import { HDR_FONT, PRODUCT_COLORS } from "@/lib/constants";
+import { useTheme } from "@/lib/contexts";
+import { useBi } from "@/hooks/useContent";
+
+const PC = PRODUCT_COLORS.transform;
 
 const TRANSFORM_TOOLS = [
   { command: "change-readiness-assessment", icon: Gauge, label: { fr: "Évaluation de préparation", en: "Readiness Assessment" }, desc: { fr: "Mesurez la capacité de vos équipes à absorber le changement — score en temps réel par département", en: "Measure your teams' capacity to absorb change — real-time score per department" } },
@@ -24,17 +27,23 @@ const STATS = [
   { value: "6", label: { fr: "Outils IA spécialisés", en: "Specialized AI tools" } },
 ];
 
+const BENEFITS = [
+  { fr: "Pas besoin de certification — l'IA intègre la méthodologie OCM pour vous", en: "No certification needed — AI integrates OCM methodology for you" },
+  { fr: "Communications bilingues FR/EN générées automatiquement, adaptées au Québec", en: "Bilingual FR/EN communications auto-generated, adapted for Quebec" },
+  { fr: "Détection de saturation — sachez quand vos équipes sont en surcharge de changements", en: "Saturation detection — know when your teams are overloaded with changes" },
+  { fr: "Métriques d'adoption reliées directement à vos KPIs business (productivité, rétention)", en: "Adoption metrics directly linked to your business KPIs (productivity, retention)" },
+];
+
 export function TransformPage() {
-  const { lang } = useLang();
   const { theme } = useTheme();
   const dark = theme === "dark";
   const navigate = useNavigate();
-  const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
+  const bi = useBi();
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-8">
       {/* Header with gradient */}
-      <div className="rounded-2xl overflow-hidden mb-8" style={{ background: "linear-gradient(135deg, #06B6D4, #0891B2)" }}>
+      <div className="rounded-2xl overflow-hidden mb-8" style={{ background: PC.gradient }}>
         <div className="p-8 relative">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0l10 10-10 10L0 10z' fill='white' fill-opacity='0.1'/%3E%3C/svg%3E\")" }} />
           <div className="relative flex items-start gap-4">
@@ -68,18 +77,13 @@ export function TransformPage() {
       {/* Why Transform is different */}
       <div className={`rounded-xl p-5 mb-8 ${dark ? "bg-white/5" : "bg-cyan-50 border border-cyan-100"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <Shield className="w-4 h-4" style={{ color: "#06B6D4" }} />
+          <Shield className="w-4 h-4" style={{ color: PC.primary }} />
           {bi({ fr: "Pourquoi Transform est différent", en: "Why Transform is different" })}
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
-          {[
-            { fr: "Pas besoin de certification — l'IA intègre la méthodologie OCM pour vous", en: "No certification needed — AI integrates OCM methodology for you" },
-            { fr: "Communications bilingues FR/EN générées automatiquement, adaptées au Québec", en: "Bilingual FR/EN communications auto-generated, adapted for Quebec" },
-            { fr: "Détection de saturation — sachez quand vos équipes sont en surcharge de changements", en: "Saturation detection — know when your teams are overloaded with changes" },
-            { fr: "Métriques d'adoption reliées directement à vos KPIs business (productivité, rétention)", en: "Adoption metrics directly linked to your business KPIs (productivity, retention)" },
-          ].map((benefit, i) => (
+          {BENEFITS.map((benefit, i) => (
             <div key={i} className={`flex items-start gap-2 text-xs ${dark ? "text-white/50" : "text-gray-600"}`}>
-              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#06B6D4" }} />
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: PC.primary }} />
               {bi(benefit)}
             </div>
           ))}
@@ -108,7 +112,7 @@ export function TransformPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${dark ? "bg-cyan-500/10 group-hover:bg-cyan-500/20" : "bg-cyan-50 group-hover:bg-cyan-100"}`}>
-                  <tool.icon className="w-4 h-4" style={{ color: "#06B6D4" }} />
+                  <tool.icon className="w-4 h-4" style={{ color: PC.primary }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <CardTitle className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>

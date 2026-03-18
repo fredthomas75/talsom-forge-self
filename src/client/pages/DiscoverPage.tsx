@@ -5,8 +5,11 @@ import {
   ArrowRight, Lightbulb, Sparkles, Target, LineChart,
   Compass, FileSearch, CheckCircle2, Package, Zap,
 } from "lucide-react";
-import { HDR_FONT } from "@/lib/constants";
-import { useLang, useTheme } from "@/lib/contexts";
+import { HDR_FONT, PRODUCT_COLORS } from "@/lib/constants";
+import { useTheme } from "@/lib/contexts";
+import { useBi } from "@/hooks/useContent";
+
+const PC = PRODUCT_COLORS.discover;
 
 const DISCOVER_TOOLS = [
   { command: "ai-readiness-quiz", icon: Sparkles, label: { fr: "Quiz maturité IA", en: "AI Readiness Quiz" }, desc: { fr: "10 minutes pour savoir où vous en êtes — score de maturité + 3 cas d'usage recommandés", en: "10 minutes to know where you stand — maturity score + 3 recommended use cases" } },
@@ -25,17 +28,29 @@ const STATS = [
   { value: "7", label: { fr: "Outils IA spécialisés", en: "Specialized AI tools" } },
 ];
 
+const BENEFITS = [
+  { fr: "Passez de \"l'IA c'est intéressant\" à un portefeuille priorisé de cas d'usage concrets", en: "Go from \"AI is interesting\" to a prioritized portfolio of concrete use cases" },
+  { fr: "Chaque cas d'usage est évalué sur 5 dimensions avec un score de faisabilité clair", en: "Every use case is evaluated across 5 dimensions with a clear feasibility score" },
+  { fr: "Modélisation ROI réaliste — incluant les coûts de données, inférence et supervision humaine", en: "Realistic ROI modeling — including data, inference, and human oversight costs" },
+  { fr: "Gouvernance intégrée dès le départ — risques, conformité Loi 25, considérations éthiques", en: "Governance built in from day one — risks, Bill 25 compliance, ethical considerations" },
+];
+
+const JOURNEY_STEPS = [
+  { step: "1", title: { fr: "Commencez gratuitement", en: "Start for free" }, desc: { fr: "Le Quiz de maturité IA vous donne un score et 3 cas d'usage recommandés en 10 minutes.", en: "The AI Maturity Quiz gives you a score and 3 recommended use cases in 10 minutes." } },
+  { step: "2", title: { fr: "Explorez et priorisez", en: "Explore and prioritize" }, desc: { fr: "Accédez à la bibliothèque complète, scorez la faisabilité et estimez le ROI de chaque cas.", en: "Access the full library, score feasibility, and estimate ROI for each case." } },
+  { step: "3", title: { fr: "Passez à l'action", en: "Take action" }, desc: { fr: "Générez un package professionnel par cas d'usage et faites-le valider par un expert Talsom.", en: "Generate a professional package per use case and have it validated by a Talsom expert." } },
+];
+
 export function DiscoverPage() {
-  const { lang } = useLang();
   const { theme } = useTheme();
   const dark = theme === "dark";
   const navigate = useNavigate();
-  const bi = (v: { fr: string; en: string }) => (lang === "fr" ? v.fr : v.en);
+  const bi = useBi();
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-8">
       {/* Header with gradient */}
-      <div className="rounded-2xl overflow-hidden mb-8" style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)" }}>
+      <div className="rounded-2xl overflow-hidden mb-8" style={{ background: PC.gradient }}>
         <div className="p-8 relative">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0l10 10-10 10L0 10z' fill='white' fill-opacity='0.1'/%3E%3C/svg%3E\")" }} />
           <div className="relative flex items-start gap-4">
@@ -69,18 +84,13 @@ export function DiscoverPage() {
       {/* What Discover does for you */}
       <div className={`rounded-xl p-5 mb-8 ${dark ? "bg-white/5" : "bg-violet-50 border border-violet-100"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <Zap className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+          <Zap className="w-4 h-4" style={{ color: PC.primary }} />
           {bi({ fr: "Ce que Discover fait pour vous", en: "What Discover does for you" })}
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
-          {[
-            { fr: "Passez de \"l'IA c'est intéressant\" à un portefeuille priorisé de cas d'usage concrets", en: "Go from \"AI is interesting\" to a prioritized portfolio of concrete use cases" },
-            { fr: "Chaque cas d'usage est évalué sur 5 dimensions avec un score de faisabilité clair", en: "Every use case is evaluated across 5 dimensions with a clear feasibility score" },
-            { fr: "Modélisation ROI réaliste — incluant les coûts de données, inférence et supervision humaine", en: "Realistic ROI modeling — including data, inference, and human oversight costs" },
-            { fr: "Gouvernance intégrée dès le départ — risques, conformité Loi 25, considérations éthiques", en: "Governance built in from day one — risks, Bill 25 compliance, ethical considerations" },
-          ].map((benefit, i) => (
+          {BENEFITS.map((benefit, i) => (
             <div key={i} className={`flex items-start gap-2 text-xs ${dark ? "text-white/50" : "text-gray-600"}`}>
-              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#8B5CF6" }} />
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: PC.primary }} />
               {bi(benefit)}
             </div>
           ))}
@@ -109,7 +119,7 @@ export function DiscoverPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${dark ? "bg-violet-500/10 group-hover:bg-violet-500/20" : "bg-violet-50 group-hover:bg-violet-100"}`}>
-                  <tool.icon className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+                  <tool.icon className="w-4 h-4" style={{ color: PC.primary }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <CardTitle className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
@@ -131,17 +141,13 @@ export function DiscoverPage() {
       {/* Your journey */}
       <div className={`mt-8 rounded-xl border p-5 ${dark ? "border-white/5 bg-gray-900" : "border-gray-100 bg-white"}`}>
         <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${dark ? "text-white" : "text-gray-900"}`}>
-          <Sparkles className="w-4 h-4" style={{ color: "#8B5CF6" }} />
+          <Sparkles className="w-4 h-4" style={{ color: PC.primary }} />
           {bi({ fr: "Votre parcours", en: "Your journey" })}
         </h3>
         <div className="grid sm:grid-cols-3 gap-4">
-          {[
-            { step: "1", title: { fr: "Commencez gratuitement", en: "Start for free" }, desc: { fr: "Le Quiz de maturité IA vous donne un score et 3 cas d'usage recommandés en 10 minutes.", en: "The AI Maturity Quiz gives you a score and 3 recommended use cases in 10 minutes." } },
-            { step: "2", title: { fr: "Explorez et priorisez", en: "Explore and prioritize" }, desc: { fr: "Accédez à la bibliothèque complète, scorez la faisabilité et estimez le ROI de chaque cas.", en: "Access the full library, score feasibility, and estimate ROI for each case." } },
-            { step: "3", title: { fr: "Passez à l'action", en: "Take action" }, desc: { fr: "Générez un package professionnel par cas d'usage et faites-le valider par un expert Talsom.", en: "Generate a professional package per use case and have it validated by a Talsom expert." } },
-          ].map((item) => (
+          {JOURNEY_STEPS.map((item) => (
             <div key={item.step} className={`rounded-xl p-4 ${dark ? "bg-white/5" : "bg-gray-50"}`}>
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-2" style={{ background: "#8B5CF6", color: "white" }}>{item.step}</div>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-2" style={{ background: PC.primary, color: "white" }}>{item.step}</div>
               <p className={`text-xs font-semibold mb-1 ${dark ? "text-white" : "text-gray-900"}`}>{bi(item.title)}</p>
               <p className={`text-[11px] leading-relaxed ${dark ? "text-white/40" : "text-gray-500"}`}>{bi(item.desc)}</p>
             </div>
